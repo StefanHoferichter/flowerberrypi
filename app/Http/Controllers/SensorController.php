@@ -11,6 +11,7 @@ use Illuminate\View\View;
 
 use App\Models\Sensor;
 use App\Models\RemoteSocket;
+use App\Models\TemperaturSensorResult;
 
 class SensorController extends Controller
 {
@@ -71,13 +72,44 @@ class SensorController extends Controller
         else
            $code = 1;
                 
-           echo('python /var/www/html/flowerberrypi/app/python/php_set_relay.py ' . $sensor->gpio_out . ' ' . $code);
+//           echo('python /var/www/html/flowerberrypi/app/python/php_set_relay.py ' . $sensor->gpio_out . ' ' . $code);
            $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_set_relay.py '. $sensor->gpio_out. ' ' . $code  );
         echo $output;
             
             
         $relays = Sensor::where('sensor_type', '3')->get();
         return view('relay_list', ['relays' => $relays]);
+    }
+
+    
+    public function show_temperature()
+    {
+        $sensors = Sensor::where('sensor_type', '4')->get();
+        $readings = []; 
+        
+        foreach ($sensors as $sensor)
+        {
+//            echo('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
+            $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
+//            echo $output;
+            
+            if (strpos($output, 'Fehler') !== false) {
+//                echo "Fehler beim Auslesen des DHT11-Sensors.";
+            } else {
+                list($temp, $hum) = explode(",", trim($output));
+//                echo "Temperatur: {$temp} °C<br>";
+//                echo "Luftfeuchtigkeit: {$hum} %<br>";
+                $newReading = new TemperaturSensorResult();
+                $newReading->temperature=$temp;
+                $newReading->humidity=$hum;
+                $newReading->name=$sensor->name;
+                
+                array_push($readings, $newReading);
+            }
+            
+        }
+        
+        return view('temperature_list', ['sensors' => $sensors, 'readings'=>$readings]);
     }
     
 }

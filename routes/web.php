@@ -9,6 +9,7 @@ Route::get('/remote_sockets', 'App\Http\Controllers\SensorController@show_remote
 Route::post('/remote_sockets', 'App\Http\Controllers\SensorController@control_remote_socket');
 Route::get('/relays', 'App\Http\Controllers\SensorController@show_relays');
 Route::post('/relays', 'App\Http\Controllers\SensorController@control_relays');
+Route::get('/temperature', 'App\Http\Controllers\SensorController@show_temperature');
 
 /*
 Route::get('/', function () {

@@ -10,7 +10,25 @@
             <div class="grid-item">
         	<h2>Kategorien</h2>
             @foreach($sensors as $sensor) 
-              <a  href="/show_recipes_from_category/{{ $sensor->id }}">{{ $sensor->name }}</a><br><br>
+                @php
+                    if ($sensor->sensor_type == 1) 
+                    {
+                        $action = '/remote_sockets';
+                    } 
+                    else if ($sensor->sensor_type == 3) 
+                    {
+                        $action = '/relays';
+                    } 
+                    else if ($sensor->sensor_type == 4) 
+                    {
+                        $action = '/temperature';
+                    } 
+                    else 
+                    {
+                        $action = '/';
+                    }
+                @endphp            
+              <a  href="{{ $action }}">{{ $sensor->name }}</a><br><br>
             @endforeach
         	</div>
         	

@@ -26,6 +26,10 @@ class SensorTypeSeeder extends Seeder
             'name' => '4 Relay Module',
             'order_val' => '30',
         ]);
+        DB::table('sensor_types')->insert([
+            'name' => 'DHT11 Temperature Sensor',
+            'order_val' => '40',
+        ]);
         
     }
 }

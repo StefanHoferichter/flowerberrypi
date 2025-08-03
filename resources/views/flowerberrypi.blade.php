@@ -26,9 +26,10 @@
   <body>
       <header> 
         <nav>
+              <div class="nav_logo"><a href="/">Home</a></div>
               <div class="nav_logo"><a href="/remote_sockets">Remote Sockets</a></div>
               <div class="nav_recipes"><a  class="nav_item" href="/relays">Relays</a></div>
-              <div class="nav_ingredients"><a  !!} class="nav_item" href="/show_ingredients">Zutaten</a></div>
+              <div class="nav_ingredients"><a class="nav_item" href="/show_ingredients">Zutaten</a></div>
               <div class="nav_ernaehrung"><a class="nav_item" href="/ernaehrung">Ernährung</a></div>
               <div class="nav_blog"><a class="nav_item" href="/blog">Blog</a></div>
               <div class="nav_about"><a class="nav_item" href="/about_me">Über mich</a></div>
