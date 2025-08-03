@@ -30,6 +30,10 @@ class SensorTypeSeeder extends Seeder
             'name' => 'DHT11 Temperature Sensor',
             'order_val' => '40',
         ]);
+        DB::table('sensor_types')->insert([
+            'name' => 'HC-SR04 Ultrasonic Sensor',
+            'order_val' => '50',
+        ]);
         
     }
 }

@@ -21,7 +21,11 @@
                     } 
                     else if ($sensor->sensor_type == 4) 
                     {
-                        $action = '/temperature';
+                        $action = '/temperatures';
+                    } 
+                    else if ($sensor->sensor_type == 5) 
+                    {
+                        $action = '/distances';
                     } 
                     else 
                     {

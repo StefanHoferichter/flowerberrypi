@@ -24,7 +24,7 @@ class SensorSeeder extends Seeder
         DB::table('sensors')->insert([
             'name' => '433 Mhz Receiver für Brennenstuhl',
             'enabled' => '1',
-            'sensor_type' => '1',
+            'sensor_type' => '2',
             'GPIO_IN' => '27',
             'GPIO_OUT' => '0',
             'GPIO_EXTRA' => '0',
@@ -67,6 +67,22 @@ class SensorSeeder extends Seeder
             'sensor_type' => '4',
             'GPIO_IN' => '22',
             'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '0',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'HC-SR04 Ultrasonic A',
+            'enabled' => '1',
+            'sensor_type' => '5',
+            'GPIO_IN' => '26',
+            'GPIO_OUT' => '16',
+            'GPIO_EXTRA' => '0',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'HC-SR04 Ultrasonic B',
+            'enabled' => '1',
+            'sensor_type' => '5',
+            'GPIO_IN' => '7',
+            'GPIO_OUT' => '8',
             'GPIO_EXTRA' => '0',
         ]);
         
