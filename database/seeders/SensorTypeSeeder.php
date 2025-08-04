@@ -38,6 +38,10 @@ class SensorTypeSeeder extends Seeder
             'name' => 'ADS A/D Converter',
             'order_val' => '60',
         ]);
+        DB::table('sensor_types')->insert([
+            'name' => 'Raspberry Pi Camera 1.3',
+            'order_val' => '70',
+        ]);
         
     }
 }

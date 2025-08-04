@@ -31,6 +31,10 @@
                     {
                         $action = '/humidities';
                     } 
+                    else if ($sensor->sensor_type == 7) 
+                    {
+                        $action = '/camera';
+                    } 
                     else 
                     {
                         $action = '/';

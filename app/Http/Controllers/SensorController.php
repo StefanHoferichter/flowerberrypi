@@ -171,5 +171,38 @@ class SensorController extends Controller
         
         return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings]);
     }
+
+    public function show_camera()
+    {
+        $cameras = Sensor::where('sensor_type', '7')->get();
+        $readings = [];
+        
+        foreach ($cameras as $camera)
+        {
+            if ($camera->enabled > 0)
+            {
+            }
+        }
+        
+        $filename = null;
+        return view('camera_list', ['cameras' => $cameras, 'filename'=>$filename]);
+    }
+    
+    
+    public function make_picture(Request $request)
+    {
+//        echo $request->action;
+//        echo $request->id;
+        
+        $cameras = Sensor::where('sensor_type', '7')->get();
+            
+        $filename = 'pic_' . date('Y-m-d_H-i-s') . '.jpg';
+        echo $filename;
+        $output = shell_exec("rpicam-jpeg -o /var/www/html/flowerberrypi/public/" . $filename);
+        echo $output;
+        
+            
+        return view('camera_list', ['cameras' => $cameras, 'filename'=>$filename]);
+    }
     
 }

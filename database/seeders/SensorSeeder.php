@@ -165,6 +165,14 @@ class SensorSeeder extends Seeder
             'GPIO_OUT' => '0',
             'GPIO_EXTRA' => '73',
         ]);
+        DB::table('sensors')->insert([
+            'name' => 'Camera',
+            'enabled' => '1',
+            'sensor_type' => '7',
+            'GPIO_IN' => '0',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '0',
+        ]);
         
     }
 }
