@@ -120,26 +120,56 @@ class SensorController extends Controller
         
         foreach ($sensors as $sensor)
         {
-            //            echo('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
-//            echo('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 2>&1');
-            $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 2>&1');
-//            echo $output;
-            
-            if (strpos($output, 'Fehler') !== false) {
-                //                echo "Fehler beim Auslesen des DHT11-Sensors.";
-            } else {
-                list($v0) = explode(",", trim($output));
-//                echo "Entfernung 0: {$v0}<br>";
-                $newReading = new SensorResult();
-                $newReading->value=$v0;
-                $newReading->name=$sensor->name;
+            if ($sensor->enabled > 0)
+            {
+                //            echo('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 2>&1');
+                $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 2>&1');
+                //            echo $output;
                 
-                array_push($readings, $newReading);
+                if (strpos($output, 'Fehler') !== false) {
+                    //                echo "Fehler beim Auslesen des DHT11-Sensors.";
+                } else {
+                    list($v0) = explode(",", trim($output));
+                    //                echo "Entfernung 0: {$v0}<br>";
+                    $newReading = new SensorResult();
+                    $newReading->value=$v0;
+                    $newReading->name=$sensor->name;
+                    
+                    array_push($readings, $newReading);
+                }
             }
-            
         }
         
         return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings]);
+    }
+
+    public function show_humidities()
+    {
+        $sensors = Sensor::where('sensor_type', '6')->get();
+        $readings = [];
+        
+        foreach ($sensors as $sensor)
+        {
+            if ($sensor->enabled > 0)
+            {
+                $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_humidity.py '. $sensor->gpio_extra . ' ' . $sensor->gpio_in . ' 2>&1');
+                //            echo $output;
+                
+                if (strpos($output, 'Fehler') !== false) {
+                    //                echo "Fehler beim Auslesen des DHT11-Sensors.";
+                } else {
+                    list($v0) = explode(",", trim($output));
+                    //                echo "Entfernung 0: {$v0}<br>";
+                    $newReading = new SensorResult();
+                    $newReading->value=$v0;
+                    $newReading->name=$sensor->name;
+                    
+                    array_push($readings, $newReading);
+                }
+            }
+        }
+        
+        return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings]);
     }
     
 }

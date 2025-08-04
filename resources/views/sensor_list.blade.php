@@ -27,12 +27,28 @@
                     {
                         $action = '/distances';
                     } 
+                    else if ($sensor->sensor_type == 6) 
+                    {
+                        $action = '/humidities';
+                    } 
                     else 
                     {
                         $action = '/';
                     }
                 @endphp            
-              <a  href="{{ $action }}">{{ $sensor->name }}</a><br><br>
+              <a  href="{{ $action }}">{{ $sensor->name }}
+                @php
+                    if ($sensor->enabled == 1) 
+                    {
+                        $enabled = 'enabled';
+                    } 
+                    else 
+                    {
+                        $enabled = 'disabled';
+                    } 
+                @endphp            
+				 {{ $enabled }}
+              </a><br><br>
             @endforeach
         	</div>
         	

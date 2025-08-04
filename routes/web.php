@@ -11,6 +11,7 @@ Route::get('/relays', 'App\Http\Controllers\SensorController@show_relays');
 Route::post('/relays', 'App\Http\Controllers\SensorController@control_relays');
 Route::get('/temperatures', 'App\Http\Controllers\SensorController@show_temperatures');
 Route::get('/distances', 'App\Http\Controllers\SensorController@show_distances');
+Route::get('/humidities', 'App\Http\Controllers\SensorController@show_humidities');
 
 /*
 Route::get('/', function () {

@@ -79,11 +79,51 @@ class SensorSeeder extends Seeder
         ]);
         DB::table('sensors')->insert([
             'name' => 'HC-SR04 Ultrasonic B',
-            'enabled' => '1',
+            'enabled' => '0',
             'sensor_type' => '5',
             'GPIO_IN' => '7',
             'GPIO_OUT' => '8',
             'GPIO_EXTRA' => '0',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'HC-SR04 Ultrasonic C',
+            'enabled' => '0',
+            'sensor_type' => '5',
+            'GPIO_IN' => '9',
+            'GPIO_OUT' => '10',
+            'GPIO_EXTRA' => '0',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'HC-SR04 Ultrasonic D',
+            'enabled' => '1',
+            'sensor_type' => '5',
+            'GPIO_IN' => '24',
+            'GPIO_OUT' => '23',
+            'GPIO_EXTRA' => '0',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'ADS1115 Moisture Sensor A',
+            'enabled' => '1',
+            'sensor_type' => '6',
+            'GPIO_IN' => '0',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '73',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'ADS1115 Moisture Sensor D',
+            'enabled' => '1',
+            'sensor_type' => '6',
+            'GPIO_IN' => '3',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '73',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'ADS1115 Moisture Sensor F',
+            'enabled' => '1',
+            'sensor_type' => '6',
+            'GPIO_IN' => '2',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '72',
         ]);
         
     }

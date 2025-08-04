@@ -34,6 +34,10 @@ class SensorTypeSeeder extends Seeder
             'name' => 'HC-SR04 Ultrasonic Sensor',
             'order_val' => '50',
         ]);
+        DB::table('sensor_types')->insert([
+            'name' => 'ADS A/D Converter',
+            'order_val' => '60',
+        ]);
         
     }
 }
