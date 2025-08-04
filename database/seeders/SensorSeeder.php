@@ -103,6 +103,38 @@ class SensorSeeder extends Seeder
         ]);
         DB::table('sensors')->insert([
             'name' => 'ADS1115 Moisture Sensor A',
+            'enabled' => '0',
+            'sensor_type' => '6',
+            'GPIO_IN' => '0',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '72',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'ADS1115 Moisture Sensor B',
+            'enabled' => '0',
+            'sensor_type' => '6',
+            'GPIO_IN' => '1',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '72',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'ADS1115 Moisture Sensor C',
+            'enabled' => '1',
+            'sensor_type' => '6',
+            'GPIO_IN' => '2',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '72',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'ADS1115 Moisture Sensor D',
+            'enabled' => '0',
+            'sensor_type' => '6',
+            'GPIO_IN' => '3',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '72',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'ADS1115 Moisture Sensor E',
             'enabled' => '1',
             'sensor_type' => '6',
             'GPIO_IN' => '0',
@@ -110,20 +142,28 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '73',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'ADS1115 Moisture Sensor D',
+            'name' => 'ADS1115 Moisture Sensor F',
+            'enabled' => '0',
+            'sensor_type' => '6',
+            'GPIO_IN' => '1',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '73',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'ADS1115 Moisture Sensor G',
+            'enabled' => '0',
+            'sensor_type' => '6',
+            'GPIO_IN' => '2',
+            'GPIO_OUT' => '0',
+            'GPIO_EXTRA' => '73',
+        ]);
+        DB::table('sensors')->insert([
+            'name' => 'ADS1115 Moisture Sensor H',
             'enabled' => '1',
             'sensor_type' => '6',
             'GPIO_IN' => '3',
             'GPIO_OUT' => '0',
             'GPIO_EXTRA' => '73',
-        ]);
-        DB::table('sensors')->insert([
-            'name' => 'ADS1115 Moisture Sensor F',
-            'enabled' => '1',
-            'sensor_type' => '6',
-            'GPIO_IN' => '2',
-            'GPIO_OUT' => '0',
-            'GPIO_EXTRA' => '72',
         ]);
         
     }
