@@ -15,6 +15,7 @@ use App\Models\RemoteSocket;
 use App\Models\TemperatureSensorResult;
 use App\Models\SensorResult;
 use App\Services\SensorReader;
+use App\Jobs\ProcessSensorReadings;
 
 class SensorController extends Controller
 {
@@ -144,6 +145,19 @@ class SensorController extends Controller
         
             
         return view('camera_list', ['cameras' => $cameras, 'filename'=>$filename]);
+    }
+    
+    
+    public function triggerJob()
+    {
+//        if ($request->adhoc == "true")
+            ProcessSensorReadings::dispatchSync();
+//            else
+//                SpellcheckBackgroundJob::dispatch($sc);
+                
+        $sensors = Sensor::all();
+        
+        return view('sensor_list', ['sensors' => $sensors]);
     }
     
 }

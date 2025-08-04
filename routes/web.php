@@ -14,6 +14,7 @@ Route::get('/distances', 'App\Http\Controllers\SensorController@show_distances')
 Route::get('/humidities', 'App\Http\Controllers\SensorController@show_humidities');
 Route::get('/camera', 'App\Http\Controllers\SensorController@show_camera');
 Route::post('/camera', 'App\Http\Controllers\SensorController@make_picture');
+Route::get('/trigger_job', 'App\Http\Controllers\SensorController@triggerJob');
 
 /*
 Route::get('/', function () {
