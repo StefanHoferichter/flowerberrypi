@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TemperaturSensorResult extends Model
+class TemperatureSensorResult extends Model
 {
     // Keine zugeordnete Datenbank-Tabelle
     protected $table = null;
@@ -24,5 +24,6 @@ class TemperaturSensorResult extends Model
     public $temperature;
     public $humidity;
     public $name;
+    public $sensor_id;
     
 }

@@ -8,11 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Collection;
 
 use App\Models\Sensor;
 use App\Models\RemoteSocket;
-use App\Models\TemperaturSensorResult;
+use App\Models\TemperatureSensorResult;
 use App\Models\SensorResult;
+use App\Services\SensorReader;
 
 class SensorController extends Controller
 {
@@ -86,59 +88,18 @@ class SensorController extends Controller
     public function show_temperatures()
     {
         $sensors = Sensor::where('sensor_type', '4')->get();
-        $readings = [];
-        
-        foreach ($sensors as $sensor)
-        {
-            //            echo('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
-            $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
-            //            echo $output;
-            
-            if (strpos($output, 'Fehler') !== false) {
-                //                echo "Fehler beim Auslesen des DHT11-Sensors.";
-            } else {
-                list($temp, $hum) = explode(",", trim($output));
-                //                echo "Temperatur: {$temp} °C<br>";
-                //                echo "Luftfeuchtigkeit: {$hum} %<br>";
-                $newReading = new TemperaturSensorResult();
-                $newReading->temperature=$temp;
-                $newReading->humidity=$hum;
-                $newReading->name=$sensor->name;
-                
-                array_push($readings, $newReading);
-            }
-            
-        }
+        $reader = new SensorReader();        
+        $readings = $reader->read_temperatures($sensors);
         
         return view('temperature_list', ['sensors' => $sensors, 'readings'=>$readings]);
     }
+
     
     public function show_distances()
     {
         $sensors = Sensor::where('sensor_type', '5')->get();
-        $readings = [];
-        
-        foreach ($sensors as $sensor)
-        {
-            if ($sensor->enabled > 0)
-            {
-                //            echo('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 2>&1');
-                $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 2>&1');
-                //            echo $output;
-                
-                if (strpos($output, 'Fehler') !== false) {
-                    //                echo "Fehler beim Auslesen des DHT11-Sensors.";
-                } else {
-                    list($v0) = explode(",", trim($output));
-                    //                echo "Entfernung 0: {$v0}<br>";
-                    $newReading = new SensorResult();
-                    $newReading->value=$v0;
-                    $newReading->name=$sensor->name;
-                    
-                    array_push($readings, $newReading);
-                }
-            }
-        }
+        $reader = new SensorReader();
+        $readings = $reader->read_distances($sensors);
         
         return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings]);
     }
@@ -146,28 +107,8 @@ class SensorController extends Controller
     public function show_humidities()
     {
         $sensors = Sensor::where('sensor_type', '6')->get();
-        $readings = [];
-        
-        foreach ($sensors as $sensor)
-        {
-            if ($sensor->enabled > 0)
-            {
-                $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_humidity.py '. $sensor->gpio_extra . ' ' . $sensor->gpio_in . ' 2>&1');
-                //            echo $output;
-                
-                if (strpos($output, 'Fehler') !== false) {
-                    //                echo "Fehler beim Auslesen des DHT11-Sensors.";
-                } else {
-                    list($v0) = explode(",", trim($output));
-                    //                echo "Entfernung 0: {$v0}<br>";
-                    $newReading = new SensorResult();
-                    $newReading->value=$v0;
-                    $newReading->name=$sensor->name;
-                    
-                    array_push($readings, $newReading);
-                }
-            }
-        }
+        $reader = new SensorReader();
+        $readings = $reader->read_humidities($sensors);
         
         return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings]);
     }
