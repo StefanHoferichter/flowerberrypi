@@ -126,33 +126,28 @@ class SensorController extends Controller
             }
         }
         
-        $filename = null;
-        return view('camera_list', ['cameras' => $cameras, 'filename'=>$filename]);
+        $pictures = null;
+        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures]);
     }
     
     
     public function make_picture(Request $request)
     {
-//        echo $request->action;
-//        echo $request->id;
-        
         $cameras = Sensor::where('sensor_type', '7')->get();
-            
-        $filename = 'pic_' . date('Y-m-d_H-i-s') . '.jpg';
-        echo $filename;
-        $output = shell_exec("rpicam-jpeg -o /var/www/html/flowerberrypi/public/" . $filename);
-        echo $output;
         
-            
-        return view('camera_list', ['cameras' => $cameras, 'filename'=>$filename]);
+        $reader = new SensorReader();
+        $pictures = $reader->read_camera($cameras);
+        
+        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures]);
     }
     
     
     public function triggerJob()
     {
 //        if ($request->adhoc == "true")
-            ProcessSensorReadings::dispatchSync();
-//            else
+//            ProcessSensorReadings::dispatchSync();
+            ProcessSensorReadings::dispatch();
+            //            else
 //                SpellcheckBackgroundJob::dispatch($sc);
                 
         $sensors = Sensor::all();

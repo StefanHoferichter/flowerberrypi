@@ -20,9 +20,11 @@
     	          </form>
             @endforeach
         	</div>
-        	    @if($filename != null)
-        	           <img src='{{ $filename }}'>
-                @endif            
+        	@if($pictures != null)
+            	@foreach($pictures as $picture) 
+        	           <img src='{{ $picture->filename }}'>
+            	@endforeach
+            @endif            
         	
         	
         	<br>

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\SensorResult;
+use App\Models\Picture;
 use App\Models\TemperatureSensorResult;
 use Illuminate\Support\Collection;
 
@@ -96,5 +97,34 @@ class SensorReader
         return $readings;
     }
     
-    
+
+    public function read_camera(Collection $sensors)
+    {
+        $readings = [];
+        
+        echo 1;
+        
+        foreach ($sensors as $sensor)
+        {
+            echo 2;
+            if ($sensor->enabled > 0)
+            {
+                echo 3;
+                $filename = 'pic_' . date('Y-m-d_H-i-s') . '.jpg';
+                echo $filename;
+                $output = shell_exec("rpicam-jpeg -o /var/www/html/flowerberrypi/public/" . $filename);
+                echo $output;
+
+                $newReading = new Picture();
+                $newReading->type=5;
+                $newReading->filename=$filename;
+                //                $newReading->name=$sensor->name;
+                $newReading->sensor_id=$sensor->id;
+                
+                array_push($readings, $newReading);
+                
+            }
+        }
+        return $readings;
+    }
 }
