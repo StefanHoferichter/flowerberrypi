@@ -21,7 +21,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/images/logo/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo/favicon-16x16.png">
     <link rel="manifest" href="/images/logo/site.webmanifest">   
-	
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
       <header> 
@@ -30,7 +30,7 @@
               <div class="nav_logo"><a href="/remote_sockets">Remote Sockets</a></div>
               <div class="nav_recipes"><a  class="nav_item" href="/relays">Relays</a></div>
               <div class="nav_ingredients"><a class="nav_item" href="/trigger_job">Job</a></div>
-              <div class="nav_ernaehrung"><a class="nav_item" href="/ernaehrung">Ernährung</a></div>
+              <div class="nav_ernaehrung"><a class="nav_item" href="/forecast">Forecast</a></div>
               <div class="nav_blog"><a class="nav_item" href="/blog">Blog</a></div>
               <div class="nav_about"><a class="nav_item" href="/about_me">Über mich</a></div>
               <div class="nav_search"><form style="display:inline-block" action="/search_recipe" target="_top" method="post" novalidate="">
