@@ -9,7 +9,20 @@
 		<div class="grid-container">
             <div class="grid-item">
         	<h2>Kategorien</h2>
+        	
+        	<table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>enbaled</th>
+                        <th>Cycle</th>
+                        <th>enabled</th>
+                    </tr>
+                </thead>
+                <tbody>
+        	
             @foreach($sensors as $sensor) 
+                        <tr>
                 @php
                     if ($sensor->sensor_type == 1) 
                     {
@@ -40,7 +53,7 @@
                         $action = '/';
                     }
                 @endphp            
-              <a  href="{{ $action }}">{{ $sensor->name }}
+              <td><a  href="{{ $action }}">{{ $sensor->name }} </a></td>
                 @php
                     if ($sensor->enabled == 1) 
                     {
@@ -51,9 +64,24 @@
                         $enabled = 'disabled';
                     } 
                 @endphp            
-				 {{ $enabled }}
-              </a><br><br>
+				 <td> {{ $enabled }} </td>
+               <td> {{ $sensor->cycle->name }} </td>
+                @php
+                    if ($sensor->cycle->enabled == 1) 
+                    {
+                        $enabled = 'enabled';
+                    } 
+                    else 
+                    {
+                        $enabled = 'disabled';
+                    } 
+                @endphp            
+				 <td> {{ $enabled }} </td>
+                </tr>
+             
             @endforeach
+                </tbody>
+            </table>        
         	</div>
         	
 

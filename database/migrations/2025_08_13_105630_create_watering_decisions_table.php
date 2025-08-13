@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sensors', function (Blueprint $table) {
+        Schema::create('watering_decisions', function (Blueprint $table) {
             $table->id();
-            $table->String('name');
-            $table->boolean('enabled')->default(true);
-            $table->unsignedBigInteger('sensor_type');
+            $table->date('day');
+            $table->unsignedInteger('tod');
             $table->foreignId('cycle_id')->constrained('cycles');
-            $table->foreign('sensor_type')->references('id')->on('sensor_types');
-            $table->unsignedInteger('gpio_in');
-            $table->unsignedInteger('gpio_out');
-            $table->unsignedInteger('gpio_extra');
+            $table->unsignedInteger('forecast_classification');
+            $table->unsignedInteger('humidity_classification');
+            $table->unsignedInteger('watering_classification');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sensors');
+        Schema::dropIfExists('watering_decisions');
     }
 };

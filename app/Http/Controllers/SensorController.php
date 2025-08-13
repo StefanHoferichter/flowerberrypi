@@ -2,20 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
-use Illuminate\Support\Collection;
-
-use App\Models\Sensor;
+use App\Jobs\ProcessData;
 use App\Models\RemoteSocket;
-use App\Models\TemperatureSensorResult;
-use App\Models\SensorResult;
+use App\Models\Sensor;
+use App\Models\SensorValue;
 use App\Services\SensorReader;
-use App\Jobs\ProcessSensorReadings;
+use Illuminate\Http\Request;
 
 class SensorController extends Controller
 {
@@ -111,7 +103,8 @@ class SensorController extends Controller
         $reader = new SensorReader();
         $readings = $reader->read_humidities($sensors);
         
-        return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings]);
+        $history = SensorValue::where('type', '4')->get();
+        return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings, 'history'=>$history]);
     }
 
     public function show_camera()
@@ -145,8 +138,8 @@ class SensorController extends Controller
     public function triggerJob()
     {
 //        if ($request->adhoc == "true")
-//            ProcessSensorReadings::dispatchSync();
-            ProcessSensorReadings::dispatch();
+ProcessData::dispatchSync();
+//            ProcessData::dispatch();
             //            else
 //                SpellcheckBackgroundJob::dispatch($sc);
                 

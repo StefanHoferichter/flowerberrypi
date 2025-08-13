@@ -21,6 +21,9 @@ class DatabaseSeeder extends Seeder
         ]);
 */        
         $this->call([
+            CycleSeeder::class,
+        ]);
+        $this->call([
             SensorTypeSeeder::class,
         ]);
         $this->call([

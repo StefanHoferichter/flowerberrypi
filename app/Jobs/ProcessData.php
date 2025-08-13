@@ -1,0 +1,162 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Models\Cycle;
+use App\Models\Sensor;
+use App\Models\SensorJob;
+use App\Models\SensorValue;
+use App\Models\WateringDecision;
+use App\Models\WeatherForecast;
+use App\Services\ForecastReader;
+use App\Services\SensorReader;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
+
+class ProcessData implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        Log::info('start handling sensor job');
+        
+        $job = new SensorJob();
+        $job->save();
+        
+        $sensors = Sensor::where('sensor_type', '4')->get();
+        $reader = new SensorReader();
+        $readings = $reader->read_temperatures($sensors);
+        
+        foreach($readings as $reading)
+        {
+            $v = new SensorValue();
+            $v->job_id=$job->id;
+            $v->type=1;
+            $v->value=$reading->temperature;
+            $v->sensor_id=$reading->sensor_id;
+            $v->classification=0;
+            $v->save();
+            
+            $v = new SensorValue();
+            $v->job_id=$job->id;
+            $v->type=2;
+            $v->value=$reading->humidity;
+            $v->sensor_id=$reading->sensor_id;
+            $v->classification=0;
+            $v->save();
+        }
+        Log::info('finished handling temperatures');
+        
+        $sensors = Sensor::where('sensor_type', '5')->get();
+        $reader = new SensorReader();
+        $readings = $reader->read_distances($sensors);
+
+        foreach($readings as $reading)
+        {
+            $v = new SensorValue();
+            $v->job_id=$job->id;
+            $v->type=3;
+            $v->value=$reading->value;
+            $v->sensor_id=$reading->sensor_id;
+            $v->classification=0;
+            $v->save();
+        }
+        Log::info('finished handling distances');
+        
+        $sensors = Sensor::where('sensor_type', '6')->get();
+        $reader = new SensorReader();
+        $readings = $reader->read_humidities($sensors);
+
+        foreach($readings as $reading)
+        {
+            $v = new SensorValue();
+            $v->job_id=$job->id;
+            $v->type=4;
+            $v->value=$reading->value;
+            $v->sensor_id=$reading->sensor_id;
+            $v->classification=$reading->classification;
+            $v->save();
+        }
+        Log::info('finished handling humidities');
+        
+        $cameras = Sensor::where('sensor_type', '7')->get();
+        $reader = new SensorReader();
+        $pictures = $reader->read_camera($cameras);
+
+        foreach($pictures as $picture)
+        {
+            $picture->job_id=$job->id;
+            $picture->save();
+        }
+        Log::info('finished handling pictures');
+        
+        $hour = date('G');
+        Log::info('hour of the day is ' . $hour);
+        if ($hour > 7)
+        {
+            $reader = new ForecastReader();
+            $wf = $reader->read_daily_api();
+            $exists = WeatherForecast::where('day', $wf->day)->exists();
+            if (!$exists)
+                $wf->save();
+        }
+        Log::info('finished handling weather forecasts');
+
+        $tod = 0;
+        if ($hour > 7 and $hour < 13)
+            $tod=1;
+        if ($hour >=13 and $hour < 17)
+            $tod=2;
+        if ($tod > 0)
+        {
+            $exists = WateringDecision::where('day', date('Y-m-d'))->where('tod', $tod)->exists();
+            if (!$exists)
+            {
+                $cycles = Cycle::where('enabled', 1)->where('has_watering', 1)->get();
+                foreach($cycles as $cycle)
+                {
+                    Log::info('analyzing cycle ' . $cycle->name);
+                    $sensors = Sensor::where('cycle_id', $cycle->id)->get();
+                    $max_humidity_classification = 0;
+                    foreach($sensors as $sensor)
+                    {
+                        Log::info('analyzing sensor ' . $sensor->name . ' ' .  $sensor->sensor_type);
+                        if ($sensor->sensor_type == 6 and $sensor->enabled)
+                        {
+                            Log::info('analyzing sensor ' . $sensor->id . ' ' . $job->id);
+                            $v = SensorValue::where('sensor_id', $sensor->id)->where('job_id', $job->id)->first();
+                            Log::info('humidity classification ' . $v->classification);
+                            
+                            if ($max_humidity_classification < $v->classification)
+                                $max_humidity_classification = $v->classification;
+                        }
+                    }
+                    $wd = new WateringDecision();
+                    $wd->cycle_id=$cycle->id;
+                    $wd->humidity_classification=$max_humidity_classification;
+                    $wd->forecast_classification=$wf->classification;
+                    $wd->day=date('Y-m-d');
+                    $wd->tod=$tod;
+                    $wd->watering_classification=($wd->humidity_classification + $wd->forecast_classification) /2 ;
+                    $wd->save();
+                }
+            }
+        }
+        
+        
+        Log::info('finished handling sensor job');
+    }
+}

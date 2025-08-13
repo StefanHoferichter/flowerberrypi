@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sensor_values', function (Blueprint $table) {
+        Schema::create('weather_forecasts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('job_id');
-            $table->unsignedBigInteger('sensor_id');
-            $table->unsignedInteger('type');
-            $table->double('value', $precision = 8, $scale = 2);
+            $table->date('day');
+            $table->double('min_temp', $precision = 8, $scale = 2);
+            $table->double('max_temp', $precision = 8, $scale = 2);
+            $table->double('sunshine_duration');
+            $table->double('rain_sum', $precision = 8, $scale = 2);
             $table->unsignedInteger('classification');
+            
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sensor_values');
+        Schema::dropIfExists('weather_forecasts');
     }
 };

@@ -8,119 +8,40 @@
 
 		<div class="grid-container">
             <div class="grid-item">
+        	<h2>Current</h2>
+              Date: {{ $forecast->day}}<br>
+              Min temperature: {{ $forecast->min_temp }} °C<br>
+              Max temperature: {{ $forecast->max_temp }} °C<br>
+              Rain Sum: {{ $forecast->rain_sum}} mm<br>
+              Sunshine: {{ $forecast->sunshine_duration }} s<br>
+              Classification: {{ $forecast->classification }}<br><br>
+        	</div>
+        	
+        	<h2>History</h2>
+
             <table border="1" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Temperature</th>
-                        <th>Precipitation</th>
-                        <th>Cloud Cover</th>
+                        <th>Date</th>
+                        <th>Min Temp</th>
+                        <th>Max Temp</th>
+                        <th>Rain Sum</th>
+                        <th>Sunshine</th>
+                        <th>Classification</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @for ($i = 0; $i < count($temperatures); $i++)
+                    @foreach($history as $hist) 
                         <tr>
-                            <td>{{ $temperatures[$i] }}</td>
-                            <td>{{ $precipitation[$i] }}</td>
-                            <td>{{ $cloudCovers[$i] }}</td>
+                            <td>{{ $hist->day }}</td>
+                            <td>{{ $hist->min_temp }}</td>
+                            <td>{{ $hist->max_temp }}</td>
+                            <td>{{ $hist->rain_sum }}</td>
+                            <td>{{ $hist->sunshine_duration }}</td>
+                            <td>{{ $hist->classification }}</td>
                         </tr>
-                    @endfor
+                    @endforeach
                 </tbody>
             </table>        
-            
-            
-            <canvas id="lineChart" width="600" height="400"></canvas>
-            <script>
-    const ctx = document.getElementById('lineChart').getContext('2d');
-
-    const labels = @json($labels);
-    const temperature = @json($temperatures);
-    const precipitation = @json($precipitation);
-    const cloudCover = @json($cloudCovers);
-    
-const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Temperatur (°C)',
-                    data: temperature,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: 'yTemp',
-                    fill: false,
-                    tension: 0.3,
-                },
-                {
-                    label: 'Niederschlag (mm)',
-                    data: precipitation,
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    yAxisID: 'yPrecip',
-                    fill: false,
-                    tension: 0.3,
-                },
-                {
-                    label: 'Bewölkung (%)',
-                    data: cloudCover,
-                    borderColor: 'rgba(255, 206, 86, 1)',
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                    yAxisID: 'yCloud',
-                    fill: false,
-                    tension: 0.3,
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                yTemp: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Temperatur (°C)'
-                    },
-                },
-                yPrecip: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    title: {
-                        display: true,
-                        text: 'Niederschlag (mm)'
-                    },
-
-                    // Verhindert Überlappung mit yTemp-Achse
-                    grid: {
-                        drawOnChartArea: false,
-                    },
-                },
-                yCloud: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    offset: true,  // Verschiebt Achse etwas nach rechts
-                    title: {
-                        display: true,
-                        text: 'Bewölkung (%)'
-                    },
-                    grid: {
-                        drawOnChartArea: false,
-                    },
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Zeit'
-                    }
-                }
-            }
-        }
-    });
-</script>
-         </div>
-        	
 
 @endsection

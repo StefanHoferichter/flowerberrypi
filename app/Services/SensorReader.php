@@ -88,6 +88,16 @@ class SensorReader
                     $newReading->value=$v0;
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
+
+//                    $newReading->value = 1.8;
+                        
+                    if ($newReading->value < 1.7)
+                        $newReading->classification=1;
+                    else if ($newReading->value > 2.5)
+                        $newReading->classification=3;
+                     else
+                         $newReading->classification=2;
+                         
                     
                     array_push($readings, $newReading);
                 }
