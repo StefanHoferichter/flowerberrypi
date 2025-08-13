@@ -40,40 +40,49 @@
             </table>        
             
         	</div>
+        	
+<canvas id="lineChart" width="600" height="400"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-            <canvas id="lineChart" width="600" height="400"></canvas>
-            <script>
+<script>
     const ctx = document.getElementById('lineChart').getContext('2d');
 
     const labels = @json($labels);
-    const values = @json($values);
-    
-const chart = new Chart(ctx, {
+    const datasetsData = @json($datasets);
+
+    // Farben (für automatische Vergabe)
+    const colors = [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+    ];
+
+    const datasets = datasetsData.map((set, index) => ({
+        label: set.label,
+        data: set.data,
+        borderColor: colors[index % colors.length],
+        backgroundColor: colors[index % colors.length].replace('1)', '0.2)'),
+        fill: false,
+        tension: 0.3
+    }));
+
+    new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
-            datasets: [
-                {
-                    label: 'Humidity',
-                    data: values,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: 'yTemp',
-                    fill: false,
-                    tension: 0.3,
-                }            ]
+            datasets: datasets
         },
         options: {
             responsive: true,
             scales: {
-                yTemp: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
+                y: {
                     title: {
                         display: true,
-                        text: 'Temperatur (°C)'
-                    },
+                        text: 'Wert'
+                    }
                 },
                 x: {
                     title: {

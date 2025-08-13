@@ -112,15 +112,38 @@ class SensorController extends Controller
         $readings = $reader->read_humidities($sensors);
         
         $history = SensorValue::where('type', '4')->get();
-        $labels = [];
-        $values = [];
+        $datasets = [];
+        $labelSet = [];
+
+        // Gruppiere Werte nach Sensor
+        $grouped = $history->groupBy('sensor_id');
         
-        foreach($history as $h)
+        foreach ($grouped as $sensorId => $values) 
         {
-            array_push($labels, $h->created_at);
-            array_push($values, $h->value);
+            $sensor = $values->first()->sensor ?? null;
+            $label = $sensor ? $sensor->name : "Sensor $sensorId";
+            
+            $data = [];
+            $labels = [];
+            
+            foreach ($values as $entry) 
+            {
+                $labels[] = $entry->created_at->format('Y-m-d H:i'); // einheitliche Zeitachse pro Sensor
+                $data[] = $entry->value;
+            }
+            
+            $datasets[] = [
+                'label' => $label,
+                'data' => $data,
+            ];
+            
+            // Für die Labels nehmen wir einfach die Zeitpunkte des ersten Sensors
+            if (empty($labelSet)) {
+                $labelSet = $labels;
+            }
         }
-        return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings, 'history'=>$history, 'labels'=>$labels, 'values'=>$values]);
+        
+        return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings, 'history'=>$history, 'datasets' => $datasets, 'labels' => $labelSet]);
     }
 
     public function show_camera()
@@ -154,8 +177,8 @@ class SensorController extends Controller
     public function triggerJob()
     {
 //        if ($request->adhoc == "true")
-ProcessData::dispatchSync();
-//            ProcessData::dispatch();
+//          ProcessData::dispatchSync();
+            ProcessData::dispatch();
             //            else
 //                SpellcheckBackgroundJob::dispatch($sc);
                 
