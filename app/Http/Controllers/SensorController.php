@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessData;
 use App\Models\Cycle;
+use App\Models\Picture;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorValue;
@@ -159,7 +160,8 @@ class SensorController extends Controller
         }
         
         $pictures = null;
-        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures]);
+        $history = Picture::all();
+        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures, 'history'=>$history]);
     }
     
     
@@ -170,7 +172,8 @@ class SensorController extends Controller
         $reader = new SensorReader();
         $pictures = $reader->read_camera($cameras);
         
-        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures]);
+        $history = Picture::all();
+        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures, 'history'=>$history]);
     }
     
     

@@ -22,7 +22,13 @@
         	</div>
         	@if($pictures != null)
             	@foreach($pictures as $picture) 
-        	           <img src='{{ $picture->filename }}'>
+        	           <img  width='800' src='{{ $picture->filename }}'>
+            	@endforeach
+            @endif            
+
+        	@if($history != null)
+            	@foreach($history as $picture) 
+        	           <img width='500' src='{{ $picture->filename }}'>
             	@endforeach
             @endif            
         	
