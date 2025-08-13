@@ -112,7 +112,15 @@ class SensorController extends Controller
         $readings = $reader->read_humidities($sensors);
         
         $history = SensorValue::where('type', '4')->get();
-        return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings, 'history'=>$history]);
+        $labels = [];
+        $values = [];
+        
+        foreach($history as $h)
+        {
+            array_push($labels, $h->created_at);
+            array_push($values, $h->value);
+        }
+        return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings, 'history'=>$history, 'labels'=>$labels, 'values'=>$values]);
     }
 
     public function show_camera()

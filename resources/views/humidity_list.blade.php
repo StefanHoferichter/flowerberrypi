@@ -40,6 +40,51 @@
             </table>        
             
         	</div>
+
+            <canvas id="lineChart" width="600" height="400"></canvas>
+            <script>
+    const ctx = document.getElementById('lineChart').getContext('2d');
+
+    const labels = @json($labels);
+    const values = @json($values);
+    
+const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Humidity',
+                    data: values,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    yAxisID: 'yTemp',
+                    fill: false,
+                    tension: 0.3,
+                }            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                yTemp: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Temperatur (°C)'
+                    },
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Zeit'
+                    }
+                }
+            }
+        }
+    });
+</script>
         	
 
 @endsection
