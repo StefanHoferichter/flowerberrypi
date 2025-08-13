@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Cycle;
+use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorJob;
 use App\Models\SensorValue;
@@ -10,6 +11,7 @@ use App\Models\WateringDecision;
 use App\Models\WeatherForecast;
 use App\Services\ForecastReader;
 use App\Services\SensorReader;
+use App\Services\WateringController;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -31,7 +33,7 @@ class ProcessData implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::info('start handling sensor job');
+        Log::info('######### start handling hourly job');
         
         $job = new SensorJob();
         $job->save();
@@ -104,6 +106,7 @@ class ProcessData implements ShouldQueue
         Log::info('finished handling pictures');
         
         $hour = date('G');
+ //       $hour = 8;
         Log::info('hour of the day is ' . $hour);
         if ($hour > 7)
         {
@@ -155,8 +158,47 @@ class ProcessData implements ShouldQueue
                 }
             }
         }
+        Log::info('finished analyzing cycles');
         
+        if ($tod > 0)
+        {
+            Log::info('start executing watering');
+            $decisions = WateringDecision::where('day', date('Y-m-d'))->where('tod', $tod)->where('executed', 0)->get();
+            foreach($decisions as $decision)
+            {
+                Log::info('executing decision ' . $decision->cycle_id . ' watering ' . $decision->watering_classification);
+                
+                $sensor = Sensor::where('sensor_type', '1')->first();
+                $remoteSocket = RemoteSocket::where('cycle_id', $decision->cycle_id)->first();
+                if ($remoteSocket != null)
+                {
+                    Log::info('switching on remote socket ' . $remoteSocket->name);
+                    
+                    $controller = new WateringController();
+                    $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_on);
+                    sleep(10);
+                    $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_off);
+                    
+                    Log::info('switching off remote socket ' . $remoteSocket->name);
+                }
+                $relay = Sensor::where('sensor_type', '3')->where('cycle_id', $decision->cycle_id)->first();
+                if ($relay != null)
+                {
+                    Log::info('switching on relay ' . $relay->name);
+                    
+                    $controller = new WateringController();
+                    $controller->control_relay($relay->gpio_out, 0);
+                    sleep(10);
+                    $controller->control_relay($relay->gpio_out, 1);
+                    
+                    Log::info('switching on relay ' . $relay->name);
+                }
+                
+                $decision->executed=1;
+                $decision->save();
+            }
+        }
         
-        Log::info('finished handling sensor job');
+        Log::info('######### finished handling hourly job');
     }
 }

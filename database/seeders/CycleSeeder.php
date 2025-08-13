@@ -45,7 +45,7 @@ class CycleSeeder extends Seeder
         ]);
         DB::table('cycles')->insert([
             'name' => 'Bathroom B',
-            'enabled' => '0',
+            'enabled' => '1',
             'has_watering' => '1',
         ]);
         DB::table('cycles')->insert([

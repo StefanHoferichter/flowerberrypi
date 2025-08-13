@@ -31,7 +31,7 @@
               <div class="nav_recipes"><a  class="nav_item" href="/relays">Relays</a></div>
               <div class="nav_ingredients"><a class="nav_item" href="/trigger_job">Job</a></div>
               <div class="nav_ernaehrung"><a class="nav_item" href="/forecast">Forecast</a></div>
-              <div class="nav_blog"><a class="nav_item" href="/blog">Blog</a></div>
+              <div class="nav_blog"><a class="nav_item" href="/cycles">Cycles</a></div>
               <div class="nav_about"><a class="nav_item" href="/about_me">Über mich</a></div>
               <div class="nav_search"><form style="display:inline-block" action="/search_recipe" target="_top" method="post" novalidate="">
               @csrf

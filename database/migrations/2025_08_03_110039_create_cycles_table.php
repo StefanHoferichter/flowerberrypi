@@ -16,6 +16,7 @@ return new class extends Migration
             $table->String('name');
             $table->boolean('enabled')->default(true);
             $table->boolean('has_watering')->default(true);
+            $table->boolean('rain_sensitive')->default(true);
             $table->timestamps();
         });
     }

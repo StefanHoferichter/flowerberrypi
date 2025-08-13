@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedInteger('forecast_classification');
             $table->unsignedInteger('humidity_classification');
             $table->unsignedInteger('watering_classification');
+            $table->boolean('executed')->default(false);
             $table->timestamps();
         });
     }

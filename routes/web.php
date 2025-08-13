@@ -16,6 +16,7 @@ Route::get('/camera', 'App\Http\Controllers\SensorController@show_camera');
 Route::post('/camera', 'App\Http\Controllers\SensorController@make_picture');
 Route::get('/trigger_job', 'App\Http\Controllers\SensorController@triggerJob');
 Route::get('/forecast', 'App\Http\Controllers\ForecastController@read_daily_api');
+Route::get('/cycles', 'App\Http\Controllers\SensorController@show_cycles');
 
 /*
 Route::get('/', function () {

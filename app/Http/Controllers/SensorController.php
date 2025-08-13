@@ -3,14 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ProcessData;
+use App\Models\Cycle;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorValue;
 use App\Services\SensorReader;
+use App\Services\WateringController;
 use Illuminate\Http\Request;
 
 class SensorController extends Controller
 {
+    
+    public function show_cycles()
+    {
+        $cycles = Cycle::all();
+        $sensors = Sensor::all();
+        
+        return view('cycle_list', ['cycles' => $cycles, 'sensors' => $sensors]);
+    }
     
     public function show_sensors()
     {
@@ -39,9 +49,8 @@ class SensorController extends Controller
         if ($request->action == "off")
             $code = $remoteSocket->code_off;
         
-        $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_send_433mhz.py ' . $code . ' ' . $sensor->gpio_out);
-        echo $output;
-        
+         $controller = new WateringController();
+         $controller->control_remote_socket($sensor->gpio_out, $code);
         
         $remoteSockets = RemoteSocket::all();
         
@@ -68,9 +77,8 @@ class SensorController extends Controller
         else
            $code = 1;
                 
-//           echo('python /var/www/html/flowerberrypi/app/python/php_set_relay.py ' . $sensor->gpio_out . ' ' . $code);
-           $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_set_relay.py '. $sensor->gpio_out. ' ' . $code  );
-        echo $output;
+           $controller = new WateringController();
+           $controller->control_relay($sensor->gpio_out, $code);
             
             
         $relays = Sensor::where('sensor_type', '3')->get();
