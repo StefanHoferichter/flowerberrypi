@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Cycle;
+use App\Models\Picture;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorJob;
@@ -37,7 +38,40 @@ class ProcessData implements ShouldQueue
         
         $job = new SensorJob();
         $job->save();
+
+        $hour = date('G');
+        //       $hour = 8;
+        Log::info('hour of the day is ' . $hour);
+
+        $tod = 0;
+        if ($hour > 7 and $hour < 12)
+            $tod=1;
+        if ($hour >=12 and $hour < 17)
+            $tod=2;
+        Log::info('time of the day is ' . $tod);
+                
+        $this->handle_temperature_sensors($job);
         
+        $this->handle_distance_sensors($job);
+        
+        $this->handle_humidity_sensors($job);
+        
+        $this->handle_cameras($job, $tod);
+                
+        $this->handle_weather_forecast($job, $hour);
+        
+        
+        $this->make_watering_decisions($job, $tod);
+        
+        $this->execute_watering_decisions($job, $tod);
+        
+        Log::info('######### finished handling hourly job');
+    }
+    
+    
+    private function handle_temperature_sensors($job)
+    {
+        Log::info('start handling temperatures');
         $sensors = Sensor::where('sensor_type', '4')->get();
         $reader = new SensorReader();
         $readings = $reader->read_temperatures($sensors);
@@ -62,10 +96,16 @@ class ProcessData implements ShouldQueue
         }
         Log::info('finished handling temperatures');
         
+    }
+    
+    private function handle_distance_sensors($job)
+    {
+        Log::info('start handling distances');
+        
         $sensors = Sensor::where('sensor_type', '5')->get();
         $reader = new SensorReader();
         $readings = $reader->read_distances($sensors);
-
+        
         foreach($readings as $reading)
         {
             $v = new SensorValue();
@@ -77,11 +117,16 @@ class ProcessData implements ShouldQueue
             $v->save();
         }
         Log::info('finished handling distances');
+    }
+    
+    private function handle_humidity_sensors($job)
+    {
+        Log::info('start handling humidities');
         
         $sensors = Sensor::where('sensor_type', '6')->get();
         $reader = new SensorReader();
         $readings = $reader->read_humidities($sensors);
-
+        
         foreach($readings as $reading)
         {
             $v = new SensorValue();
@@ -93,21 +138,35 @@ class ProcessData implements ShouldQueue
             $v->save();
         }
         Log::info('finished handling humidities');
+    }
+    
+    private function handle_cameras($job, $tod)
+    {
+        Log::info('start handling pictures');
         
-        $cameras = Sensor::where('sensor_type', '7')->get();
-        $reader = new SensorReader();
-        $pictures = $reader->read_camera($cameras);
-
-        foreach($pictures as $picture)
+        $exists = Picture::where('day', date('Y-m-d'))->where('tod', $tod)->exists();
+        
+        if (!$exists)
         {
-            $picture->job_id=$job->id;
-            $picture->save();
+            $cameras = Sensor::where('sensor_type', '7')->get();
+            $reader = new SensorReader();
+            $pictures = $reader->read_camera($cameras);
+            
+            foreach($pictures as $picture)
+            {
+                $picture->job_id=$job->id;
+                $picture->day=date('Y-m-d');
+                $picture->tod=$tod;
+                $picture->save();
+                Log::info('made picture ' . $picture->filename);
+            }
         }
         Log::info('finished handling pictures');
-        
-        $hour = date('G');
- //       $hour = 8;
-        Log::info('hour of the day is ' . $hour);
+    }
+    
+    private function handle_weather_forecast($job, $hour)
+    {
+        Log::info('start handling weather forecasts');
         if ($hour > 7)
         {
             $reader = new ForecastReader();
@@ -117,14 +176,15 @@ class ProcessData implements ShouldQueue
                 $wf->save();
         }
         Log::info('finished handling weather forecasts');
-
-        $tod = 0;
-        if ($hour > 7 and $hour < 13)
-            $tod=1;
-        if ($hour >=13 and $hour < 17)
-            $tod=2;
+    }
+    
+    
+    private function make_watering_decisions($job, $tod)
+    {
+        Log::info('start making watering decisions');
         if ($tod > 0)
         {
+            $wf = WeatherForecast::where('day', date('Y-m-d'))->first();
             $exists = WateringDecision::where('day', date('Y-m-d'))->where('tod', $tod)->exists();
             if (!$exists)
             {
@@ -155,10 +215,16 @@ class ProcessData implements ShouldQueue
                     $wd->tod=$tod;
                     $wd->watering_classification=($wd->humidity_classification + $wd->forecast_classification) /2 ;
                     $wd->save();
+                    Log::info('watering decision for cycle ' . $wd->cycle_id . ' is ' . $wd->watering_classification);
                 }
             }
         }
-        Log::info('finished analyzing cycles');
+        Log::info('finished making watering decisions');
+    }
+     
+    private function execute_watering_decisions($job, $tod)
+    {
+        Log::info('start executing watering decisions');
         
         if ($tod > 0)
         {
@@ -198,7 +264,7 @@ class ProcessData implements ShouldQueue
                 $decision->save();
             }
         }
+        Log::info('finished executing watering decisions');
         
-        Log::info('######### finished handling hourly job');
     }
 }

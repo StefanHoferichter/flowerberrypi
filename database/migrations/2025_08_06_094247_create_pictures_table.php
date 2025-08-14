@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('pictures', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('job_id');
+            $table->date('day');
+            $table->unsignedInteger('tod');
             $table->unsignedBigInteger('sensor_id');
             $table->unsignedInteger('type');
             $table->String('filename');
