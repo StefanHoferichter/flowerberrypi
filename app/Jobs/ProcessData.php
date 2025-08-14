@@ -234,6 +234,8 @@ class ProcessData implements ShouldQueue
             {
                 Log::info('executing decision ' . $decision->cycle_id . ' watering ' . $decision->watering_classification);
                 
+//                $decision->watering_classification = 3;
+                
                 $sensor = Sensor::where('sensor_type', '1')->first();
                 $remoteSocket = RemoteSocket::where('cycle_id', $decision->cycle_id)->first();
                 if ($remoteSocket != null)
