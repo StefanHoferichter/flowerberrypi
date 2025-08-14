@@ -238,26 +238,12 @@ class ProcessData implements ShouldQueue
                 $remoteSocket = RemoteSocket::where('cycle_id', $decision->cycle_id)->first();
                 if ($remoteSocket != null)
                 {
-                    Log::info('switching on remote socket ' . $remoteSocket->name);
-                    
-                    $controller = new WateringController();
-                    $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_on);
-                    sleep(10);
-                    $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_off);
-                    
-                    Log::info('switching off remote socket ' . $remoteSocket->name);
+                    $this->water_via_remote_socket($decision->watering_classification, $sensor, $remoteSocket);
                 }
                 $relay = Sensor::where('sensor_type', '3')->where('cycle_id', $decision->cycle_id)->first();
                 if ($relay != null)
                 {
-                    Log::info('switching on relay ' . $relay->name);
-                    
-                    $controller = new WateringController();
-                    $controller->control_relay($relay->gpio_out, 0);
-                    sleep(10);
-                    $controller->control_relay($relay->gpio_out, 1);
-                    
-                    Log::info('switching on relay ' . $relay->name);
+                    $this->water_via_realy($decision->watering_classification, $relay);
                 }
                 
                 $decision->executed=1;
@@ -266,5 +252,67 @@ class ProcessData implements ShouldQueue
         }
         Log::info('finished executing watering decisions');
         
+    }
+    
+    private function water_via_remote_socket($classification, $sensor, $remoteSocket)
+    {
+        Log::info('start watering with remote socket ' . $remoteSocket->name . ' classification ' . $classification);
+        
+        $controller = new WateringController();
+        
+        $loops=0;
+        if ($classification==1)
+        {
+            $loops=1;
+            $sleep=1;
+        }
+        if ($classification==2)
+        {
+            $loops=1;
+            $sleep=5;
+        }
+        if ($classification==3)
+        {
+            $loops=2;
+            $sleep=5;
+        }
+        
+        for ($i = 0; $i < $loops; $i++)
+        {
+            Log::info('switching  on remote socket ' . $remoteSocket->name);
+            $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_on);
+            sleep($sleep);
+            $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_off);
+            Log::info('switching off remote socket ' . $remoteSocket->name);
+        }
+
+        Log::info('finished watering with remote socket ' . $remoteSocket->name);
+    }
+ 
+    private function water_via_realy($classification, $relay)
+    {
+        Log::info('start watering with relay ' . $relay->name . ' classification ' . $classification);
+
+        if ($classification==1)
+        {
+            $sleep=1;
+        }
+        if ($classification==2)
+        {
+            $sleep=5;
+        }
+        if ($classification==3)
+        {
+            $sleep=10;
+        }
+        
+        $controller = new WateringController();
+        Log::info('switching on relay ' . $relay->name);
+        $controller->control_relay($relay->gpio_out, 0);
+        sleep($sleep);
+        $controller->control_relay($relay->gpio_out, 1);
+        Log::info('switching off relay ' . $relay->name);
+
+        Log::info('finished watering with relay ' . $relay->name . ' classification ' . $classification);
     }
 }
