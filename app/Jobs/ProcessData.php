@@ -40,8 +40,9 @@ class ProcessData implements ShouldQueue
         $job->save();
 
         $hour = date('G');
+        $day = date('Y-m-d');
         //       $hour = 8;
-        Log::info('hour of the day is ' . $hour);
+        Log::info('date is ' . $day . ' hour of the day is ' . $hour);
 
         $tod = 0;
         if ($hour > 7 and $hour < 12)
@@ -56,14 +57,13 @@ class ProcessData implements ShouldQueue
         
         $this->handle_humidity_sensors($job);
         
-        $this->handle_cameras($job, $tod);
+        $this->handle_cameras($job, $tod, $day);
                 
         $this->handle_weather_forecast($job, $hour);
         
+        $this->make_watering_decisions($job, $tod, $day);
         
-        $this->make_watering_decisions($job, $tod);
-        
-        $this->execute_watering_decisions($job, $tod);
+        $this->execute_watering_decisions($job, $tod, $day);
         
         Log::info('######### finished handling hourly job');
     }
@@ -140,11 +140,11 @@ class ProcessData implements ShouldQueue
         Log::info('finished handling humidities');
     }
     
-    private function handle_cameras($job, $tod)
+    private function handle_cameras($job, $tod, $day)
     {
         Log::info('start handling pictures');
         
-        $exists = Picture::where('day', date('Y-m-d'))->where('tod', $tod)->exists();
+        $exists = Picture::where('day', $day)->where('tod', $tod)->exists();
         
         if (!$exists)
         {
@@ -155,7 +155,7 @@ class ProcessData implements ShouldQueue
             foreach($pictures as $picture)
             {
                 $picture->job_id=$job->id;
-                $picture->day=date('Y-m-d');
+                $picture->day=$day;
                 $picture->tod=$tod;
                 $picture->save();
                 Log::info('made picture ' . $picture->filename);
@@ -179,13 +179,13 @@ class ProcessData implements ShouldQueue
     }
     
     
-    private function make_watering_decisions($job, $tod)
+    private function make_watering_decisions($job, $tod, $day)
     {
         Log::info('start making watering decisions');
         if ($tod > 0)
         {
-            $wf = WeatherForecast::where('day', date('Y-m-d'))->first();
-            $exists = WateringDecision::where('day', date('Y-m-d'))->where('tod', $tod)->exists();
+            $wf = WeatherForecast::where('day', $day)->first();
+            $exists = WateringDecision::where('day', $day)->where('tod', $tod)->exists();
             if (!$exists)
             {
                 $cycles = Cycle::where('enabled', 1)->where('has_watering', 1)->get();
@@ -222,14 +222,14 @@ class ProcessData implements ShouldQueue
         Log::info('finished making watering decisions');
     }
      
-    private function execute_watering_decisions($job, $tod)
+    private function execute_watering_decisions($job, $tod, $day)
     {
         Log::info('start executing watering decisions');
         
         if ($tod > 0)
         {
             Log::info('start executing watering');
-            $decisions = WateringDecision::where('day', date('Y-m-d'))->where('tod', $tod)->where('executed', 0)->get();
+            $decisions = WateringDecision::where('day', $day)->where('tod', $tod)->where('executed', 0)->get();
             foreach($decisions as $decision)
             {
                 Log::info('executing decision ' . $decision->cycle_id . ' watering ' . $decision->watering_classification);
