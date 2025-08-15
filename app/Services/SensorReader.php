@@ -30,6 +30,13 @@ class SensorReader
                 $newReading->name=$sensor->name;
                 $newReading->sensor_id=$sensor->id;
                 
+                if ($temp > 24)
+                    $newReading->classification=3;
+                else if ($temp > 15)
+                    $newReading->classification=2;
+                else        
+                    $newReading->classification=1;
+                            
                 array_push($readings, $newReading);
             }
             

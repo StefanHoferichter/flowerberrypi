@@ -49,6 +49,8 @@ class ProcessData implements ShouldQueue
             $tod=1;
         if ($hour >=12 and $hour < 17)
             $tod=2;
+        if ($hour >=17)
+            $tod=3;
         Log::info('time of the day is ' . $tod);
                 
         $this->handle_temperature_sensors($job);
@@ -83,7 +85,7 @@ class ProcessData implements ShouldQueue
             $v->type=1;
             $v->value=$reading->temperature;
             $v->sensor_id=$reading->sensor_id;
-            $v->classification=0;
+            $v->classification=$reading->classification;
             $v->save();
             
             $v = new SensorValue();
@@ -184,7 +186,10 @@ class ProcessData implements ShouldQueue
         Log::info('start making watering decisions');
         if ($tod > 0)
         {
+            $tempSensor = SensorValue::where('type', '1')->where('job_id', $job->id)->first();
             $wf = WeatherForecast::where('day', $day)->first();
+            Log::info('outdoor temp classification ' . $wf->classification . ' indoor temp classification ' . $tempSensor->classification);
+            
             $exists = WateringDecision::where('day', $day)->where('tod', $tod)->exists();
             if (!$exists)
             {
@@ -210,7 +215,10 @@ class ProcessData implements ShouldQueue
                     $wd = new WateringDecision();
                     $wd->cycle_id=$cycle->id;
                     $wd->humidity_classification=$max_humidity_classification;
-                    $wd->forecast_classification=$wf->classification;
+                    if ($cycle->outdoor)
+                        $wd->forecast_classification=$wf->classification;
+                    else
+                        $wd->forecast_classification=$tempSensor->classification;
                     $wd->day=date('Y-m-d');
                     $wd->tod=$tod;
                     $wd->watering_classification=($wd->humidity_classification + $wd->forecast_classification) /2 ;

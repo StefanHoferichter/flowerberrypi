@@ -29,6 +29,7 @@
         	@if($history != null)
             	@foreach($history as $picture) 
         	           <img width='500' src='{{ $picture->filename }}'>
+        	           {{ $picture->day }} {{ $picture->tod }}
             	@endforeach
             @endif            
         	

@@ -92,8 +92,25 @@ class SensorController extends Controller
         $sensors = Sensor::where('sensor_type', '4')->get();
         $reader = new SensorReader();        
         $readings = $reader->read_temperatures($sensors);
+
+        $history = SensorValue::where('type', '1')->orderBy('created_at')->get();
         
-        return view('temperature_list', ['sensors' => $sensors, 'readings'=>$readings]);
+        // Extrahiere Zeit (X-Achse) und Temperaturwerte (Y-Achse)
+        $labels = [];
+        $temperatures = [];
+        
+        foreach ($history as $entry) {
+            $labels[] = $entry->created_at->format('Y-m-d H:i'); // oder nur Zeit
+            $temperatures[] = $entry->value;
+        }
+        
+        return view('temperature_list', [
+            'sensors' => $sensors,
+            'readings' => $readings,
+            'history' => $history,
+            'labels' => $labels,
+            'temperatures' => $temperatures
+        ]);
     }
 
     

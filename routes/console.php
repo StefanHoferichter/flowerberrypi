@@ -1,6 +1,6 @@
 <?php
 
-use App\Jobs\ProcessSensorReadings;
+use App\Jobs\ProcessData;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -12,5 +12,5 @@ Artisan::command('inspire', function () {
 
 
 return function (Schedule $schedule) {
-    $schedule->job(new ProcessSensorReadings)->hourly();
+    $schedule->job(new ProcessData)->hourly();
 };
