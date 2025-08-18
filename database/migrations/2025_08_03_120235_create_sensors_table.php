@@ -16,7 +16,7 @@ return new class extends Migration
             $table->String('name');
             $table->boolean('enabled')->default(true);
             $table->unsignedBigInteger('sensor_type');
-            $table->foreignId('cycle_id')->constrained('cycles');
+            $table->foreignId('zone_id')->constrained('zones');
             $table->foreign('sensor_type')->references('id')->on('sensor_types');
             $table->unsignedInteger('gpio_in');
             $table->unsignedInteger('gpio_out');

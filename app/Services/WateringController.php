@@ -13,6 +13,8 @@ class WateringController
     public function control_remote_socket($gpio_out, $code)
     {
         $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_send_433mhz.py ' . $code . ' ' . $gpio_out);
+        sleep(1);
+        $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_send_433mhz.py ' . $code . ' ' . $gpio_out);
         echo $output;
     }
     

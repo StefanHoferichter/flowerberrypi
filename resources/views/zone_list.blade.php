@@ -20,11 +20,11 @@
                 </thead>
                 <tbody>
         	
-            @foreach($cycles as $cycle) 
+            @foreach($zones as $zone) 
                         <tr>
-              <td>{{ $cycle->name }} </a></td>
+              <td><a href="zone_details/{{$zone->id}}">{{ $zone->name }} </a></td>
                 @php
-                    if ($cycle->enabled == 1) 
+                    if ($zone->enabled == 1) 
                     {
                         $enabled = 'enabled';
                     } 
@@ -35,7 +35,7 @@
                 	$sensor_list="";
                 	foreach($sensors as $sensor) 
                 	{
-                		if ($sensor->cycle_id == $cycle->id)
+                		if ($sensor->zone_id == $zone->id)
                 			$sensor_list= $sensor_list . $sensor->name . ',';
                 		
                 	}   

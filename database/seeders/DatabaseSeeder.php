@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         ]);
 */        
         $this->call([
-            CycleSeeder::class,
+            ZoneSeeder::class,
         ]);
         $this->call([
             SensorTypeSeeder::class,

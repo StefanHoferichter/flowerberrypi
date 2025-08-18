@@ -15,7 +15,7 @@
                     <tr>
                         <th>Name</th>
                         <th>enbaled</th>
-                        <th>Cycle</th>
+                        <th>Zone</th>
                         <th>enabled</th>
                     </tr>
                 </thead>
@@ -65,9 +65,9 @@
                     } 
                 @endphp            
 				 <td> {{ $enabled }} </td>
-               <td> {{ $sensor->cycle->name }} </td>
+               <td> {{ $sensor->zone->name }} </td>
                 @php
-                    if ($sensor->cycle->enabled == 1) 
+                    if ($sensor->zone->enabled == 1) 
                     {
                         $enabled = 'enabled';
                     } 

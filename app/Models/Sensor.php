@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sensor extends Model
 {
-    public function cycle()
+    public function zone()
     {
-        return $this->belongsTo(Cycle::class);
+        return $this->belongsTo(Zone::class);
     }
 }

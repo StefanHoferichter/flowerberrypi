@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cycles', function (Blueprint $table) {
+        Schema::create('zones', function (Blueprint $table) {
             $table->id();
             $table->String('name');
             $table->boolean('enabled')->default(true);
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cycles');
+        Schema::dropIfExists('zones');
     }
 };

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->String('name');
             $table->unsignedInteger('code_on');
             $table->unsignedInteger('code_off');
-            $table->foreignId('cycle_id')->constrained('cycles');
+            $table->foreignId('zone_id')->constrained('zones');
             $table->timestamps();
         });
     }

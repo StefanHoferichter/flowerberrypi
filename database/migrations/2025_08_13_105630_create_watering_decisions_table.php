@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('day');
             $table->unsignedInteger('tod');
-            $table->foreignId('cycle_id')->constrained('cycles');
+            $table->foreignId('zone_id')->constrained('zones');
             $table->unsignedInteger('forecast_classification');
             $table->unsignedInteger('humidity_classification');
             $table->unsignedInteger('watering_classification');

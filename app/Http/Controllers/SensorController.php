@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ProcessData;
-use App\Models\Cycle;
 use App\Models\Picture;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorValue;
+use App\Models\WeatherForecast;
+use App\Models\Zone;
 use App\Services\SensorReader;
 use App\Services\WateringController;
 use Illuminate\Http\Request;
@@ -15,12 +16,77 @@ use Illuminate\Http\Request;
 class SensorController extends Controller
 {
     
-    public function show_cycles()
+    public function show_zones()
     {
-        $cycles = Cycle::all();
+        $zones = Zone::all();
         $sensors = Sensor::all();
         
-        return view('cycle_list', ['cycles' => $cycles, 'sensors' => $sensors]);
+        return view('zone_list', ['zones' => $zones, 'sensors' => $sensors]);
+    }
+    
+    public function show_zone_details($id)
+    {
+        $zones = Zone::find($id);
+        
+        $sensors = Sensor::where('zone_id', $id)->get();
+        $sensorIds = $sensors->pluck('id');
+        
+        $history = SensorValue::where('type', '4')->whereIn('sensor_id', $sensorIds)->get();
+        $datasets = [];
+        $labelSet = [];
+        
+        // Gruppiere Werte nach Sensor
+        $grouped = $history->groupBy('sensor_id');
+        
+        foreach ($grouped as $sensorId => $values)
+        {
+            $sensor = $values->first()->sensor ?? null;
+            $label = $sensor ? $sensor->name : "Sensor $sensorId";
+            
+            $data = [];
+            $labels = [];
+            
+            foreach ($values as $entry)
+            {
+                $labels[] = $entry->created_at->format('Y-m-d H:i'); // einheitliche Zeitachse pro Sensor
+                $data[] = $entry->value;
+            }
+            
+            $datasets[] = [
+                'label' => $label,
+                'data' => $data,
+            ];
+            
+            // Für die Labels nehmen wir einfach die Zeitpunkte des ersten Sensors
+            if (empty($labelSet)) {
+                $labelSet = $labels;
+            }
+        }
+            
+        $temp_history = SensorValue::where('type', '1')->orderBy('created_at')->get();
+        
+        $temperatures = [];
+        
+        foreach ($temp_history as $entry) {
+            $temperatures[] = $entry->value;
+        }
+        
+        $forecast_history = WeatherForecast::all();
+        $forecast_max = [];
+        $forecast_min = [];
+        foreach ($forecast_history as $entry)
+        {
+            foreach ($temp_history as $temp)
+            {
+                if ($temp->created_at->format('Y-m-d') == $entry->day)
+                {
+                    $forecast_max[] = $entry->max_temp;
+                    $forecast_min[] = $entry->min_temp;
+                }
+            }
+        }
+        
+        return view('zone_details', ['datasets' => $datasets, 'temperatures' => $temperatures, 'forecast_max' => $forecast_max, 'forecast_min' => $forecast_min, 'labels' => $labelSet]);
     }
     
     public function show_sensors()
