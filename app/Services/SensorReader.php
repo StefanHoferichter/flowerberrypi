@@ -83,6 +83,7 @@ class SensorReader
         {
             if ($sensor->enabled > 0)
             {
+                usleep(500000); //halbe sekunde
                 $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_humidity.py '. $sensor->gpio_extra . ' ' . $sensor->gpio_in . ' 2>&1');
                 //            echo $output;
                 
@@ -95,12 +96,13 @@ class SensorReader
                     $newReading->value=$v0;
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
-
+                    $newReading->zone_id=$sensor->zone_id;
+                    
 //                    $newReading->value = 1.8;
                         
-                    if ($newReading->value < 1.7)
+                    if ($newReading->value < 1.9)
                         $newReading->classification=1;
-                    else if ($newReading->value > 2.5)
+                    else if ($newReading->value > 2.3)
                         $newReading->classification=3;
                      else
                          $newReading->classification=2;

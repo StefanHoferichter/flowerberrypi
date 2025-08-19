@@ -11,8 +11,10 @@
         	<h2>Current</h2>
             @foreach($readings as $reading) 
               Sensor: {{ $reading->name }}<br>
+              Sensor Id: {{ $reading->sensor_id }}<br>
               Value {{ $reading->value }} V<br>
-              Classification: {{ $reading->classification }}<br><br>
+              Classification: {{ $reading->classification }}<br>
+              Zone Id: {{ $reading->zone_id }}<br><br>
             @endforeach
             
         	<h2>History</h2>

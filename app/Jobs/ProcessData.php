@@ -227,7 +227,11 @@ class ProcessData implements ShouldQueue
                             $wd->forecast_classification=$tempSensor->classification;
                         $wd->day=date('Y-m-d');
                         $wd->tod=$tod;
-                        $wd->watering_classification=($wd->humidity_classification + $wd->forecast_classification) /2 ;
+                        
+                        if ($wd->humidity_classification == 1)
+                            $wd->watering_classification = 1;
+                        else
+                            $wd->watering_classification=($wd->humidity_classification + $wd->forecast_classification) /2 ;
                         $wd->save();
                         Log::info('watering decision for zone ' . $wd->zone_id . ' is ' . $wd->watering_classification);
                     }
@@ -280,18 +284,18 @@ class ProcessData implements ShouldQueue
         $loops=0;
         if ($classification==1)
         {
-            $loops=1;
+            $loops=0;
             $sleep=1;
         }
         if ($classification==2)
         {
             $loops=1;
-            $sleep=5;
+            $sleep=60;
         }
         if ($classification==3)
         {
             $loops=2;
-            $sleep=5;
+            $sleep=60;
         }
         
         for ($i = 0; $i < $loops; $i++)
