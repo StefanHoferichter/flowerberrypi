@@ -187,43 +187,50 @@ class ProcessData implements ShouldQueue
         if ($tod > 0)
         {
             $tempSensor = SensorValue::where('type', '1')->where('job_id', $job->id)->first();
-            $wf = WeatherForecast::where('day', $day)->first();
-            Log::info('outdoor temp classification ' . $wf->classification . ' indoor temp classification ' . $tempSensor->classification);
-            
-            $exists = WateringDecision::where('day', $day)->where('tod', $tod)->exists();
-            if (!$exists)
+            if ($tempSensor != null)
             {
-                $zones = Zone::where('enabled', 1)->where('has_watering', 1)->get();
-                foreach($zones as $zone)
+                Log::info(' indoor temp classification ' . $tempSensor->classification);
+            }
+            $wf = WeatherForecast::where('day', $day)->first();
+            if ($wf != null)
+            {
+                Log::info('outdoor temp classification ' . $wf->classification);
+                
+                $exists = WateringDecision::where('day', $day)->where('tod', $tod)->exists();
+                if (!$exists)
                 {
-                    Log::info('analyzing zone ' . $zone->name);
-                    $sensors = Sensor::where('zone_id', $zone->id)->get();
-                    $max_humidity_classification = 0;
-                    foreach($sensors as $sensor)
+                    $zones = Zone::where('enabled', 1)->where('has_watering', 1)->get();
+                    foreach($zones as $zone)
                     {
-                        Log::info('analyzing sensor ' . $sensor->name . ' ' .  $sensor->sensor_type);
-                        if ($sensor->sensor_type == 6 and $sensor->enabled)
+                        Log::info('analyzing zone ' . $zone->name);
+                        $sensors = Sensor::where('zone_id', $zone->id)->get();
+                        $max_humidity_classification = 0;
+                        foreach($sensors as $sensor)
                         {
-                            Log::info('analyzing sensor ' . $sensor->id . ' ' . $job->id);
-                            $v = SensorValue::where('sensor_id', $sensor->id)->where('job_id', $job->id)->first();
-                            Log::info('humidity classification ' . $v->classification);
-                            
-                            if ($max_humidity_classification < $v->classification)
-                                $max_humidity_classification = $v->classification;
+                            Log::info('analyzing sensor ' . $sensor->name . ' ' .  $sensor->sensor_type);
+                            if ($sensor->sensor_type == 6 and $sensor->enabled)
+                            {
+                                Log::info('analyzing sensor ' . $sensor->id . ' ' . $job->id);
+                                $v = SensorValue::where('sensor_id', $sensor->id)->where('job_id', $job->id)->first();
+                                Log::info('humidity classification ' . $v->classification);
+                                
+                                if ($max_humidity_classification < $v->classification)
+                                    $max_humidity_classification = $v->classification;
+                            }
                         }
+                        $wd = new WateringDecision();
+                        $wd->zone_id=$zone->id;
+                        $wd->humidity_classification=$max_humidity_classification;
+                        if ($zone->outdoor)
+                            $wd->forecast_classification=$wf->classification;
+                        else
+                            $wd->forecast_classification=$tempSensor->classification;
+                        $wd->day=date('Y-m-d');
+                        $wd->tod=$tod;
+                        $wd->watering_classification=($wd->humidity_classification + $wd->forecast_classification) /2 ;
+                        $wd->save();
+                        Log::info('watering decision for zone ' . $wd->zone_id . ' is ' . $wd->watering_classification);
                     }
-                    $wd = new WateringDecision();
-                    $wd->zone_id=$zone->id;
-                    $wd->humidity_classification=$max_humidity_classification;
-                    if ($zone->outdoor)
-                        $wd->forecast_classification=$wf->classification;
-                    else
-                        $wd->forecast_classification=$tempSensor->classification;
-                    $wd->day=date('Y-m-d');
-                    $wd->tod=$tod;
-                    $wd->watering_classification=($wd->humidity_classification + $wd->forecast_classification) /2 ;
-                    $wd->save();
-                    Log::info('watering decision for zone ' . $wd->zone_id . ' is ' . $wd->watering_classification);
                 }
             }
         }
