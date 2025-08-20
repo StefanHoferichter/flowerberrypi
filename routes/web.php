@@ -17,7 +17,7 @@ Route::post('/camera', 'App\Http\Controllers\SensorController@make_picture');
 Route::get('/trigger_job', 'App\Http\Controllers\SensorController@triggerJob');
 Route::get('/forecast', 'App\Http\Controllers\ForecastController@read_daily_api');
 Route::get('/zones', 'App\Http\Controllers\SensorController@show_zones');
-Route::get('/zone_details/{id}', 'App\Http\Controllers\SensorController@show_zone_details');
+Route::get('/zone_details/{id}', 'App\Http\Controllers\SensorController@show_zone_details2');
 
 /*
 Route::get('/', function () {

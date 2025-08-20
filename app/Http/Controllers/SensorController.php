@@ -7,9 +7,11 @@ use App\Models\Picture;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorValue;
+use App\Models\WateringDecision;
 use App\Models\WeatherForecast;
 use App\Models\Zone;
 use App\Services\SensorReader;
+use App\Helpers\GlobalStuff;
 use App\Services\WateringController;
 use Illuminate\Http\Request;
 
@@ -26,7 +28,7 @@ class SensorController extends Controller
     
     public function show_zone_details($id)
     {
-        $zones = Zone::find($id);
+        $zone = Zone::find($id);
         
         $sensors = Sensor::where('zone_id', $id)->get();
         $sensorIds = $sensors->pluck('id');
@@ -86,7 +88,99 @@ class SensorController extends Controller
             }
         }
         
-        return view('zone_details', ['datasets' => $datasets, 'temperatures' => $temperatures, 'forecast_max' => $forecast_max, 'forecast_min' => $forecast_min, 'labels' => $labelSet]);
+        return view('zone_details', ['zone'=>$zone, 'datasets' => $datasets, 'temperatures' => $temperatures, 'forecast_max' => $forecast_max, 'forecast_min' => $forecast_min, 'labels' => $labelSet]);
+    }
+
+    public function show_zone_details2($id)
+    {
+        $zone = Zone::find($id);
+        
+        $sensors = Sensor::where('zone_id', $id)->where('enabled', 1)->get();
+
+        $timeSeries = [];
+        foreach($sensors as $sensor)
+        {
+            $humi = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->orderBy('created_at')->get();
+            
+            $data = [];
+            foreach ($humi as $entry)
+            {
+                $data[] = $entry->value;
+            }
+            
+            $timeSeries[] = ['name' => 'Humidity ' . $sensor->id,
+                'unit' => 'V',
+                'values' => $data,
+            ];
+            
+        }
+        $temp_history = SensorValue::where('type', '1')->orderBy('created_at')->get();
+        
+        
+        $labels = [];
+        $temperatures = [];
+        foreach ($temp_history as $entry) 
+        {
+            $labels[] = $entry->created_at->format('Y-m-d H:i'); // einheitliche Zeitachse
+            $temperatures[] = $entry->value;
+        }
+        $timeSeries[] = ['name' => 'Temperature Sensor',
+            'unit' => '°C',
+            'values' => $temperatures,
+        ];
+
+        $forecast_history = WeatherForecast::all();
+        $forecast_max = [];
+        $forecast_min = [];
+        foreach ($forecast_history as $entry)
+        {
+            foreach ($temp_history as $temp)
+            {
+                if ($temp->created_at->format('Y-m-d') == $entry->day)
+                {
+                    $forecast_max[] = $entry->max_temp;
+                    $forecast_min[] = $entry->min_temp;
+                }
+            }
+        }
+        $timeSeries[] = ['name' => 'Forecast Max Temperature',
+            'unit' => '°C',
+            'values' => $forecast_max,
+        ];
+        $timeSeries[] = ['name' => 'Forecast Min Temperature',
+            'unit' => '°C',
+            'values' => $forecast_min,
+        ];
+        
+        $decisions = WateringDecision::where('zone_id', $id)->get();
+        $watering = [];
+        foreach ($temp_history as $temp)
+        {
+            $day=$temp->created_at->format(('Y-m-d'));
+            $tod=GlobalStuff::get_tod_from_hour($temp->created_at->format('H'));
+            $ifh=GlobalStuff::is_first_hour_of_tod($temp->created_at->format('H'));
+            foreach ($decisions as $dec)
+            {
+                
+                if ($day == $dec->day and
+                    $tod=$dec->tod)
+                {
+                    if ($ifh)
+                        $watering[] = $dec->watering_classification;
+                    else
+                        $watering[] = 0;
+                }
+            }
+        }
+        $timeSeries[] = ['name' => 'Watering',
+            'unit' => 'l',
+            'values' => $watering,
+        ];
+        
+        print_r($timeSeries);
+        echo("<br>");
+        print_r($labels);
+        return view('zone_details2', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels]);
     }
     
     public function show_sensors()

@@ -4,15 +4,16 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Humidities</h1>
+        <h1>Zones</h1>
 
 		<div class="grid-container">
             <div class="grid-item">
+			
+            Zone Id: {{ $zone->id }}<br>
+            Zone Name: {{ $zone->name }}<br>
+            
             
         	<h2>History</h2>
-            
-            
-            
         	</div>
         	
 <canvas id="lineChart" width="600" height="400"></canvas>

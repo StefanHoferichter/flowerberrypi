@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Zone;
+use App\Helpers\GlobalStuff;
 use App\Models\Picture;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
@@ -10,6 +10,7 @@ use App\Models\SensorJob;
 use App\Models\SensorValue;
 use App\Models\WateringDecision;
 use App\Models\WeatherForecast;
+use App\Models\Zone;
 use App\Services\ForecastReader;
 use App\Services\SensorReader;
 use App\Services\WateringController;
@@ -44,13 +45,7 @@ class ProcessData implements ShouldQueue
         //       $hour = 8;
         Log::info('date is ' . $day . ' hour of the day is ' . $hour);
 
-        $tod = 0;
-        if ($hour > 7 and $hour < 12)
-            $tod=1;
-        if ($hour >=12 and $hour < 17)
-            $tod=2;
-        if ($hour >=17)
-            $tod=3;
+        $tod=GlobalStuff::get_tod_from_hour($hour);
         Log::info('time of the day is ' . $tod);
                 
         $this->handle_temperature_sensors($job);
