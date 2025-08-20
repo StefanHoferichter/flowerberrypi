@@ -153,33 +153,48 @@ class SensorController extends Controller
         ];
         
         $decisions = WateringDecision::where('zone_id', $id)->get();
+        foreach ($decisions as $dec)
+        {
+//                echo $dec->day . " " . $dec->tod . " " .$dec->watering_classification . " <br>";
+        }
+        echo("<br>");
+        
         $watering = [];
         foreach ($temp_history as $temp)
         {
             $day=$temp->created_at->format(('Y-m-d'));
             $tod=GlobalStuff::get_tod_from_hour($temp->created_at->format('H'));
             $ifh=GlobalStuff::is_first_hour_of_tod($temp->created_at->format('H'));
-            foreach ($decisions as $dec)
+            echo $day . " " . $temp->created_at->format('H') . " " . $tod . " " . $ifh . " ";
+            if ($tod == 0)
             {
-                
-                if ($day == $dec->day and
-                    $tod=$dec->tod)
-                {
-                    if ($ifh)
-                        $watering[] = $dec->watering_classification;
-                    else
-                        $watering[] = 0;
-                }
+                $watering[] = 0;
+                echo "0  <br>";
             }
+            else
+                foreach ($decisions as $dec)
+                {
+                    
+                    if ($day == $dec->day and
+                        $tod == $dec->tod)
+                    {
+                        echo $dec->watering_classification . " <br>";
+                        if ($ifh)
+                            $watering[] = $dec->watering_classification;
+                        else
+                            $watering[] = 0;
+                        break;
+                    }
+                }
         }
         $timeSeries[] = ['name' => 'Watering',
             'unit' => 'l',
             'values' => $watering,
         ];
         
-        print_r($timeSeries);
-        echo("<br>");
-        print_r($labels);
+//        print_r($timeSeries);
+//        echo("<br>");
+//        print_r($labels);
         return view('zone_details2', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels]);
     }
     

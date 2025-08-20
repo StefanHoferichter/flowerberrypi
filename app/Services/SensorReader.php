@@ -100,7 +100,7 @@ class SensorReader
                     
 //                    $newReading->value = 1.8;
                         
-                    if ($newReading->value < 1.8)
+                    if ($newReading->value < 1.7)
                         $newReading->classification=1;
                     else if ($newReading->value > 2.3)
                         $newReading->classification=3;

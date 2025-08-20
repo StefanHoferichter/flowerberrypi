@@ -27,13 +27,13 @@ class ZoneSeeder extends Seeder
         ]);
         DB::table('zones')->insert([
             'name' => 'Balkony Right Side',
-            'enabled' => '1',
+            'enabled' => '0',
             'has_watering' => '1',
             'outdoor' => '1',
         ]);
         DB::table('zones')->insert([
             'name' => 'Balkony Table',
-            'enabled' => '0',
+            'enabled' => '1',
             'has_watering' => '1',
             'outdoor' => '1',
         ]);
