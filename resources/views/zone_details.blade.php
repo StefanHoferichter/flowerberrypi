@@ -4,7 +4,7 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Zones</h1>
+        <h1>Zone</h1>
 
 		<div class="grid-container">
             <div class="grid-item">
@@ -14,103 +14,128 @@
             
             
         	<h2>History</h2>
-        	</div>
         	
-<canvas id="lineChart" width="600" height="400"></canvas>
+        	<table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Time of Day</th>
+                        <th>Forecast</th>
+                        <th>Humidity</th>
+                        <th>Watering</th>
+                    </tr>
+                </thead>
+                <tbody>
+        	
+            @foreach($decisions as $dec) 
+                        <tr>
+              <td>{{ $dec->day }} </a></td>
+				 <td> {{ $dec->tod  }} </td>
+				 <td> {{ $dec->forecast_classification }} </td>
+				 <td> {{ $dec->humidity_classification }} </td>
+				 <td> {{ $dec->watering_classification }} </td>
+                </tr>
+             
+            @endforeach
+                </tbody>
+            </table>        
+        	
+        	</div>
+<style>
+    #lineChart {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 3;
+        display: block;
+    }
+
+    @media (max-width: 600px) {
+        #lineChart {
+            aspect-ratio: 1 / 1;
+        }
+    }
+</style>        	
+<div style="width: 100%; height: 600px;">
+    <canvas id="lineChart" style="width: 100%; height: 100%;"></canvas>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
+    <script>
     const ctx = document.getElementById('lineChart').getContext('2d');
 
-    const labels = @json($labels);
-    const datasetsData = @json($datasets);
-	const temperatureSeries = @json($temperatures); // neue Zeitreihe
-	const forecastMax = @json($forecast_max); // neue Zeitreihe
-	const forecastMin = @json($forecast_min); // neue Zeitreihe
+    	const labels = @json($labels);
+    	const rawSeries = @json($timeseries);
+        const units = [...new Set(rawSeries.map(s => s.unit))];
+        
+        const datasets = rawSeries.map(series => ({
+            label: `${series.name} (${series.unit})`,
+            data: series.values,
+            fill: false,
+            borderColor: randomColor(),
+            tension: 0.1,
+            yAxisID: series.unit,
+        }));
+        
+        const scales = {};
 
-    // Farben (für automatische Vergabe)
-    const colors = [
-        'rgba(54, 162, 235, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(255, 99, 132, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)'
-    ];
-
-    const datasets = datasetsData.map((set, index) => ({
-        label: set.label,
-        data: set.data,
-        borderColor: colors[index % colors.length],
-        backgroundColor: colors[index % colors.length].replace('1)', '0.2)'),
-        fill: false,
-        tension: 0.3
-    }));
-
-// Temperatur-Datensatz hinzufügen
-    datasets.push({
-        label: 'Temperatures',
-        data: temperatureSeries,
-        borderColor: 'rgba(255, 0, 0, 1)',
-        backgroundColor: 'rgba(255, 255, 0, 0.2)',
-        fill: false,
-        tension: 0.3,
-        yAxisID: 'y1' 
-    });
-    datasets.push({
-        label: 'Forecast Max',
-        data: forecastMax,
-        borderColor: 'rgba(0, 255, 0, 1)',
-        backgroundColor: 'rgba(100, 100, 0, 0.2)',
-        fill: false,
-        tension: 0.3,
-        yAxisID: 'y1' 
-    });
-    datasets.push({
-        label: 'Forecast Min',
-        data: forecastMin,
-        borderColor: 'rgba(10, 1, 255, 1)',
-        backgroundColor: 'rgba(0, 100, 255, 0.2)',
-        fill: false,
-        tension: 0.3,
-        yAxisID: 'y1' 
-    });
-    
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Wert'
+        // Wechsle Seiten der Achsen (links/rechts), wenn mehrere Einheiten
+        units.forEach((unit, index) => {
+            scales[unit] = {
+                type: 'linear',
+                position: index % 2 === 0 ? 'left' : 'right',
+                title: {
+                    display: true,
+                    text: unit
+                },
+                ticks: {
+                    callback: function(value) {
+                        return value + ' ' + unit;
                     }
                 },
-                y1: { // 👉 Zweite Y-Achse für Temperatur
-                    title: {
-                        display: true,
-                        text: 'Temperatur (°C)'
-                    },
-                    position: 'right',
-                    grid: {
-                        drawOnChartArea: false // verhindert Überlagerung der Gitterlinien
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Zeit'
-                    }
+                grid: {
+                    drawOnChartArea: index === 0 // Nur Hauptachse mit Gitter
                 }
+            };
+        });
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Zeitreihen mit Einheiten & Achsen'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const unit = context.dataset.yAxisID;
+                                return `${context.dataset.label}: ${context.formattedValue} ${unit}`;
+                            }
+                        }
+                    }
+                },
+                scales: scales
             }
+        });
+
+        function randomColor() {
+            const r = Math.floor(Math.random() * 200);
+            const g = Math.floor(Math.random() * 200);
+            const b = Math.floor(Math.random() * 200);
+            return `rgb(${r}, ${g}, ${b})`;
         }
-    });
-</script>
+    </script>
+
         	
 
 @endsection
