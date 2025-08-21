@@ -60,8 +60,15 @@
     <canvas id="lineChart" style="width: 100%; height: 100%;"></canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
+
+
 
     <script>
+    
+            const ChartAnnotations = window['chartjs-plugin-annotation'];
+        Chart.register(ChartAnnotations);
+    
     const ctx = document.getElementById('lineChart').getContext('2d');
 
     	const labels = @json($labels);
@@ -76,6 +83,27 @@
             tension: 0.1,
             yAxisID: series.unit,
         }));
+        
+        const thresholds = @json($thresholds);
+
+        const annotations = {};
+        thresholds.forEach((t, i) => {
+            annotations['line' + i] = {
+                type: 'line',
+                yMin: t.y,
+                yMax: t.y,
+                borderColor: 'red',
+                borderWidth: 1.5,
+                label: {
+                    content: t.label + ` (${t.unit})`,
+                    enabled: true,
+                    position: 'start',
+                    backgroundColor: 'rgba(255,255,255,0.7)',
+                    color: 'red'
+                },
+       			yScaleID: t.unit
+            };
+        });
         
         const scales = {};
 
@@ -98,6 +126,7 @@
                 }
             };
         });
+
 
         new Chart(ctx, {
             type: 'line',
@@ -122,6 +151,9 @@
                                 return `${context.dataset.label}: ${context.formattedValue} ${unit}`;
                             }
                         }
+                    },
+                    annotation: {
+                        annotations: annotations
                     }
                 },
                 scales: scales

@@ -130,7 +130,13 @@ class SensorController extends Controller
 //        print_r($timeSeries);
 //        echo("<br>");
 //        print_r($labels);
-        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions]);
+
+        $thresholds = [
+            ['y' => 1.7, 'unit' => 'V', 'label' => 'Humidity 1'],
+            ['y' => 2.3, 'unit' => 'V', 'label' => 'Humidity 2']
+        ];
+        
+        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'thresholds' => $thresholds]);
     }
     
     public function show_sensors()
