@@ -54,18 +54,36 @@ class SensorController extends Controller
 
         foreach($sensors as $sensor)
         {
-            $mois = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
+            $moistures = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
             
-            $data = [];
-            foreach ($mois as $entry)
+            if (!$moistures->isEmpty())
             {
-                $data[] = $entry->value;
+                $data = [];
+                foreach ($temp_history as $temp)
+                {
+                    $temp_day=$temp->day;
+                    $temp_hour=$temp->hour;
+                    $found = false;
+                    foreach ($moistures as $mois)
+                    {
+                        $mois_hour = $mois->hour;
+                        $mois_day = $mois->day;
+                        if ($temp_day == $mois_day and $temp_hour == $mois_hour)
+                        {
+                            //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
+                            $found = true;
+                            $data[] = $mois->value;
+                            break;
+                        }
+                    }
+                    if (!$found)
+                        $data[] = 0.0;
+                }
+                $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->id,
+                    'unit' => 'V',
+                    'values' => $data,
+                ];
             }
-            
-            $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->id,
-                'unit' => 'V',
-                'values' => $data,
-            ];
         }
         
         $forecast_history = WeatherForecast::where('day', '>=', $horizon)->get();
@@ -74,20 +92,28 @@ class SensorController extends Controller
         $rain_sum = [];
         foreach ($temp_history as $temp)
         {
+            $temp_day=$temp->day;
+            $temp_hour=$temp->hour;
+            $found = false;
             foreach ($forecast_history as $forecast)
             {
-                $temp_day=$temp->day;
-                $temp_hour=$temp->hour;
                 $forecast_day=$forecast->day;
 //                echo $temp_day . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
                 if ($temp_day == $forecast_day)
                 {
 //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
+                    $found = true;
                     $forecast_max[] = $forecast->max_temp;
                     $forecast_min[] = $forecast->min_temp;
                     $rain_sum[] = $forecast->rain_sum;
                     break;
                 }
+            }
+            if (!$found)
+            {
+                $forecast_max[] = 50.0;
+                $forecast_min[] = 0.0;
+                $rain_sum[] = 0.0;
             }
         }
         $timeSeries[] = ['name' => 'Forecast Max Temperature',
@@ -104,11 +130,6 @@ class SensorController extends Controller
         ];
         
         $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
-        foreach ($decisions as $dec)
-        {
-//                echo $dec->day . " " . $dec->tod . " " .$dec->watering_classification . " <br>";
-        }
-//        echo("<br>");
         
         $watering = [];
         foreach ($temp_history as $temp)
@@ -117,26 +138,26 @@ class SensorController extends Controller
             $tod=GlobalStuff::get_tod_from_hour($temp->created_at->format('H'));
             $ifh=GlobalStuff::is_first_hour_of_tod($temp->created_at->format('H'));
 //            echo $day . " " . $temp->created_at->format('H') . " " . $tod . " " . $ifh . " ";
-            if ($tod == 0)
+            $found = false;
+            foreach ($decisions as $dec)
             {
-                $watering[] = 0;
-//                echo "0  <br>";
-            }
-            else
-                foreach ($decisions as $dec)
-                {
                     
-                    if ($day == $dec->day and
-                        $tod == $dec->tod)
-                    {
+                if ($day == $dec->day and
+                    $tod == $dec->tod)
+                {
 //                        echo $dec->watering_classification . " <br>";
-                        if ($ifh)
-                            $watering[] = $dec->watering_classification;
-                        else
-                            $watering[] = 0;
-                        break;
-                    }
+                    $found = true;
+                    if ($ifh)
+                        $watering[] = $dec->watering_classification;
+                    else
+                        $watering[] = 0;
+                    break;
                 }
+             }
+             if (!$found)
+             {
+                 $watering[] = 0;
+             }
         }
         $timeSeries[] = ['name' => 'Watering',
             'unit' => 'l',

@@ -58,7 +58,7 @@ class ProcessData implements ShouldQueue
                 
         $this->handle_weather_forecast($job, $hour);
         
-        $this->make_watering_decisions($job, $tod, $day);
+        $this->make_watering_decisions($job, $tod, $day, $hour);
         
         $this->execute_watering_decisions($job, $tod, $day);
         
@@ -192,7 +192,7 @@ class ProcessData implements ShouldQueue
     }
     
     
-    private function make_watering_decisions($job, $tod, $day)
+    private function make_watering_decisions($job, $tod, $day, $hour)
     {
         Log::info('start making watering decisions');
         if ($tod > 0)
@@ -207,13 +207,13 @@ class ProcessData implements ShouldQueue
             {
                 Log::info('outdoor temp classification ' . $wf->classification);
                 
-                $exists = WateringDecision::where('day', $day)->where('tod', $tod)->exists();
-                if (!$exists)
+                $zones = Zone::where('enabled', 1)->where('has_watering', 1)->get();
+                foreach($zones as $zone)
                 {
-                    $zones = Zone::where('enabled', 1)->where('has_watering', 1)->get();
-                    foreach($zones as $zone)
+                    Log::info('analyzing zone ' . $zone->name);
+                    $exists = WateringDecision::where('day', $day)->where('tod', $tod)->where('zone_id', $zone->id)->exists();
+                    if (!$exists)
                     {
-                        Log::info('analyzing zone ' . $zone->name);
                         $sensors = Sensor::where('zone_id', $zone->id)->get();
                         $max_humidity_classification = 0;
                         foreach($sensors as $sensor)
@@ -221,8 +221,8 @@ class ProcessData implements ShouldQueue
                             Log::info('analyzing sensor ' . $sensor->name . ' ' .  $sensor->sensor_type);
                             if ($sensor->sensor_type == 6 and $sensor->enabled)
                             {
-                                Log::info('analyzing sensor ' . $sensor->id . ' ' . $job->id);
-                                $v = SensorValue::where('sensor_id', $sensor->id)->where('job_id', $job->id)->first();
+                                Log::info('analyzing sensor ' . $sensor->id . ' hour ' . $hour);
+                                $v = SensorValue::where('sensor_id', $sensor->id)->where('hour', $hour)->first();
                                 Log::info('humidity classification ' . $v->classification);
                                 
                                 if ($max_humidity_classification < $v->classification)

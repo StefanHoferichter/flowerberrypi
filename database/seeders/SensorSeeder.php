@@ -113,7 +113,7 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '0',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'ADS1115 Moisture Sensor A',
+            'name' => 'ADS1115 Moisture Sensor A Buntnessel',
             'enabled' => '1',
             'sensor_type' => '6',
             'zone_id' => '5',
@@ -122,7 +122,7 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '72',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'ADS1115 Moisture Sensor B',
+            'name' => 'ADS1115 Moisture Sensor B Geranie',
             'enabled' => '0',
             'sensor_type' => '6',
             'zone_id' => '2',
@@ -149,7 +149,7 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '72',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'ADS1115 Moisture Sensor E',
+            'name' => 'ADS1115 Moisture Sensor E Hängepflanze',
             'enabled' => '1',
             'sensor_type' => '6',
             'zone_id' => '4',
@@ -158,7 +158,7 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '73',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'ADS1115 Moisture Sensor F',
+            'name' => 'ADS1115 Moisture Sensor F Unkraut',
             'enabled' => '1',
             'sensor_type' => '6',
             'zone_id' => '4',
@@ -167,7 +167,7 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '73',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'ADS1115 Moisture Sensor G',
+            'name' => 'ADS1115 Moisture Sensor G trocken',
             'enabled' => '1',
             'sensor_type' => '6',
             'zone_id' => '4',
