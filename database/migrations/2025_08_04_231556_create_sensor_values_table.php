@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('job_id');
             $table->unsignedBigInteger('sensor_id');
+            $table->date('day');
+            $table->unsignedInteger('hour');
             $table->unsignedInteger('type');
             $table->double('value', $precision = 8, $scale = 2);
             $table->unsignedInteger('classification');

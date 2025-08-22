@@ -80,16 +80,24 @@ class ProcessData implements ShouldQueue
             $v->type=1;
             $v->value=$reading->temperature;
             $v->sensor_id=$reading->sensor_id;
+            $v->hour = date('G');
+            $v->day = date('Y-m-d');
             $v->classification=$reading->classification;
-            $v->save();
-            
+            $exists = SensorValue::where('day', $v->day)->where('hour', $v->hour)->where('type', $v->type)->where('sensor_id', $v->sensor_id)->exists();
+            if (!$exists)
+                $v->save();
+                
             $v = new SensorValue();
             $v->job_id=$job->id;
             $v->type=2;
             $v->value=$reading->humidity;
             $v->sensor_id=$reading->sensor_id;
+            $v->hour = date('G');
+            $v->day = date('Y-m-d');
             $v->classification=0;
-            $v->save();
+            $exists = SensorValue::where('day', $v->day)->where('hour', $v->hour)->where('type', $v->type)->where('sensor_id', $v->sensor_id)->exists();
+            if (!$exists)
+                $v->save();
         }
         Log::info('finished handling temperatures');
         
@@ -110,8 +118,12 @@ class ProcessData implements ShouldQueue
             $v->type=3;
             $v->value=$reading->value;
             $v->sensor_id=$reading->sensor_id;
+            $v->hour = date('G');
+            $v->day = date('Y-m-d');
             $v->classification=0;
-            $v->save();
+            $exists = SensorValue::where('day', $v->day)->where('hour', $v->hour)->where('type', $v->type)->where('sensor_id', $v->sensor_id)->exists();
+            if (!$exists)
+                $v->save();
         }
         Log::info('finished handling distances');
     }
@@ -131,8 +143,12 @@ class ProcessData implements ShouldQueue
             $v->type=4;
             $v->value=$reading->value;
             $v->sensor_id=$reading->sensor_id;
+            $v->hour = date('G');
+            $v->day = date('Y-m-d');
             $v->classification=$reading->classification;
-            $v->save();
+            $exists = SensorValue::where('day', $v->day)->where('hour', $v->hour)->where('type', $v->type)->where('sensor_id', $v->sensor_id)->exists();
+            if (!$exists)
+                $v->save();
         }
         Log::info('finished handling humidities');
     }

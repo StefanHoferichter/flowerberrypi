@@ -14,6 +14,7 @@ use App\Services\SensorReader;
 use App\Helpers\GlobalStuff;
 use App\Services\WateringController;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class SensorController extends Controller
 {
@@ -31,26 +32,13 @@ class SensorController extends Controller
         $zone = Zone::find($id);
         
         $sensors = Sensor::where('zone_id', $id)->where('enabled', 1)->get();
+                
+        $horizon = Carbon::now()->subDays(2)->toDateString();
+        echo ($horizon);
 
         $timeSeries = [];
-        foreach($sensors as $sensor)
-        {
-            $humi = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->orderBy('created_at')->get();
-            
-            $data = [];
-            foreach ($humi as $entry)
-            {
-                $data[] = $entry->value;
-            }
-            
-            $timeSeries[] = ['name' => 'Humidity ' . $sensor->id,
-                'unit' => 'V',
-                'values' => $data,
-            ];
-            
-        }
-        $temp_history = SensorValue::where('type', '1')->orderBy('created_at')->get();
         
+        $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         
         $labels = [];
         $temperatures = [];
@@ -64,17 +52,39 @@ class SensorController extends Controller
             'values' => $temperatures,
         ];
 
-        $forecast_history = WeatherForecast::all();
+        foreach($sensors as $sensor)
+        {
+            $humi = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
+            
+            $data = [];
+            foreach ($humi as $entry)
+            {
+                $data[] = $entry->value;
+            }
+            
+            $timeSeries[] = ['name' => 'Humidity ' . $sensor->id,
+                'unit' => 'V',
+                'values' => $data,
+            ];
+        }
+        
+        $forecast_history = WeatherForecast::where('day', '>=', $horizon)->get();
         $forecast_max = [];
         $forecast_min = [];
-        foreach ($forecast_history as $entry)
+        foreach ($temp_history as $temp)
         {
-            foreach ($temp_history as $temp)
+            foreach ($forecast_history as $forecast)
             {
-                if ($temp->created_at->format('Y-m-d') == $entry->day)
+                $temp_day=$temp->day;
+                $temp_hour=$temp->hour;
+                $forecast_day=$forecast->day;
+//                echo $temp_day . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
+                if ($temp_day == $forecast_day)
                 {
-                    $forecast_max[] = $entry->max_temp;
-                    $forecast_min[] = $entry->min_temp;
+//                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
+                    $forecast_max[] = $forecast->max_temp;
+                    $forecast_min[] = $forecast->min_temp;
+                    break;
                 }
             }
         }
@@ -87,7 +97,7 @@ class SensorController extends Controller
             'values' => $forecast_min,
         ];
         
-        $decisions = WateringDecision::where('zone_id', $id)->get();
+        $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
         foreach ($decisions as $dec)
         {
 //                echo $dec->day . " " . $dec->tod . " " .$dec->watering_classification . " <br>";
@@ -130,7 +140,9 @@ class SensorController extends Controller
 //        print_r($timeSeries);
 //        echo("<br>");
 //        print_r($labels);
-
+//        print_r($temp_history);
+//        print_r($forecast_history);
+        
         $thresholds = [
             ['y' => 1.7, 'unit' => 'V', 'label' => 'Humidity 1'],
             ['y' => 2.3, 'unit' => 'V', 'label' => 'Humidity 2']

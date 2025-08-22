@@ -118,7 +118,7 @@
                 },
                 ticks: {
                     callback: function(value) {
-                        return value + ' ' + unit;
+                        return value.toFixed(1) + ' ' + unit;
                     }
                 },
                 grid: {

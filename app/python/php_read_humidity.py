@@ -5,6 +5,14 @@ import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 
+MAX_RETRIES = 3
+RETRY_DELAY = 0.5
+
+
+def error_exit(msg):
+    print(f"❌ {msg}", file=sys.stderr)
+    sys.exit(1)
+
 # --- Argumente prüfen ---
 if len(sys.argv) != 3:
     print("❌ Verwendung: python3 read_ads_channel.py <i2c_address> <Kanalnummer 0-3>")
@@ -16,7 +24,7 @@ try:
     if i2c_address not in (72,73):
         raise ValueError
 except ValueError:
-    print("❌ Ungültige I2C-Adresse. Beispiel: 0x48")
+    error_exit("Ungültige I2C-Adresse. Bitte dezimal (72/73) oder hex (0x48/0x49) angeben.")
     sys.exit(1)
 
 # Kanalnummer prüfen
@@ -29,14 +37,19 @@ except ValueError:
     sys.exit(1)
 
 # I2C starten
-i2c = busio.I2C(board.SCL, board.SDA)
+try:
+	i2c = busio.I2C(board.SCL, board.SDA)
+except Exception as e:
+    error_exit(f"I2C-Initialisierung fehlgeschlagen: {e}")
 
 # ADS1115 mit angegebener I2C-Adresse initialisieren
-ads = ADS.ADS1115(i2c, address=i2c_address)
-
-# Kanal auswählen
-channels = [ADS.P0, ADS.P1, ADS.P2, ADS.P3]
-chan = AnalogIn(ads, channels[channel_number])
-
-# Wert ausgeben
-print(f"{chan.voltage:.3f}")
+try:
+    ads = ADS.ADS1115(i2c, address=i2c_address)
+#    ads.mode = ADS.Mode.SINGLE  # Optional: SINGLE = weniger Rauschen
+    ads.gain = 1  # z.B. für 4.096V Bereich
+    channels = [ADS.P0, ADS.P1, ADS.P2, ADS.P3]
+    chan = AnalogIn(ads, channels[channel_number])
+    time.sleep(0.05)
+    print(f"{chan.voltage:.3f}")
+except Exception as e:
+    error_exit(f"ADS1115 Zugriff fehlgeschlagen: {e}")
