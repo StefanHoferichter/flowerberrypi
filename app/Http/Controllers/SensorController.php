@@ -54,15 +54,15 @@ class SensorController extends Controller
 
         foreach($sensors as $sensor)
         {
-            $humi = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
+            $mois = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
             
             $data = [];
-            foreach ($humi as $entry)
+            foreach ($mois as $entry)
             {
                 $data[] = $entry->value;
             }
             
-            $timeSeries[] = ['name' => 'Humidity ' . $sensor->id,
+            $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->id,
                 'unit' => 'V',
                 'values' => $data,
             ];
@@ -71,6 +71,7 @@ class SensorController extends Controller
         $forecast_history = WeatherForecast::where('day', '>=', $horizon)->get();
         $forecast_max = [];
         $forecast_min = [];
+        $rain_sum = [];
         foreach ($temp_history as $temp)
         {
             foreach ($forecast_history as $forecast)
@@ -84,6 +85,7 @@ class SensorController extends Controller
 //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
                     $forecast_max[] = $forecast->max_temp;
                     $forecast_min[] = $forecast->min_temp;
+                    $rain_sum[] = $forecast->rain_sum;
                     break;
                 }
             }
@@ -95,6 +97,10 @@ class SensorController extends Controller
         $timeSeries[] = ['name' => 'Forecast Min Temperature',
             'unit' => '°C',
             'values' => $forecast_min,
+        ];
+        $timeSeries[] = ['name' => 'Forecast Rain Sum',
+            'unit' => 'mm',
+            'values' => $rain_sum,
         ];
         
         $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
@@ -144,8 +150,8 @@ class SensorController extends Controller
 //        print_r($forecast_history);
         
         $thresholds = [
-            ['y' => 1.7, 'unit' => 'V', 'label' => 'Humidity 1'],
-            ['y' => 2.3, 'unit' => 'V', 'label' => 'Humidity 2']
+            ['y' => 1.7, 'unit' => 'V', 'label' => 'Soil Moisture 1'],
+            ['y' => 2.3, 'unit' => 'V', 'label' => 'Soil Moisture 2']
         ];
         
         return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'thresholds' => $thresholds]);
@@ -221,7 +227,8 @@ class SensorController extends Controller
         $reader = new SensorReader();        
         $readings = $reader->read_temperatures($sensors);
 
-        $history = SensorValue::where('type', '1')->orderBy('created_at')->get();
+        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         
         // Extrahiere Zeit (X-Achse) und Temperaturwerte (Y-Achse)
         $labels = [];
@@ -251,13 +258,14 @@ class SensorController extends Controller
         return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings]);
     }
 
-    public function show_humidities()
+    public function show_soil_moistures()
     {
         $sensors = Sensor::where('sensor_type', '6')->get();
         $reader = new SensorReader();
         $readings = $reader->read_humidities($sensors);
         
-        $history = SensorValue::where('type', '4')->get();
+        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $history = SensorValue::where('type', '4')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         $datasets = [];
         $labelSet = [];
 
@@ -289,7 +297,7 @@ class SensorController extends Controller
             }
         }
         
-        return view('humidity_list', ['sensors' => $sensors, 'readings'=>$readings, 'history'=>$history, 'datasets' => $datasets, 'labels' => $labelSet]);
+        return view('soil_moisture_list', ['sensors' => $sensors, 'readings'=>$readings, 'history'=>$history, 'datasets' => $datasets, 'labels' => $labelSet]);
     }
 
     public function show_camera()

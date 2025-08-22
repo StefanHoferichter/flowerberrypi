@@ -42,7 +42,7 @@
                     } 
                     else if ($sensor->sensor_type == 6) 
                     {
-                        $action = '/humidities';
+                        $action = '/soil_moistures';
                     } 
                     else if ($sensor->sensor_type == 7) 
                     {

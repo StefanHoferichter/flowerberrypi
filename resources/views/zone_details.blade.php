@@ -41,6 +41,9 @@
             </table>        
         	
         	</div>
+        	
+        	<a href="/soil_moistures">Soil Moistures</a>
+        	<a href="/temperatures">Temperatures</a>
 <style>
     #lineChart {
         width: 100%;
@@ -75,11 +78,25 @@
     	const rawSeries = @json($timeseries);
         const units = [...new Set(rawSeries.map(s => s.unit))];
         
-        const datasets = rawSeries.map(series => ({
+        const colorPalette = [
+            '#E41A1C', // rot
+            '#377EB8', // blau
+            '#4DAF4A', // grün
+            '#984EA3', // violett
+            '#FF7F00', // orange
+            '#FFFF33', // gelb
+            '#A65628', // braun
+            '#F781BF', // pink
+            '#999999', // grau
+            '#66C2A5', // türkis
+            '#FC8D62', // lachs
+            '#8DA0CB'  // lavendelblau
+        ];
+        const datasets = rawSeries.map((series, index) => ({
             label: `${series.name} (${series.unit})`,
             data: series.values,
             fill: false,
-            borderColor: randomColor(),
+            borderColor: colorPalette[index % colorPalette.length],
             tension: 0.1,
             yAxisID: series.unit,
         }));
@@ -92,14 +109,14 @@
                 type: 'line',
                 yMin: t.y,
                 yMax: t.y,
-                borderColor: 'red',
+                borderColor: '#555555',
                 borderWidth: 1.5,
                 label: {
                     content: t.label + ` (${t.unit})`,
                     enabled: true,
                     position: 'start',
                     backgroundColor: 'rgba(255,255,255,0.7)',
-                    color: 'red'
+                    color: '#555555'
                 },
        			yScaleID: t.unit
             };
@@ -160,12 +177,6 @@
             }
         });
 
-        function randomColor() {
-            const r = Math.floor(Math.random() * 200);
-            const g = Math.floor(Math.random() * 200);
-            const b = Math.floor(Math.random() * 200);
-            return `rgb(${r}, ${g}, ${b})`;
-        }
     </script>
 
         	

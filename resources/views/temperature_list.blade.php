@@ -4,7 +4,7 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Sensors</h1>
+        <h1>Temperatures</h1>
 
 		<div class="grid-container">
             <div class="grid-item">
