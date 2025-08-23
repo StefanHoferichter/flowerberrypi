@@ -32,7 +32,7 @@
               <div class="nav_ingredients"><a class="nav_item" href="/trigger_job">Job</a></div>
               <div class="nav_ernaehrung"><a class="nav_item" href="/forecast">Forecast</a></div>
               <div class="nav_blog"><a class="nav_item" href="/zones">Zones</a></div>
-              <div class="nav_about"><a class="nav_item" href="/about_me">Über mich</a></div>
+              <div class="nav_about"><a class="nav_item" href="/manual_watering">Manual Watering</a></div>
               <div class="nav_search"><form style="display:inline-block" action="/search_recipe" target="_top" method="post" novalidate="">
               @csrf
               <table><tr><td><input style="display:inline-block" type="text" name="search_term" value=""></td><td><button class="button_search" style="display:inline-block" type="submit"><img src="/images/icon/search.png" width="15" alt="Suche"></button></td></tr></table>

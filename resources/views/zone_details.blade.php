@@ -20,6 +20,7 @@
                     <tr>
                         <th>Day</th>
                         <th>Time of Day</th>
+                        <th>Type</th>
                         <th>Forecast</th>
                         <th>Humidity</th>
                         <th>Watering</th>
@@ -31,6 +32,7 @@
                         <tr>
               <td>{{ $dec->day }} </a></td>
 				 <td> {{ $dec->tod  }} </td>
+				 <td> {{ $dec->type }} </td>
 				 <td> {{ $dec->forecast_classification }} </td>
 				 <td> {{ $dec->humidity_classification }} </td>
 				 <td> {{ $dec->watering_classification }} </td>

@@ -211,7 +211,7 @@ class ProcessData implements ShouldQueue
                 foreach($zones as $zone)
                 {
                     Log::info('analyzing zone ' . $zone->name);
-                    $exists = WateringDecision::where('day', $day)->where('tod', $tod)->where('zone_id', $zone->id)->exists();
+                    $exists = WateringDecision::where('day', $day)->where('tod', $tod)->where('zone_id', $zone->id)->where('type', '1')->exists();
                     if (!$exists)
                     {
                         $sensors = Sensor::where('zone_id', $zone->id)->get();
@@ -238,6 +238,7 @@ class ProcessData implements ShouldQueue
                             $wd->forecast_classification=$tempSensor->classification;
                         $wd->day=date('Y-m-d');
                         $wd->tod=$tod;
+                        $wd->type=1;
                         
                         if ($wd->humidity_classification == 1)
                             $wd->watering_classification = 1;

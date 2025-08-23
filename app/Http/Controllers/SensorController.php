@@ -18,6 +18,16 @@ use Carbon\Carbon;
 
 class SensorController extends Controller
 {
+    public function show_manual_watering()
+    {
+        $horizon = Carbon::now()->subDays(2)->toDateString();
+        echo ($horizon);
+        $manual_watering = WateringDecision::where('day', '>=', $horizon)->where('type', '2')->get();
+        
+        
+        return view('manual_watering_list', ['manual_watering' => $manual_watering]);
+    }
+    
     
     public function show_zones()
     {
@@ -130,9 +140,11 @@ class SensorController extends Controller
             'values' => $rain_sum,
         ];
         
-        $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
+        $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '1')->get();
+        $manual_decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '2')->get();
         
         $watering = [];
+        $manual_watering = [];
         foreach ($temp_history as $temp)
         {
             $day=$temp->created_at->format(('Y-m-d'));
@@ -142,27 +154,52 @@ class SensorController extends Controller
             $found = false;
             foreach ($decisions as $dec)
             {
-                    
                 if ($day == $dec->day and
                     $tod == $dec->tod)
                 {
-//                        echo $dec->watering_classification . " <br>";
                     $found = true;
                     if ($ifh)
+                    {
                         $watering[] = $dec->watering_classification;
+                    }
                     else
-                        $watering[] = 0;
+                       $watering[] = 0;
                     break;
                 }
-             }
-             if (!$found)
-             {
-                 $watering[] = 0;
-             }
+            }
+            if (!$found)
+            {
+                $watering[] = 0;
+            }
+
+            $found = false;
+            foreach ($manual_decisions as $dec)
+            {
+                if ($day == $dec->day and
+                    $tod == $dec->tod)
+                {
+                    $found = true;
+                    if ($ifh)
+                    {
+                        $manual_watering[] = 3;
+                    }
+                    else
+                        $manual_watering[] = 0;
+                    break;
+                }
+            }
+            if (!$found)
+            {
+                $manual_watering[] = 0;
+            }
         }
         $timeSeries[] = ['name' => 'Watering',
             'unit' => 'l',
             'values' => $watering,
+        ];
+        $timeSeries[] = ['name' => 'Manual Watering',
+            'unit' => 'l',
+            'values' => $manual_watering,
         ];
         
 //        print_r($timeSeries);
