@@ -11,6 +11,7 @@
         	
         	
             @foreach($relays as $r) 
+              Id: {{ $r->id }}<br>
               {{ $r->name }}<br>
             	<form class="" action="/relays" target="_top" method="post" novalidate="">
                   @csrf
@@ -18,6 +19,7 @@
                     <button name="action" value="on" type="submit">On</button>
                     <button name="action" value="off" type="submit">Off</button>
     	          </form>
+              Zone: {{ $r->zone_id }}<br><br>
             @endforeach
         	</div>
         	<br>

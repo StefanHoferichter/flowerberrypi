@@ -4,7 +4,7 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Sensors</h1>
+        <h1>Remote Sockets</h1>
 
 		<div class="grid-container">
             <div class="grid-item">
@@ -12,6 +12,7 @@
         	
         	
             @foreach($remoteSockets as $remoteSocket) 
+              Id {{ $remoteSocket->id }}<br>
               {{ $remoteSocket->name }}<br>
             	<form class="" action="/remote_sockets" target="_top" method="post" novalidate="">
                   @csrf
@@ -19,6 +20,7 @@
                     <button name="action" value="on" type="submit">On</button>
                     <button name="action" value="off" type="submit">Off</button>
     	          </form>
+              Zone {{ $remoteSocket->zone_id }}<br><br>
             @endforeach
         	</div>
         	<br>

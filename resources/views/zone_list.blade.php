@@ -13,15 +13,18 @@
         	<table border="1" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr>
+                        <th>Id</th>
                         <th>Name</th>
                         <th>enabled</th>
                         <th>Sensors</th>
+                        <th>Remote Sockets</th>
                     </tr>
                 </thead>
                 <tbody>
         	
             @foreach($zones as $zone) 
                         <tr>
+              <td>{{ $zone->id }}</td>
               <td><a href="zone_details/{{$zone->id}}">{{ $zone->name }} </a></td>
                 @php
                     if ($zone->enabled == 1) 
@@ -39,10 +42,18 @@
                 			$sensor_list= $sensor_list . $sensor->name . ',';
                 		
                 	}   
+                	$rs_list="";
+                	foreach($remoteSockets as $rs) 
+                	{
+                		if ($rs->zone_id == $zone->id)
+                			$rs_list= $rs_list . $rs->name . ',';
+                		
+                	}   
                 @endphp
                             
 				 <td> {{ $enabled }} </td>
 				 <td> {{ $sensor_list }} </td>
+				 <td> {{ $rs_list }} </td>
                 </tr>
              
             @endforeach

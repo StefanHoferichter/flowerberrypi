@@ -41,7 +41,7 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '0',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'Relay B',
+            'name' => 'Relay B Giesskanne',
             'enabled' => '1',
             'sensor_type' => '3',
             'zone_id' => '7',

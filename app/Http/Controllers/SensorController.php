@@ -23,8 +23,9 @@ class SensorController extends Controller
     {
         $zones = Zone::all();
         $sensors = Sensor::all();
+        $remoteSockets = RemoteSocket::all();
         
-        return view('zone_list', ['zones' => $zones, 'sensors' => $sensors]);
+        return view('zone_list', ['zones' => $zones, 'sensors' => $sensors, 'remoteSockets' => $remoteSockets]);
     }
     
     public function show_zone_details($id)
@@ -79,7 +80,7 @@ class SensorController extends Controller
                     if (!$found)
                         $data[] = 0.0;
                 }
-                $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->id,
+                $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->name,
                     'unit' => 'V',
                     'values' => $data,
                 ];
@@ -111,8 +112,8 @@ class SensorController extends Controller
             }
             if (!$found)
             {
-                $forecast_max[] = 50.0;
-                $forecast_min[] = 0.0;
+                $forecast_max[] = 20.0;
+                $forecast_min[] = 10.0;
                 $rain_sum[] = 0.0;
             }
         }

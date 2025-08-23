@@ -13,6 +13,7 @@
         	<table border="1" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr>
+                        <th>Id</th>
                         <th>Name</th>
                         <th>enbaled</th>
                         <th>Zone</th>
@@ -22,7 +23,9 @@
                 <tbody>
         	
             @foreach($sensors as $sensor) 
-                        <tr>
+               <tr>
+           			<td> {{ $sensor->id }} </td>
+               
                 @php
                     if ($sensor->sensor_type == 1) 
                     {
