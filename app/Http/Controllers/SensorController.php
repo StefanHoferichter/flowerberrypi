@@ -21,11 +21,30 @@ class SensorController extends Controller
     public function show_manual_watering()
     {
         $horizon = Carbon::now()->subDays(2)->toDateString();
-        echo ($horizon);
-        $manual_watering = WateringDecision::where('day', '>=', $horizon)->where('type', '2')->get();
+        $manual_waterings = WateringDecision::where('day', '>=', $horizon)->where('type', '2')->get();
+        $zones = Zone::all();
         
+        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings]);
+    }
+
+    public function show_manual_watering2(Request $request)
+    {
+        $wd = new WateringDecision();
+        $wd->zone_id = $request->zone_id;
+        $wd->watering_classification = $request->watering_classification;
+        $wd->forecast_classification = 0;
+        $wd->humidity_classification = 0;
+        $wd->type = 2;
+        $wd->executed = 1;
+        $wd->day =$request->day;
+        $wd->tod =$request->tod;
+        $wd->save();
         
-        return view('manual_watering_list', ['manual_watering' => $manual_watering]);
+        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $manual_waterings = WateringDecision::where('day', '>=', $horizon)->where('type', '2')->get();
+        $zones = Zone::all();
+        
+        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings]);
     }
     
     
@@ -213,7 +232,7 @@ class SensorController extends Controller
             ['y' => 2.3, 'unit' => 'V', 'label' => 'Soil Moisture 2']
         ];
         
-        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'thresholds' => $thresholds]);
+        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'manual_decisions' => $manual_decisions, 'thresholds' => $thresholds]);
     }
     
     public function show_sensors()
