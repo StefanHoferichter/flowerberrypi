@@ -63,7 +63,7 @@ class SensorReader
                     list($v0) = explode(",", trim($output));
                     //                echo "Entfernung 0: {$v0}<br>";
                     $newReading = new SensorResult();
-                    $newReading->value=$v0;
+                    $newReading->value=$v0 + 0.0;
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
                     

@@ -115,6 +115,40 @@ class SensorController extends Controller
                 ];
             }
         }
+
+        foreach($sensors as $sensor)
+        {
+            $distances = SensorValue::where('type', '3')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
+            
+            if (!$distances->isEmpty())
+            {
+                $data = [];
+                foreach ($temp_history as $temp)
+                {
+                    $temp_day=$temp->day;
+                    $temp_hour=$temp->hour;
+                    $found = false;
+                    foreach ($distances as $dist)
+                    {
+                        $dist_hour = $dist->hour;
+                        $dist_day = $dist->day;
+                        if ($temp_day == $dist_day and $temp_hour == $dist_hour)
+                        {
+                            //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
+                            $found = true;
+                            $data[] = $dist->value;
+                            break;
+                        }
+                    }
+                    if (!$found)
+                        $data[] = 0.0;
+                }
+                $timeSeries[] = ['name' => 'Water level ' . $sensor->name,
+                    'unit' => 'cm',
+                    'values' => $data,
+                ];
+            }
+        }
         
         $forecast_history = WeatherForecast::where('day', '>=', $horizon)->get();
         $forecast_max = [];
