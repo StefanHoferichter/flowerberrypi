@@ -26,6 +26,7 @@
                         <th>Timestamp</th>
                         @foreach ($sensorIds as $sensorId)
                             <th>Sensor {{ $sensorId }}</th>
+                            <th>Sensor {{ $sensorId }}</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -38,7 +39,10 @@
                 <td>{{ $timestamp }}</td>
                 @foreach ($sensorIds as $sensorId)
                     <td>
-                        {{ $values[$sensorId] ?? '' }}
+                        {{ $values[$sensorId]['value'] ?? '' }}
+                    </td>
+                    <td>
+                        {{ $values[$sensorId]['classification'] ?? '' }}
                     </td>
                 @endforeach
             </tr>

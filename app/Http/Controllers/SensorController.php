@@ -469,8 +469,10 @@ class SensorController extends Controller
             $timestamp = $day . " " . sprintf("%02d", $hour) . ":00";
             $sensorId = $entry['sensor_id'];
             $value = $entry['value'];
+            $classification = $entry['classification'];
             
-            $table[$timestamp][$sensorId] = $value;
+            $table[$timestamp][$sensorId]['value'] = $value;
+            $table[$timestamp][$sensorId]['classification'] = $classification;
         }
         ksort($table);
         
