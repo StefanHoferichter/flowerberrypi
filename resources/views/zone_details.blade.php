@@ -6,6 +6,8 @@
 @section('content')
         <h1>Zone</h1>
 
+@include('submenu')
+
 		<div class="grid-container">
             <div class="grid-item">
 			
@@ -67,8 +69,6 @@
         	
         	</div>
         	
-        	<a href="/soil_moistures">Soil Moistures</a>
-        	<a href="/temperatures">Temperatures</a>
 <style>
     #lineChart {
         width: 100%;

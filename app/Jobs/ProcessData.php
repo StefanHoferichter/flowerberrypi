@@ -160,7 +160,7 @@ class ProcessData implements ShouldQueue
         
         $exists = Picture::where('day', $day)->where('tod', $tod)->exists();
         
-        if (!$exists)
+        if (!$exists and $tod > 0)
         {
             $cameras = Sensor::where('sensor_type', '7')->get();
             $reader = new SensorReader();

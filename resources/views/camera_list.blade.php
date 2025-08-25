@@ -6,6 +6,8 @@
 @section('content')
         <h1>Cameras</h1>
 
+@include('submenu')
+
 		<div class="grid-container">
             <div class="grid-item">
         	<h2>Kategorien</h2>

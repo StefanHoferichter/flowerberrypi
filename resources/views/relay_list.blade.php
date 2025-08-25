@@ -6,6 +6,8 @@
 @section('content')
         <h1>Relays</h1>
 
+@include('submenu')
+
 		<div class="grid-container">
             <div class="grid-item">
         	

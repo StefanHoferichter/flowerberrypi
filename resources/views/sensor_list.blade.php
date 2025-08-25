@@ -6,9 +6,12 @@
 @section('content')
         <h1>Sensors</h1>
 
+
+@include('submenu')
+
 		<div class="grid-container">
             <div class="grid-item">
-        	<h2>Kategorien</h2>
+        	<h2>List</h2>
         	
         	<table border="1" cellpadding="5" cellspacing="0">
                 <thead>
