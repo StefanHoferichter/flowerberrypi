@@ -23,13 +23,30 @@
             <table border="1" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Sensor Id</th>
-                        <th>Value</th>
-                        <th>Classification</th>
-                        <th>timestamp</th>
+                        <th>Timestamp</th>
+                        @foreach ($sensorIds as $sensorId)
+                            <th>Sensor {{ $sensorId }}</th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody>
+        </tr>
+    </thead>
+    <tbody>
+       @foreach ($history as $timestamp => $values)
+             <tr>
+                <td>{{ $timestamp }}</td>
+                @foreach ($sensorIds as $sensorId)
+                    <td>
+                        {{ $values[$sensorId] ?? '' }}
+                    </td>
+                @endforeach
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+<!--  
+{{--
                     @foreach($history as $hist) 
                         <tr>
                             <td>{{ $hist->sensor_id }}</td>
@@ -40,7 +57,8 @@
                     @endforeach
                 </tbody>
             </table>        
-            
+--}}
+-->            
         	</div>
         	
 <canvas id="lineChart" width="600" height="400"></canvas>

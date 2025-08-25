@@ -41,7 +41,7 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '0',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'Relay B Giesskanne',
+            'name' => 'Relay B graue Box',
             'enabled' => '1',
             'sensor_type' => '3',
             'zone_id' => '7',
@@ -77,10 +77,10 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '0',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'HC-SR04 Ultrasonic A',
+            'name' => 'HC-SR04 Ultrasonic A Palme',
             'enabled' => '1',
             'sensor_type' => '5',
-            'zone_id' => '2',
+            'zone_id' => '7',
             'GPIO_IN' => '26',
             'GPIO_OUT' => '16',
             'GPIO_EXTRA' => '0',
@@ -167,10 +167,10 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '73',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'ADS1115 Moisture Sensor G trocken',
+            'name' => 'ADS1115 Moisture Sensor G Palme',
             'enabled' => '1',
             'sensor_type' => '6',
-            'zone_id' => '4',
+            'zone_id' => '7',
             'GPIO_IN' => '2',
             'GPIO_OUT' => '0',
             'GPIO_EXTRA' => '73',

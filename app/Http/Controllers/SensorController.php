@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\GlobalStuff;
 use App\Jobs\ProcessData;
+use App\Models\HourlyWeatherForecast;
 use App\Models\Picture;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
@@ -11,10 +13,9 @@ use App\Models\WateringDecision;
 use App\Models\WeatherForecast;
 use App\Models\Zone;
 use App\Services\SensorReader;
-use App\Helpers\GlobalStuff;
 use App\Services\WateringController;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class SensorController extends Controller
 {
@@ -149,6 +150,52 @@ class SensorController extends Controller
                 ];
             }
         }
+
+        $hourly_forecast_history = HourlyWeatherForecast::where('day', '>=', $horizon)->get();
+        foreach ($temp_history as $temp)
+        {
+            $temp_day=$temp->day;
+            $temp_hour=$temp->hour;
+            $found = false;
+            foreach ($hourly_forecast_history as $forecast)
+            {
+                $forecast_day=$forecast->day;
+                $forecast_hour=$forecast->hour;
+                //                echo $temp_day . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
+                if ($temp_day == $forecast_day and $forecast_hour==$temp_hour)
+                {
+                    //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
+                    $found = true;
+                    $hourly_forecast_temperature[] = $forecast->temperature;
+                    $hourly_forecast_precipitation[] = $forecast->precipitation;
+//                    $rain_sum[] = $forecast->rain_sum;
+                    break;
+                }
+            }
+            if (!$found)
+            {
+                $hourly_forecast_temperature[] = 20.0;
+                $hourly_forecast_precipitation[] = 0.0;
+                //                $forecast_min[] = 10.0;
+//                $rain_sum[] = 0.0;
+            }
+        }
+        $timeSeries[] = ['name' => 'Forecast Temperature',
+            'unit' => '°C',
+            'values' => $hourly_forecast_temperature,
+        ];
+        $timeSeries[] = ['name' => 'Precipitation',
+            'unit' => 'mm',
+            'values' => $hourly_forecast_precipitation,
+        ];
+/*        $timeSeries[] = ['name' => 'Forecast Min Temperature',
+            'unit' => '°C',
+            'values' => $forecast_min,
+        ];
+        $timeSeries[] = ['name' => 'Forecast Rain Sum',
+            'unit' => 'mm',
+            'values' => $rain_sum,
+        ];
         
         $forecast_history = WeatherForecast::where('day', '>=', $horizon)->get();
         $forecast_max = [];
@@ -192,7 +239,7 @@ class SensorController extends Controller
             'unit' => 'mm',
             'values' => $rain_sum,
         ];
-        
+*/        
         $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '1')->get();
         $manual_decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '2')->get();
         
@@ -366,8 +413,41 @@ class SensorController extends Controller
         $sensors = Sensor::where('sensor_type', '5')->get();
         $reader = new SensorReader();
         $readings = $reader->read_distances($sensors);
+
+        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $history = SensorValue::where('type', '3')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+
+        $datasets = [];
+        $labelSet = [];
+        // Gruppiere Werte nach Sensor
+        $grouped = $history->groupBy('sensor_id');
         
-        return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings]);
+        foreach ($grouped as $sensorId => $values)
+        {
+            $sensor = $values->first()->sensor ?? null;
+            $label = $sensor ? $sensor->name : "Sensor $sensorId";
+            
+            $data = [];
+            $labels = [];
+            
+            foreach ($values as $entry)
+            {
+                $labels[] = $entry->created_at->format('Y-m-d H:i'); // einheitliche Zeitachse pro Sensor
+                $data[] = $entry->value;
+            }
+            
+            $datasets[] = [
+                'label' => $label,
+                'data' => $data,
+            ];
+            
+            // Für die Labels nehmen wir einfach die Zeitpunkte des ersten Sensors
+            if (empty($labelSet)) {
+                $labelSet = $labels;
+            }
+        }
+        
+        return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings, 'history' => $history, 'datasets' => $datasets, 'labels' => $labelSet]);
     }
 
     public function show_soil_moistures()
@@ -378,6 +458,22 @@ class SensorController extends Controller
         
         $horizon = Carbon::now()->subDays(2)->toDateString();
         $history = SensorValue::where('type', '4')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        
+        
+        $sensorIds = collect($history)->pluck('sensor_id')->unique()->sort()->values();
+        $table = [];
+        foreach ($history as $entry) {
+            $day = $entry['day'];
+            $hour = $entry['hour'];
+            
+            $timestamp = $day . " " . sprintf("%02d", $hour) . ":00";
+            $sensorId = $entry['sensor_id'];
+            $value = $entry['value'];
+            
+            $table[$timestamp][$sensorId] = $value;
+        }
+        ksort($table);
+        
         $datasets = [];
         $labelSet = [];
 
@@ -409,7 +505,7 @@ class SensorController extends Controller
             }
         }
         
-        return view('soil_moisture_list', ['sensors' => $sensors, 'readings'=>$readings, 'history'=>$history, 'datasets' => $datasets, 'labels' => $labelSet]);
+        return view('soil_moisture_list', ['sensors' => $sensors, 'readings'=>$readings, 'sensorIds'=>$sensorIds, 'history'=>$table, 'datasets' => $datasets, 'labels' => $labelSet]);
     }
 
     public function show_camera()

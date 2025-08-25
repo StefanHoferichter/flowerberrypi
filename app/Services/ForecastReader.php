@@ -2,11 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\HourlyWeatherForecast;
 use App\Models\WeatherForecast;
-use App\Models\Picture;
-use App\Models\TemperatureSensorResult;
-use Illuminate\Support\Collection;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 
@@ -16,28 +13,42 @@ class ForecastReader
     {
         $url = "https://api.open-meteo.com/v1/forecast?latitude=52.5244&longitude=13.4105&hourly=temperature_2m,precipitation,cloud_cover&forecast_days=1";
         
+        $hwf = [];
         $response = $this->callApi($url);
         
         //        print_r( $response);
         //        echo "<br>";
+        $hours = $response['hourly']['time'];
         $precipitation = $response['hourly']['precipitation'];
-        foreach($precipitation as $prec)
-        {
-            //            echo $prec . "<br>";
-        }
         $temperatures = $response['hourly']['temperature_2m'];
+        $cloudCovers = $response['hourly']['cloud_cover'];
+        $i=0;
+        foreach($hours as $hour)
+        {
+            $entry = new HourlyWeatherForecast();
+            $entry->day = substr($hours[$i], 0, 10);
+            $entry->hour = $i;
+            $entry->temperature = $temperatures[$i];
+            $entry->precipitation = $precipitation[$i];
+            $entry->cloud_cover = $cloudCovers[$i];
+            $entry->classification = 0;
+            $hwf[] = $entry;
+//            echo $i . " " . $hour . " " . $entry->temperature. " " . $entry->precipitation. " " . $entry->cloud_cover . "<br>";
+            $i++;
+        }
         foreach($temperatures as $temp)
         {
             //            echo $temp . "<br>";
         }
-        $cloudCovers = $response['hourly']['cloud_cover'];
         foreach($cloudCovers as $cc)
         {
             //            echo $cc . "<br>";
         }
         
-        $labels = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00','18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
-        return view('forecast_list', ['precipitation' => $precipitation, 'temperatures' => $temperatures, 'cloudCovers' => $cloudCovers, 'labels' => $labels]);
+ //       print_r($hwf);
+        
+        return $hwf;
+//        return view('forecast_list', ['precipitation' => $precipitation, 'temperatures' => $temperatures, 'cloudCovers' => $cloudCovers, 'labels' => $labels]);
     }
     
     

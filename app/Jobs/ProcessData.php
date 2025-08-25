@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Helpers\GlobalStuff;
+use App\Models\HourlyWeatherForecast;
 use App\Models\Picture;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
@@ -180,13 +181,21 @@ class ProcessData implements ShouldQueue
     private function handle_weather_forecast($job, $hour)
     {
         Log::info('start handling weather forecasts');
-        if ($hour > 7)
+        if ($hour >= 0)
         {
             $reader = new ForecastReader();
             $wf = $reader->read_daily_api();
             $exists = WeatherForecast::where('day', $wf->day)->exists();
             if (!$exists)
                 $wf->save();
+            
+            $hwf = $reader->read_hourly_api();
+            $exists = HourlyWeatherForecast::where('day', $hwf[0]->day)->exists();
+            if (!$exists)
+                foreach ($hwf as $h) 
+                {
+                    $h->save();
+                }
         }
         Log::info('finished handling weather forecasts');
     }
@@ -197,7 +206,7 @@ class ProcessData implements ShouldQueue
         Log::info('start making watering decisions');
         if ($tod > 0)
         {
-            $tempSensor = SensorValue::where('type', '1')->where('job_id', $job->id)->first();
+            $tempSensor = SensorValue::where('type', '1')->where('day', $day)->where('hour', $hour)->first();
             if ($tempSensor != null)
             {
                 Log::info(' indoor temp classification ' . $tempSensor->classification);
@@ -214,6 +223,7 @@ class ProcessData implements ShouldQueue
                     $exists = WateringDecision::where('day', $day)->where('tod', $tod)->where('zone_id', $zone->id)->where('type', '1')->exists();
                     if (!$exists)
                     {
+                        Log::info('no watering decision found for ' . $zone->name . ' tod ' .  $tod);
                         $sensors = Sensor::where('zone_id', $zone->id)->get();
                         $max_humidity_classification = 0;
                         foreach($sensors as $sensor)
@@ -222,7 +232,7 @@ class ProcessData implements ShouldQueue
                             if ($sensor->sensor_type == 6 and $sensor->enabled)
                             {
                                 Log::info('analyzing sensor ' . $sensor->id . ' hour ' . $hour);
-                                $v = SensorValue::where('sensor_id', $sensor->id)->where('hour', $hour)->first();
+                                $v = SensorValue::where('sensor_id', $sensor->id)->where('day', $day)->where('hour', $hour)->first();
                                 Log::info('humidity classification ' . $v->classification);
                                 
                                 if ($max_humidity_classification < $v->classification)
@@ -247,6 +257,8 @@ class ProcessData implements ShouldQueue
                         $wd->save();
                         Log::info('watering decision for zone ' . $wd->zone_id . ' is ' . $wd->watering_classification);
                     }
+                    else 
+                        Log::info('watering decision found for ' . $zone->name . ' tod ' .  $tod);
                 }
             }
         }
@@ -332,19 +344,22 @@ class ProcessData implements ShouldQueue
         }
         if ($classification==2)
         {
-            $sleep=2;
+            $sleep=5;
         }
         if ($classification==3)
         {
-            $sleep=5;
+            $sleep=10;
         }
         
         $controller = new WateringController();
-        Log::info('switching on relay ' . $relay->name);
-        $controller->control_relay($relay->gpio_out, 0);
-        sleep($sleep);
-        $controller->control_relay($relay->gpio_out, 1);
-        Log::info('switching off relay ' . $relay->name);
+        if ($sleep > 0)
+        {
+            Log::info('switching on relay ' . $relay->name);
+            $controller->control_relay($relay->gpio_out, 0);
+            sleep($sleep);
+            $controller->control_relay($relay->gpio_out, 1);
+            Log::info('switching off relay ' . $relay->name);
+        }
 
         Log::info('finished watering with relay ' . $relay->name . ' classification ' . $classification);
     }

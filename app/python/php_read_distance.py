@@ -27,6 +27,8 @@ def measure_distance(trigger_pin, echo_pin):
 
     while GPIO.input(echo_pin) == 0 and time.time() < timeout:
         start = time.time()
+
+    stop = start
     while GPIO.input(echo_pin) == 1 and time.time() < timeout:
         stop = time.time()
 
