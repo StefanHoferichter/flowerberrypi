@@ -78,6 +78,49 @@ class SensorReader
         
         return $readings;
     }
+
+    public function read_i2c_bus()
+    {
+        Log::info('start reading i2c bus');
+        $output = shell_exec('sudo i2cdetect -y 1 2>&1');
+        Log::info('finished reading i2c bus ' . $output);
+        
+        if (strpos($output, 'Fehler') !== false) {
+            //                echo "Fehler beim Auslesen des DHT11-Sensors.";
+        } else {
+   //         echo "Output: {$output}<br>";
+        }
+        
+        $t = [];
+        $lines = explode("\n", trim($output));
+        
+        // erste Zeile: Spaltenüberschriften
+        $header = array_map('trim', preg_split('/\s+/', array_shift($lines)));
+        
+        $i=1;
+        $t[0][0] = 'x';
+        // HTML-Tabelle starten
+        foreach ($header as $h) 
+        {
+            $t[0][$i] = $h;
+            $i++;
+        }
+        
+        $j=1;
+        foreach ($lines as $line) 
+        {
+            $parts = array_map('trim', preg_split('/\s+/', $line));
+            $i=0;
+            foreach ($parts as $cell) 
+            {
+                $t[$j][$i] = $cell;
+                $i++;
+            }
+            $j++;
+        }
+        
+        return $t;
+    }
     
     public function read_humidities(Collection $sensors)
     {

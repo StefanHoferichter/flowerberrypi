@@ -11,6 +11,7 @@ Route::get('/relays', 'App\Http\Controllers\SensorController@show_relays');
 Route::post('/relays', 'App\Http\Controllers\SensorController@control_relays');
 Route::get('/temperatures', 'App\Http\Controllers\SensorController@show_temperatures');
 Route::get('/distances', 'App\Http\Controllers\SensorController@show_distances');
+Route::get('/i2c_bus', 'App\Http\Controllers\SensorController@show_i2c_bus');
 Route::get('/soil_moistures', 'App\Http\Controllers\SensorController@show_soil_moistures');
 Route::get('/camera', 'App\Http\Controllers\SensorController@show_camera');
 Route::post('/camera', 'App\Http\Controllers\SensorController@make_picture');

@@ -450,6 +450,14 @@ class SensorController extends Controller
         return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings, 'history' => $history, 'datasets' => $datasets, 'labels' => $labelSet]);
     }
 
+    public function show_i2c_bus()
+    {
+        $reader = new SensorReader();
+        $output = $reader->read_i2c_bus();
+        
+        return view('i2c_bus', ['output' => $output]);
+    }
+    
     public function show_soil_moistures()
     {
         $sensors = Sensor::where('sensor_type', '6')->get();

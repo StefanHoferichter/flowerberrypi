@@ -26,11 +26,11 @@
   <body>
       <header> 
         <nav>
+              <div class="nav_blog"><a class="nav_item" href="/zones">Zones</a></div>
               <div class="nav_logo"><a href="/">Sensors</a></div>
               <div class="nav_logo"><a href="/remote_sockets">Remote Sockets</a></div>
               <div class="nav_ingredients"><a class="nav_item" href="/trigger_job">Job</a></div>
               <div class="nav_ernaehrung"><a class="nav_item" href="/forecast">Forecast</a></div>
-              <div class="nav_blog"><a class="nav_item" href="/zones">Zones</a></div>
               <div class="nav_about"><a class="nav_item" href="/manual_watering">Manual Watering</a></div>
               <div class="nav_search"><form style="display:inline-block" action="/search_recipe" target="_top" method="post" novalidate="">
               @csrf
@@ -51,11 +51,6 @@
 	        <div class="footer_menu">
               <div class="footer_impressum"><a class="nav_item" href="/impressum">Impressum</a></div>
               <div class="footer_datenschutz"><a class="nav_item" href="/datenschutz">Datenschutz</a></div>
-              <div class="footer_pinterest"><a class="nav_item" target="_blank" href="https://pin.it/7Dg12ajk3"><img src="/images/icon/pinterest-131.png" width="30" alt="Pinterest"></a></div>
-              <div class="footer_instagram"><a class="nav_item" target="_blank" href="https://www.instagram.com/rezeptexperte?igsh=eDMzdjF6ZzA2bGF6"><img src="/images/icon/instagram.png" width="30" alt="Instagram"></a></div>
-              <div class="footer_facebook"><a class="nav_item" target="_blank" href="https://www.facebook.com/profile.php?id=61566584611271"><img src="/images/icon/Facebook_Logo_Primary.png" width="30" alt="Facebook"></a></div>
-              <div class="footer_threads"><a class="nav_item" target="_blank" href="https://www.threads.net/@rezeptexperte"><img src="/images/icon/threads-logo.png" width="30" alt="Threads"></a></div>
-              <div class="footer_youtube"><a class="nav_item" target="_blank" href="https://www.youtube.com/@rezeptexperte"><img src="/images/icon/yt.png" width="30" alt="YouTube"></a></div>
  			</div>
  			
   </footer>
