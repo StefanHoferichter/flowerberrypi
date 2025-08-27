@@ -6,9 +6,9 @@
 @section('content')
         <h1>Remote Sockets</h1>
 
-		<div class="grid-container">
+		<div class="data-container">
             <div class="grid-item">
-        	<h2>Kategorien</h2>
+        	<h2>Current</h2>
         	
         	
             @foreach($remoteSockets as $remoteSocket) 

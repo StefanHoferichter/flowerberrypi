@@ -4,7 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', 'App\Http\Controllers\SensorController@show_sensors');
+Route::get('/', 'App\Http\Controllers\SensorController@show_home');
+Route::get('/sensors', 'App\Http\Controllers\SensorController@show_sensors');
 Route::get('/remote_sockets', 'App\Http\Controllers\SensorController@show_remote_sockets');
 Route::post('/remote_sockets', 'App\Http\Controllers\SensorController@control_remote_socket');
 Route::get('/relays', 'App\Http\Controllers\SensorController@show_relays');

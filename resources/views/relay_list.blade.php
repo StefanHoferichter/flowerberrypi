@@ -4,11 +4,12 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Relays</h1>
-
 @include('submenu')
 
-		<div class="grid-container">
+        <h1>Relays</h1>
+
+
+		<div class="data-container">
             <div class="grid-item">
         	
         	

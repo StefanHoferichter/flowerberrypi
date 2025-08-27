@@ -1,0 +1,206 @@
+	   canvas
+	   {
+	    	width:200px;
+	   }
+	
+	  .logo {width: 300px;
+					  margin-left:20px; margin-right:20px;
+					  margin-top:0px; margin-bottom:20px;
+					  }
+	  .portrait {height: 400px;
+					  margin-left:20px; margin-right:20px;
+					  margin-top:0px; margin-bottom:20px;
+	   				  float: right; 
+					  }
+	  .home_pic {height: 400px;
+					  margin-left:20px; margin-right:20px;
+					  margin-top:0px; margin-bottom:20px;
+	   				  float: right; 
+					  }
+	  .recipe {	  float: none; 
+					  }
+		.grid-container 
+		{
+		  display: grid;
+		  grid-template-columns: 1fr 1fr 1fr;
+		  background-color: #FFFFFF;
+		  align-content: flex-start;
+		  padding: 20px;
+		  column-gap: 30px;
+		  row-gap: 30px;
+		}
+		.data-container 
+		{
+		  display: grid;
+		  grid-template-columns: 1fr;
+		  background-color: #FFFFFF;
+		  align-content: flex-start;
+		  padding: 10px;
+		  column-gap: 10px;
+		}
+		.recipe-action-container 
+		{
+		  display: grid;
+		  grid-template-columns: 1fr 1fr;
+		  background-color: #FFFFFF;
+		  align-content: flex-start;
+		  padding: 10px;
+		  column-gap: 10px;
+		  border: 1px solid gray;
+		  border-radius: 10px;
+		}
+		
+	    .grid-item 
+		{
+		  background-color: white;
+		}
+		
+
+   		.home{ margin-left:50px; margin-right:50px;}
+					  
+	   html{font-size:1em}
+		nav{font-size:2em}
+		nav{gap:1em}
+  	   .home{font-size:1.25em}
+	   h1{font-size:1.5em;}
+	   h2{font-size:1.25em;}
+	   h3{font-size:1.0em}
+	   h4{font-size:0.94em;}
+	   .dsgvo,h5{font-size:0.81em;}
+	   .footer_menu {font-size:1.25em;}
+
+	    body {
+		    display: grid;
+				gap: 0px;
+				margin: 0em;
+		    grid-template-columns: 1fr 1fr 1fr;	
+		    grid-template-rows: 110px 1fr 80px;
+		}
+
+		nav {
+/*		    margin:10px;*/
+			display: grid;
+		    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;	
+		    grid-template-rows: 1fr;
+		    align-items:center;
+		    background: #aafce3; 
+		    color:green;
+		}
+	   
+	   	.nav_logo {
+			grid-column: 1 / 2;
+		  grid-row:    1 / 2;		
+		   margin-top:5px;
+		   margin-right:20px;
+		}
+		.nav_zones {
+			grid-column: 2 / 3;
+		  grid-row:    1 / 2;		
+		  margin-left:20px; margin-right:20px;
+		}
+		.nav_sensors {
+			grid-column: 3 / 4;
+		  grid-row:    1 / 2;		
+		  margin-left:20px; margin-right:20px;
+		}
+		.nav_rs {
+			grid-column: 4 / 5;
+		  grid-row:    1 / 2;		
+		  margin-left:20px; margin-right:20px;
+		}
+		.nav_job {
+			grid-column: 5 / 6;
+		  grid-row:    1 / 2;		
+		  margin-left:20px; margin-right:20px;
+		}
+		.nav_forecast {
+			grid-column: 6 / 7;
+		  grid-row:    1 / 2;	
+		/*  background:green; */	
+		  margin-left:20px; margin-right:20px;
+		}
+		.nav_manual {
+			grid-column: 7 / 8;
+		  grid-row:    1 / 2;	
+		/*  background:green; */	
+		  margin-left:20px; margin-right:20px;
+		}
+	
+		footer {
+		  grid-column: 1 / 4;
+		  grid-row:    3 / 4;		
+		  background: #aafce3; 
+		}
+	
+		.footer_menu {
+		    margin:0px;
+			display: grid;
+		    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 10fr;	
+		    grid-template-rows: 1fr;
+		    align-items:center;
+		    padding-top: 25px;
+		    padding-bottom: 25px;
+		    padding-left: 20px;
+		    padding-right: 0px;
+		}
+		
+		.footer_impressum {
+			grid-column: 1 / 2;
+		    grid-row:    1 / 2;
+		    margin-left:20px; margin-right:20px;
+		  		
+		}
+		.footer_datenschutz {
+			grid-column: 2 / 3;
+		    grid-row:    1 / 2;
+		    margin-left:20px; margin-right:20px;
+		  		
+		}
+		.footer_pinterest {
+			grid-column: 3 / 4;
+		  grid-row:    1 / 2;		
+		    margin-left:20px; margin-right:20px;
+		}
+		.footer_instagram {
+			grid-column: 4 / 5;
+		  grid-row:    1 / 2;		
+		   margin-left:10px; margin-right:10px;
+		}
+		.footer_facebook {
+			grid-column: 5 / 6;
+		  grid-row:    1 / 2;		
+		   margin-left:10px; margin-right:10px;
+		}
+		.footer_threads {
+			grid-column: 6 / 7;
+		  grid-row:    1 / 2;		
+		   margin-left:10px; margin-right:10px;
+		}
+		.footer_youtube {
+			grid-column: 7 / 8;
+		  grid-row:    1 / 2;		
+		   margin-left:10px; margin-right:10px;
+		}
+
+		 .float_text_img 
+		 {
+		   float: right; 
+		   margin: 10px;
+	  	}
+
+		 .main_img 
+		 {
+		   margin: 10px;
+	  	}
+		 .recipe_video 
+		 {
+		   width: 30%;
+	  	}
+		 .thumb_img 
+		 {
+		   width: 200px;
+	  	}
+	   
+	    ul {margin-inline-start: 0; 
+	      padding-inline-start: 40px;
+	      };

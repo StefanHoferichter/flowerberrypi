@@ -4,11 +4,12 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Manual Waterings</h1>
-
 @include('submenu')
 
-		<div class="grid-container">
+        <h1>Manual Waterings</h1>
+
+
+		<div class="data-container">
             <div class="grid-item">
 			
 			   <form class="" action="/manual_watering" target="_top" method="post" novalidate="">

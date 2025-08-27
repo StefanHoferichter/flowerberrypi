@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\SensorResult;
+use App\Helpers\GlobalStuff;
 use App\Models\Picture;
+use App\Models\SensorResult;
 use App\Models\TemperatureSensorResult;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -17,30 +18,31 @@ class SensorReader
         
         foreach ($sensors as $sensor)
         {
-            Log::info('start reading temperatures ' . $sensor->gpio_in);
-            $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
-            Log::info('finished reading temperatures ' . $output);
-            
-            if (strpos($output, 'Fehler') !== false) {
-                //                echo "Fehler beim Auslesen des DHT11-Sensors.";
-            } else {
-                list($temp, $hum) = explode(",", trim($output));
-                //                echo "Temperatur: {$temp} °C<br>";
-                //                echo "Luftfeuchtigkeit: {$hum} %<br>";
-                $newReading = new TemperatureSensorResult();
-                $newReading->temperature=(float)$temp;
-                $newReading->humidity=(float)$hum;
-                $newReading->name=$sensor->name;
-                $newReading->sensor_id=$sensor->id;
+            $succ = false;
+            while (! $succ)
+            {
+                Log::info('start reading temperatures ' . $sensor->gpio_in);
+                $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
+                Log::info('finished reading temperatures ' . $output);
                 
-                if ($temp > 24)
-                    $newReading->classification=3;
-                else if ($temp > 15)
-                    $newReading->classification=2;
-                else        
-                    $newReading->classification=1;
-                            
-                array_push($readings, $newReading);
+                if (strpos($output, 'Fehler') !== false) {
+                    Log::info('error reading temperatures ' . $output);
+                    sleep(2);
+                } 
+                else 
+                {
+                    $succ =true;
+                    list($temp, $hum) = explode(",", trim($output));
+                    $newReading = new TemperatureSensorResult();
+                    $newReading->temperature=(float)$temp;
+                    $newReading->humidity=(float)$hum;
+                    $newReading->name=$sensor->name;
+                    $newReading->sensor_id=$sensor->id;
+                    $classification = GlobalStuff::get_classification_from_temperature($newReading->temperature);
+                    $newReading->classification=$classification;
+                                
+                    array_push($readings, $newReading);
+                }
             }
             
         }
@@ -65,7 +67,7 @@ class SensorReader
                     //                echo "Fehler beim Auslesen des DHT11-Sensors.";
                 } else {
                     list($v0) = explode(",", trim($output));
-                           echo "Entfernung 0: {$v0}<br>";
+ //                          echo "Entfernung 0: {$v0}<br>";
                     $newReading = new SensorResult();
                     $newReading->value=(float)$v0;
                     $newReading->name=$sensor->name;
@@ -122,7 +124,7 @@ class SensorReader
         return $t;
     }
     
-    public function read_humidities(Collection $sensors)
+    public function read_soil_moistures(Collection $sensors)
     {
         $readings = [];
         
@@ -145,17 +147,9 @@ class SensorReader
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
                     $newReading->zone_id=$sensor->zone_id;
-                    
-//                    $newReading->value = 1.8;
-                        
-                    if ($newReading->value < 1.7)
-                        $newReading->classification=1;
-                    else if ($newReading->value > 2.3)
-                        $newReading->classification=3;
-                     else
-                         $newReading->classification=2;
-                         
-                    
+                    $classification = GlobalStuff::get_classification_from_soil_moisture($newReading->value);
+                    $newReading->classification=$classification;
+                                        
                     array_push($readings, $newReading);
                 }
             }

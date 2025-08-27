@@ -53,7 +53,7 @@ class ProcessData implements ShouldQueue
         
         $this->handle_distance_sensors($job);
         
-        $this->handle_humidity_sensors($job);
+        $this->handle_moisture_sensors($job);
         
         $this->handle_cameras($job, $tod, $day);
                 
@@ -129,13 +129,13 @@ class ProcessData implements ShouldQueue
         Log::info('finished handling distances');
     }
     
-    private function handle_humidity_sensors($job)
+    private function handle_moisture_sensors($job)
     {
-        Log::info('start handling humidities');
+        Log::info('start handling soil moistures');
         
         $sensors = Sensor::where('sensor_type', '6')->get();
         $reader = new SensorReader();
-        $readings = $reader->read_humidities($sensors);
+        $readings = $reader->read_soil_moistures($sensors);
         
         foreach($readings as $reading)
         {
@@ -151,7 +151,7 @@ class ProcessData implements ShouldQueue
             if (!$exists)
                 $v->save();
         }
-        Log::info('finished handling humidities');
+        Log::info('finished handling soil moistures');
     }
     
     private function handle_cameras($job, $tod, $day)

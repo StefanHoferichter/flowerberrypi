@@ -1,0 +1,121 @@
+@charset "ISO-8859-1";
+
+/*--------------------------------------------------------------------------------------*/
+ 
+	@import url("/fbp_mobile.css") screen and (max-width:1024px);
+	@import url("/fbp_desktop.css") screen and (min-width:1025px);
+
+/*--------------------------------------------------------------------------------------*/
+
+   html{color:black;background:white;text-size-adjust: none; -webkit-text-size-adjust: none;}
+   .home,.dsgvo,h1,h2,h3,h4,h5,nav,.footer_menu{font-family:clean,sans-serif;}
+   .home{font-weight:normal;color:black}
+   h1,h2,h3,h4,h5{font-weight:bold;color:black}
+   a{color:black;text-decoration-line:underline;white-space:nowrap}
+   .contact{padding: 5px}
+   .references{color:white;text-decoration-line:none;white-space:nowrap}
+   	      
+	header {
+		grid-column: 1 / 4;
+	  grid-row:    1 / 2;		
+	  background: white;
+	}
+	article {
+	  grid-column: 1 / 4;
+	  grid-row:    2 / 3;		
+	  background: white;
+	  padding-top: 30px;
+	  padding-bottom: 50px;
+	}
+		
+	 .main_img_container 
+	 {
+	    text-align: center; 
+  	}
+  	.setclear { clear: both; }
+	 .float_text 
+	 {
+        font-size:1em; 
+        font-weight:normal;
+        color:black;
+  	}
+  	
+    .nav_item{color: black;text-decoration-line:none;}
+		
+    select
+    {
+    	background: white;
+    	border: 1px solid black;
+    }  
+    button
+    {
+    	background: white;
+    	border: solid;
+    }  
+    .button_search
+    {
+    	background: #f9f3ef;
+    	border: none;
+    }  
+    .button_cooking_mode
+    {
+    	background: white;
+    	border: 1px solid black;
+    }  
+        
+     .summary 
+	{
+	  background-color: #fafafa;
+	  font-style: italic;
+    	border: 1px solid gray;
+      border-radius: 10px;
+    	padding: 5px;
+	}
+    
+    
+    .tooltip {
+	  position: relative;
+	  display: inline-block;
+	  border-bottom: 1px black; /* If you want dots under the hoverable text */
+	}
+	
+	/* Tooltip text */
+	.tooltip .tooltiptext {
+	  visibility: hidden;
+	  width: 200px;
+	  background-color: #f9f3ef;
+	  color: #6b3e17;
+	  text-align: center;
+	  padding: 5px 0;
+	  border-radius: 6px;
+	 
+	  /* Position the tooltip text - see examples below! */
+  	  position: absolute;
+	  z-index: 1;
+	  top: -5px;
+	  right: 105%;
+	}
+	
+	/* Show the tooltip text when you mouse over the tooltip container */
+	.tooltip:hover .tooltiptext {
+	  visibility: visible;
+	}
+	
+	 .nutrition_table
+	 {
+	  border: 1px solid black;
+	    border-collapse: collapse; 
+	}
+	 .nutrition_cell
+	 {
+	  border: 1px solid black;
+	    padding: 8px;
+	    width: 40%;
+	}
+	 .nutrition_left_cell
+	 {
+	  border: 1px solid black;
+	    padding: 8px;
+	    width: 10%;
+	}
+	

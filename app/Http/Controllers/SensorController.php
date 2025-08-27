@@ -19,6 +19,12 @@ use Illuminate\Http\Request;
 
 class SensorController extends Controller
 {
+    public function show_home()
+    {
+        
+        return view('home');
+    }
+    
     public function show_manual_watering()
     {
         $horizon = Carbon::now()->subDays(2)->toDateString();
@@ -27,7 +33,7 @@ class SensorController extends Controller
         
         return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings]);
     }
-
+    
     public function show_manual_watering2(Request $request)
     {
         $wd = new WateringDecision();
@@ -188,58 +194,6 @@ class SensorController extends Controller
             'unit' => 'mm',
             'values' => $hourly_forecast_precipitation,
         ];
-/*        $timeSeries[] = ['name' => 'Forecast Min Temperature',
-            'unit' => '°C',
-            'values' => $forecast_min,
-        ];
-        $timeSeries[] = ['name' => 'Forecast Rain Sum',
-            'unit' => 'mm',
-            'values' => $rain_sum,
-        ];
-        
-        $forecast_history = WeatherForecast::where('day', '>=', $horizon)->get();
-        $forecast_max = [];
-        $forecast_min = [];
-        $rain_sum = [];
-        foreach ($temp_history as $temp)
-        {
-            $temp_day=$temp->day;
-            $temp_hour=$temp->hour;
-            $found = false;
-            foreach ($forecast_history as $forecast)
-            {
-                $forecast_day=$forecast->day;
-//                echo $temp_day . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
-                if ($temp_day == $forecast_day)
-                {
-//                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
-                    $found = true;
-                    $forecast_max[] = $forecast->max_temp;
-                    $forecast_min[] = $forecast->min_temp;
-                    $rain_sum[] = $forecast->rain_sum;
-                    break;
-                }
-            }
-            if (!$found)
-            {
-                $forecast_max[] = 20.0;
-                $forecast_min[] = 10.0;
-                $rain_sum[] = 0.0;
-            }
-        }
-        $timeSeries[] = ['name' => 'Forecast Max Temperature',
-            'unit' => '°C',
-            'values' => $forecast_max,
-        ];
-        $timeSeries[] = ['name' => 'Forecast Min Temperature',
-            'unit' => '°C',
-            'values' => $forecast_min,
-        ];
-        $timeSeries[] = ['name' => 'Forecast Rain Sum',
-            'unit' => 'mm',
-            'values' => $rain_sum,
-        ];
-*/        
         $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '1')->get();
         $manual_decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '2')->get();
         
@@ -462,7 +416,7 @@ class SensorController extends Controller
     {
         $sensors = Sensor::where('sensor_type', '6')->get();
         $reader = new SensorReader();
-        $readings = $reader->read_humidities($sensors);
+        $readings = $reader->read_soil_moistures($sensors);
         
         $horizon = Carbon::now()->subDays(2)->toDateString();
         $history = SensorValue::where('type', '4')->where('day', '>=', $horizon)->orderBy('created_at')->get();
@@ -531,7 +485,10 @@ class SensorController extends Controller
         }
         
         $pictures = null;
-        $history = Picture::all();
+        
+        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $history = Picture::where('day', '>=', $horizon)->orderBy('created_at')->get();
+//        $history = Picture::all();
         return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures, 'history'=>$history]);
     }
     

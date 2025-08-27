@@ -4,17 +4,19 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Temperatures</h1>
-
 @include('submenu')
 
-		<div class="grid-container">
+        <h1>Temperatures</h1>
+
+
+		<div class="data-container">
             <div class="grid-item">
-        	<h2>Kategorien</h2>
+        	<h2>Current</h2>
             @foreach($readings as $reading) 
               Sensor: {{ $reading->name }}<br>
-              Temperatur {{ $reading->temperature }} °C<br>
-              Feuchtigkeit {{ $reading->humidity }} %<br><br>
+              Temperature {{ $reading->temperature }} °C<br>
+              Humidity {{ $reading->humidity }} %<br>
+              Classification {{ $reading->classification }}<br><br>
             @endforeach
         	</div>
         	

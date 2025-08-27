@@ -4,11 +4,11 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
+@include('submenu')
         <h1>Distances</h1>
 
-@include('submenu')
 
-		<div class="grid-container">
+		<div class="data-container">
             <div class="grid-item">
         	<h2>Kategorien</h2>
             @foreach($readings as $reading) 

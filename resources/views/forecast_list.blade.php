@@ -4,11 +4,11 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
+@include('submenu')
         <h1>Forecast</h1>
 
-@include('submenu')
 
-		<div class="grid-container">
+		<div class="data-container">
             <div class="grid-item">
         	<h2>Current</h2>
               Date: {{ $forecast->day}}<br>
@@ -19,6 +19,7 @@
               Classification: {{ $forecast->classification }}<br><br>
         	</div>
   
+            <div class="grid-item">
             <table border="1" cellpadding="5" cellspacing="0">
                     @foreach($hourly_forecast as $hwf) 
                         <tr>
@@ -30,7 +31,9 @@
                         </tr>
                     @endforeach
             </table>        
+        	</div>
         	
+            <div class="grid-item">
         	<h2>History</h2>
 
             <table border="1" cellpadding="5" cellspacing="0">
@@ -57,7 +60,9 @@
                     @endforeach
                 </tbody>
             </table>        
+        	</div>
             
+            <div class="grid-item">
 <canvas id="lineChart" width="600" height="400"></canvas>
             <script>
     const ctx = document.getElementById('lineChart').getContext('2d');
@@ -135,6 +140,7 @@ const chart = new Chart(ctx, {
         }
     });
 </script>
+        	</div>
             
 
 @endsection

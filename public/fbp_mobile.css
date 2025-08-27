@@ -1,0 +1,205 @@
+	   canvas
+	   {
+	    	width:100px;
+	   }
+		
+	  .logo {width: 200px;
+					  margin-left:0px; margin-right:10px;
+					  margin-top:0px; margin-bottom:0px;
+	  }
+	  .portrait {    width: 50%;
+	  				margin-left:0px; margin-right:10px;
+					  margin-top:0px; margin-bottom:10px;
+	   				  float: right; 
+	  }
+	  .home_pic {    width: 180px;
+	  				margin-left:0px; margin-right:10px;
+					  margin-top:0px; margin-bottom:10px;
+	   				  float: right; 
+	  }
+	  .recipe {	  float: none; 
+					  }
+		.grid-container 
+		{
+		  display: grid;
+		  grid-template-columns: 1fr;
+		  background-color: #FFFFFF;
+		  align-content: flex-start;
+		  padding: 10px;
+		  column-gap: 10px;
+	      row-gap: 20px;
+		}
+		.recipe-head-container 
+		{
+		  display: grid;
+		  grid-template-columns: 1fr;
+		  background-color: #FFFFFF;
+		  align-content: flex-start;
+		  padding: 20px;
+		  row-gap: 20px;
+		}
+		.recipe-action-container 
+		{
+		  display: grid;
+		  grid-template-columns: 1fr;
+		  background-color: #FFFFFF;
+		  align-content: flex-start;
+		  padding: 20px;
+		  row-gap: 20px;
+		  border: 1px solid gray;
+		  border-radius: 10px;
+		}
+		
+	    .grid-item 
+		{
+		  background-color: white;
+		}
+		
+
+   		.home{ margin-left:10px; margin-right:10px;}
+	   html{font-size:1em}
+		nav{font-size:1.25em}
+		nav{gap:0.1em}
+   	   .home{font-size:0.8em}
+	   h1{font-size:1.5em;}
+	   h2{font-size:1.25em;}
+	   h3{font-size:1.0em}
+	   h4{font-size:0.94em;}
+	   .dsgvo,h5{font-size:0.81em;}
+	   .footer_menu {font-size:1.25em;}
+
+	    body {
+		    display: grid;
+				gap: 0px;
+				margin: 0em;
+		    grid-template-columns: 1fr 1fr 1fr;	
+		    grid-template-rows: 140px 1fr 160px;
+		}
+
+		nav {
+/*		    margin:5px; */
+			display: grid;
+		    grid-template-columns: 1fr 1fr 1fr ;	
+		    grid-template-rows: 0.8fr 0.5fr 0.8fr;
+		    align-items:center;
+		    background: #f9f3ef; 
+		    color:green;
+		}
+	   
+	  	.nav_logo {
+			grid-column: 1 / 3;
+		  grid-row:    1 / 2;		
+		  margin-right:5px;
+		}
+		.nav_recipes {
+			grid-column: 3 / 4;
+		  grid-row:    1 / 2;		
+		  margin-left:5px; margin-right:5px;
+		}
+		.nav_ingredients {
+			grid-column: 1 / 2;
+		  grid-row:    2 / 3;		
+		  margin-left:5px; margin-right:5px;
+		}
+		.nav_ernaehrung {
+			grid-column: 2 / 3;
+		  grid-row:    2 / 3;		
+		  margin-left:5px; margin-right:5px;
+		}
+		.nav_blog {
+			grid-column: 3 / 4;
+		  grid-row:    2 / 3;		
+		  margin-left:5px; margin-right:5px;
+		}
+		.nav_about {
+			grid-column: 1 / 2;
+		  grid-row:    3 / 4;	
+		  margin-left:5px; margin-right:5px; margin-bottom:10px;
+		}
+		.nav_search {
+			grid-column: 2/ 4;
+		  grid-row:    3 / 4;		
+		  margin-left:5px; margin-right:5px; margin-bottom:10px;
+		}
+
+		footer {
+		  grid-column: 1 / 4;
+		  grid-row:    3 / 4;		
+	      background: #f9f3ef; 
+		}
+	
+		.footer_menu {
+		    margin:0px;
+			display: grid;
+		    grid-template-columns: 1fr 1fr 1fr 10fr;	
+		    grid-template-rows: 1fr 1fr 1fr;
+		    align-items:center;
+		    padding-top: 25px;
+		    padding-bottom: 25px;
+		    padding-left: 5px;
+		    padding-right: 0px;
+		}
+		
+		.footer_impressum {
+			grid-column: 1 / 2;
+		    grid-row:    1 / 2;
+		    margin-left:5px; margin-right:5px;
+		  		
+		}
+		.footer_datenschutz {
+			grid-column: 2 / 3;
+		    grid-row:    1 / 2;
+		    margin-left:5px; margin-right:5px;
+		  		
+		}
+		.footer_pinterest {
+			grid-column: 1 / 2;
+		  grid-row:    2 / 3;		
+		    margin-left:5px; margin-right:5px;
+		}
+		.footer_instagram {
+			grid-column: 2 / 3;
+		  grid-row:    2 / 3;		
+		   margin-left:5px; margin-right:5px;
+		}
+		.footer_facebook {
+			grid-column: 3 / 4;
+		  grid-row:    2 / 3;		
+		   margin-left:5px; margin-right:5px;
+		}
+		.footer_threads {
+			grid-column: 1 / 2;
+		  grid-row:    3 / 4;		
+		   margin-left:5px; margin-right:5px;
+		}
+		.footer_youtube {
+			grid-column: 2 / 3;
+		  grid-row:    3 / 4;		
+		   margin-left:10px; margin-right:10px;
+		}
+
+		 .float_text_img 
+		 {
+		   float: right; 
+		   margin: 10px;
+			width: 40%;
+	  	}
+
+		 .main_img 
+		 {
+		   margin: 10px;
+			width: 90%;
+	  	}
+	     .recipe_video 
+		 {
+		   width: 60%;
+	  	}
+	  	
+		 .thumb_img 
+		 {
+		   width: 70px;
+	  	}
+	   
+	    ul {margin-inline-start: 0; 
+	      padding-inline-start: 10px;
+	      };

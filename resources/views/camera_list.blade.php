@@ -4,15 +4,12 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Cameras</h1>
-
 @include('submenu')
 
-		<div class="grid-container">
-            <div class="grid-item">
-        	<h2>Kategorien</h2>
-        	
-        	
+        <h1>Cameras</h1>
+
+        <h2>Current</h2>
+
             @foreach($cameras as $camera) 
               {{ $camera->name }}<br>
             	<form class="" action="/camera" target="_top" method="post" novalidate="">
@@ -21,19 +18,25 @@
                     <button name="action" value="on" type="submit">Click</button>
     	          </form>
             @endforeach
-        	</div>
         	@if($pictures != null)
             	@foreach($pictures as $picture) 
         	           <img  width='800' src='{{ $picture->filename }}'>
             	@endforeach
             @endif            
+        	
+        <h2>History</h2>
+		<div class="grid-container">
+        	
 
         	@if($history != null)
             	@foreach($history as $picture) 
-        	           <img width='500' src='{{ $picture->filename }}'>
+            <div class="grid-item">
+        	           <img width='500' src='{{ $picture->filename }}'><br>
         	           {{ $picture->day }} {{ $picture->tod }}
+        	</div>
             	@endforeach
             @endif            
+        	</div>
         	
         	
         	<br>

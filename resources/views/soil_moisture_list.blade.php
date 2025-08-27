@@ -4,11 +4,12 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Soil Moistures</h1>
-
 @include('submenu')
 
-		<div class="grid-container">
+        <h1>Soil Moistures</h1>
+
+
+		<div class="data-container">
             <div class="grid-item">
         	<h2>Current</h2>
             @foreach($readings as $reading) 

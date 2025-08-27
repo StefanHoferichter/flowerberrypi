@@ -41,4 +41,32 @@ class GlobalStuff
         
         return $ifh;
     }
+    
+    public static function get_classification_from_temperature($temp)
+    {
+        $classification=0;
+        if ($temp > 24)
+            $classification=3;
+        else if ($temp > 15)
+            $classification=2;
+        else
+            $classification=1;
+        
+        return $classification;
+    }
+    
+
+    public static function get_classification_from_soil_moisture($value)
+    {
+        if ($value < 1.7)
+            $classification=1;
+        else if ($value > 2.3)
+            $classification=3;
+        else
+            $classification=2;
+                    
+        return $classification;
+    }
+    
+                
 }

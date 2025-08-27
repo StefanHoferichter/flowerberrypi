@@ -4,14 +4,13 @@
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 
 @section('content')
-        <h1>Zones</h1>
-
 @include('submenu')
 
-		<div class="grid-container">
+        <h1>Zones</h1>
+
+
+		<div class="data-container">
             <div class="grid-item">
-        	<h2>Kategorien</h2>
-        	
         	<table border="1" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr>
@@ -27,7 +26,7 @@
             @foreach($zones as $zone) 
                         <tr>
               <td>{{ $zone->id }}</td>
-              <td><a href="zone_details/{{$zone->id}}">{{ $zone->name }} </a></td>
+              <td><a href="/zone_details/{{$zone->id}}">{{ $zone->name }} </a></td>
                 @php
                     if ($zone->enabled == 1) 
                     {
@@ -55,12 +54,13 @@
                             
 				 <td> {{ $enabled }} </td>
 				 <td> {{ $sensor_list }} </td>
-				 <td> {{ $rs_list }} </td>
+				 <td> <a href="/remote_sockets">{{ $rs_list }} </a></td>
                 </tr>
              
             @endforeach
                 </tbody>
             </table>        
+        	</div>
         	</div>
         	
 
