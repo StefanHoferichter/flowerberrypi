@@ -4,7 +4,7 @@ import sys
 import RPi.GPIO as GPIO
 
 
-def measure_distance(trigger_pin, echo_pin):
+def measure_distance(trigger_pin, echo_pin, temp):
     # BCM-Modus verwenden
     GPIO.setmode(GPIO.BCM)
 
@@ -22,19 +22,20 @@ def measure_distance(trigger_pin, echo_pin):
     GPIO.output(trigger_pin, False)
 
     # Zeitmessung starten
-    start = time.time()
+    start = time.perf_counter()
     timeout = start + 1  # Timeout nach 1 Sekunde
 
-    while GPIO.input(echo_pin) == 0 and time.time() < timeout:
-        start = time.time()
+    while GPIO.input(echo_pin) == 0 and time.perf_counter() < timeout:
+        start = time.perf_counter()
 
     stop = start
-    while GPIO.input(echo_pin) == 1 and time.time() < timeout:
-        stop = time.time()
+    while GPIO.input(echo_pin) == 1 and time.perf_counter() < timeout:
+        stop = time.perf_counter()
 
     # Differenz berechnen
     elapsed = stop - start
-    speedSound = 34300
+#    speedSound = 34300
+    speedSound = (331.3 + 0.6 * temp) * 100
     distance = (elapsed * speedSound) / 2
 
     # Aufräumen
@@ -50,19 +51,20 @@ def measure_distance(trigger_pin, echo_pin):
 
 
 # --- Kommandozeilenargumente prüfen ---
-if len(sys.argv) != 3:
-    print("❌ Verwendung: python3 script.py <TRIG> <ECHO>")
+if len(sys.argv) != 4:
+    print("❌ Verwendung: python3 script.py <TRIG> <ECHO> <TEMP>")
     sys.exit(1)
 
 try:
     trig1 = int(sys.argv[1])
     echo1 = int(sys.argv[2])
+    temp = int(sys.argv[3])
 except ValueError:
     print("❌ Bitte nur Ganzzahlen für GPIO-Pins verwenden.")
     sys.exit(1)
 
 # --- Messen ---
-dist1 = measure_distance(trig1, echo1)
+dist1 = measure_distance(trig1, echo1, temp)
 
 # --- Ausgabe ---
 print(f"{dist1:.3f}")

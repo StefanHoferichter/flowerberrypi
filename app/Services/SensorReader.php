@@ -58,7 +58,7 @@ class SensorReader
             if ($sensor->enabled > 0)
             {
                 Log::info('start reading distances ' . $sensor->gpio_out . ' ' . $sensor->gpio_in );
-                $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 2>&1');
+                $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 20 2>&1');
                 Log::info('finished reading distance ' . $output);
                 
                 if (strpos($output, 'Fehler') !== false) {
