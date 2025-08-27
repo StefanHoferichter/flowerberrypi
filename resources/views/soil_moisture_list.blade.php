@@ -12,13 +12,31 @@
 		<div class="data-container">
             <div class="grid-item">
         	<h2>Current</h2>
+            <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Sensor</th>
+                        <th>Value</th>
+                        <th>Classification</th>
+                        <th>Zone</th>
+                    </tr>
+                </thead>
+                <tbody>
+        </tr>
+    </thead>
+    <tbody>
             @foreach($readings as $reading) 
-              Sensor: {{ $reading->name }}<br>
-              Sensor Id: {{ $reading->sensor_id }}<br>
-              Value {{ $reading->value }} V<br>
-              Classification: {{ $reading->classification }}<br>
-              Zone Id: {{ $reading->zone_id }}<br><br>
-            @endforeach
+             <tr>
+                <td>{{ $reading->sensor_id }}</td>
+                <td>{{ $reading->name }}</td>
+                <td>{{ $reading->value  }}</td>
+                <td>{{ $reading->classification }}</td>
+                <td>{{ $reading->zone_id }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
             
         	<h2>History</h2>
             

@@ -9,15 +9,38 @@
 
 
 		<div class="data-container">
-            <div class="grid-item">
         	<h2>Kategorien</h2>
+        	
+        	<table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Sensor</th>
+                        <th>Value</th>
+                        <th>Classification</th>
+                        <th>Zone</th>
+                    </tr>
+                </thead>
+                <tbody>
+        </tr>
+    </thead>
+    <tbody>
             @foreach($readings as $reading) 
-              Sensor: {{ $reading->name }}<br>
-              Distance {{ $reading->value }} cm<br>
-            @endforeach
+             <tr>
+                <td>{{ $reading->sensor_id }}</td>
+                <td>{{ $reading->name }}</td>
+                <td>{{ $reading->value  }}</td>
+                <td>{{ $reading->classification }}</td>
+                <td>{{ $reading->zone_id }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+        	
         	</div>
         	
         	<h2>History</h2>
+		<div class="data-container">
             <table border="1" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr>
