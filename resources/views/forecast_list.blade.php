@@ -62,7 +62,8 @@
             </table>        
         	</div>
             
-            <div class="grid-item">
+                    	<h2>Graph</h2>
+            
 <canvas id="lineChart" width="600" height="400"></canvas>
             <script>
     const ctx = document.getElementById('lineChart').getContext('2d');

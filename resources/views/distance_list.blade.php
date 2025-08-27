@@ -61,6 +61,9 @@
                     @endforeach
                 </tbody>
             </table>        
+
+        	<h2>Graph</h2>
+
 <canvas id="lineChart" width="600" height="400"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

@@ -69,6 +69,8 @@
             </table>        
         	
         	</div>
+
+                    	<h2>Graph</h2>
         	
 <style>
     #lineChart {
