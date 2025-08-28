@@ -97,12 +97,14 @@ class SensorController extends Controller
             ];
         }
 
+        $found_moistures = false;
         foreach($sensors as $sensor)
         {
             $moistures = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
             
             if (!$moistures->isEmpty())
             {
+                $found_moistures = true;
                 $data = [];
                 foreach ($temp_history as $temp)
                 {
@@ -273,13 +275,19 @@ class SensorController extends Controller
             'values' => $manual_watering,
         ];
         
-        $thresholds = [
-            ['y' => GlobalStuff::get_soil_moisture_threshold_low(), 'unit' => 'V', 'label' => 'Soil Moisture 1'],
-            ['y' => GlobalStuff::get_soil_moisture_threshold_high(), 'unit' => 'V', 'label' => 'Soil Moisture 2'],
-            ['y' => GlobalStuff::get_temperature_threshold_low(), 'unit' => '°C', 'label' => 'Temperature 1'],
-            ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
-        ];
-        
+        if ($found_moistures)
+            $thresholds = [
+                ['y' => GlobalStuff::get_soil_moisture_threshold_low(), 'unit' => 'V', 'label' => 'Soil Moisture 1'],
+                ['y' => GlobalStuff::get_soil_moisture_threshold_high(), 'unit' => 'V', 'label' => 'Soil Moisture 2'],
+                ['y' => GlobalStuff::get_temperature_threshold_low(), 'unit' => '°C', 'label' => 'Temperature 1'],
+                ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
+            ];
+        else
+            $thresholds = [
+                ['y' => GlobalStuff::get_temperature_threshold_low(), 'unit' => '°C', 'label' => 'Temperature 1'],
+                ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
+            ];
+            
         $form_url = "/zone_details/" . $id;
         
         
