@@ -64,8 +64,9 @@ class SensorController extends Controller
         return view('zone_list', ['zones' => $zones, 'sensors' => $sensors, 'remoteSockets' => $remoteSockets]);
     }
     
-    public function show_zone_details($id)
+    public function show_zone_details($id, Request $request)
     {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
         $zone = Zone::find($id);
         
         $outdoor = $zone->outdoor;
@@ -74,7 +75,7 @@ class SensorController extends Controller
         
         $sensors = Sensor::where('zone_id', $id)->where('enabled', 1)->get();
                 
-        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
 //        echo ($horizon);
 
         $timeSeries = [];
@@ -227,7 +228,10 @@ class SensorController extends Controller
                     $found = true;
                     if ($ifh)
                     {
-                        $watering[] = $dec->watering_classification;
+                        $wc = $dec->watering_classification;
+                        if ($wc == 1)
+                            $wc = 0.1;
+                        $watering[] = $wc;
                     }
                     else
                        $watering[] = 0;
@@ -270,13 +274,16 @@ class SensorController extends Controller
         ];
         
         $thresholds = [
-            ['y' => 1.7, 'unit' => 'V', 'label' => 'Soil Moisture 1'],
-            ['y' => 2.3, 'unit' => 'V', 'label' => 'Soil Moisture 2'],
-            ['y' => 15, 'unit' => '°C', 'label' => 'Temperature 1'],
-            ['y' => 24, 'unit' => '°C', 'label' => 'Temperature 2'],
+            ['y' => GlobalStuff::get_soil_moisture_threshold_low(), 'unit' => 'V', 'label' => 'Soil Moisture 1'],
+            ['y' => GlobalStuff::get_soil_moisture_threshold_high(), 'unit' => 'V', 'label' => 'Soil Moisture 2'],
+            ['y' => GlobalStuff::get_temperature_threshold_low(), 'unit' => '°C', 'label' => 'Temperature 1'],
+            ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
         ];
         
-        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'manual_decisions' => $manual_decisions, 'thresholds' => $thresholds, 'sensors'=>$sensors]);
+        $form_url = "/zone_details/" . $id;
+        
+        
+        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'manual_decisions' => $manual_decisions, 'thresholds' => $thresholds, 'sensors'=>$sensors, 'form_url' => $form_url]);
     }
     
     public function show_sensors()

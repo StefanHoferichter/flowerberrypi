@@ -45,27 +45,45 @@ class GlobalStuff
     public static function get_classification_from_temperature($temp)
     {
         $classification=0;
-        if ($temp > 24)
+        if ($temp > GlobalStuff::get_temperature_threshold_high())
             $classification=3;
-        else if ($temp > 15)
+        else if ($temp > GlobalStuff::get_temperature_threshold_low())
             $classification=2;
         else
             $classification=1;
         
         return $classification;
     }
+
+    public static function get_temperature_threshold_low()
+    {
+        return 15;
+    }
+    public static function get_temperature_threshold_high()
+    {
+        return 24;
+    }
     
 
     public static function get_classification_from_soil_moisture($value)
     {
-        if ($value < 1.7)
+        if ($value < GlobalStuff::get_soil_moisture_threshold_low())
             $classification=1;
-        else if ($value > 2.3)
+        else if ($value > GlobalStuff::get_soil_moisture_threshold_high())
             $classification=3;
         else
             $classification=2;
                     
         return $classification;
+    }
+    
+    public static function get_soil_moisture_threshold_low()
+    {
+        return 1.7;
+    }
+    public static function get_soil_moisture_threshold_high()
+    {
+        return 2.3;
     }
     
     public static function get_classification_from_distance($value)

@@ -5,6 +5,7 @@
 
 @section('content')
 @include('submenu')
+@include('time_horizon_menu')
 
         <h1>Zone Details {{ $zone->name }}</h1>
 
