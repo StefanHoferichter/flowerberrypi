@@ -271,7 +271,9 @@ class SensorController extends Controller
         
         $thresholds = [
             ['y' => 1.7, 'unit' => 'V', 'label' => 'Soil Moisture 1'],
-            ['y' => 2.3, 'unit' => 'V', 'label' => 'Soil Moisture 2']
+            ['y' => 2.3, 'unit' => 'V', 'label' => 'Soil Moisture 2'],
+            ['y' => 15, 'unit' => '°C', 'label' => 'Temperature 1'],
+            ['y' => 24, 'unit' => '°C', 'label' => 'Temperature 2'],
         ];
         
         return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'manual_decisions' => $manual_decisions, 'thresholds' => $thresholds, 'sensors'=>$sensors]);
