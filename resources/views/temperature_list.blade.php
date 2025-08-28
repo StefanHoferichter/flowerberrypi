@@ -5,6 +5,7 @@
 
 @section('content')
 @include('submenu')
+@include('time_horizon_menu')
 
         <h1>Temperatures</h1>
 

@@ -5,6 +5,7 @@
 
 @section('content')
 @include('submenu')
+@include('time_horizon_menu')
 
         <h1>Cameras</h1>
 
@@ -32,7 +33,7 @@
             	@foreach($history as $picture) 
             <div class="grid-item">
         	           <img width='500' src='{{ $picture->filename }}'><br>
-        	           {{ $picture->day }} {{ $picture->tod }}
+        	           Day: {{ $picture->day }} Time of day: {{ $picture->tod }}
         	</div>
             	@endforeach
             @endif            

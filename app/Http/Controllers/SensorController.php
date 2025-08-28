@@ -341,13 +341,15 @@ class SensorController extends Controller
     }
 
     
-    public function show_temperatures()
+    public function show_temperatures(Request $request)
     {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+//        echo $time_horizon_days;
         $sensors = Sensor::where('sensor_type', '4')->get();
         $reader = new SensorReader();        
         $readings = $reader->read_temperatures($sensors);
 
-        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         
         // Extrahiere Zeit (X-Achse) und Temperaturwerte (Y-Achse)
@@ -359,23 +361,28 @@ class SensorController extends Controller
             $temperatures[] = $entry->value;
         }
         
+        $form_url = "/temperatures";
+        
         return view('temperature_list', [
             'sensors' => $sensors,
             'readings' => $readings,
             'history' => $history,
             'labels' => $labels,
-            'temperatures' => $temperatures
+            'temperatures' => $temperatures,
+            'form_url' => $form_url
         ]);
     }
 
     
-    public function show_distances()
+    public function show_distances(Request $request)
     {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+        
         $sensors = Sensor::where('sensor_type', '5')->get();
         $reader = new SensorReader();
         $readings = $reader->read_distances($sensors);
 
-        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $history = SensorValue::where('type', '3')->where('day', '>=', $horizon)->orderBy('created_at')->get();
 
         $datasets = [];
@@ -408,7 +415,9 @@ class SensorController extends Controller
             }
         }
         
-        return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings, 'history' => $history, 'datasets' => $datasets, 'labels' => $labelSet]);
+        $form_url = "/distances";
+        
+        return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings, 'history' => $history, 'datasets' => $datasets, 'labels' => $labelSet, 'form_url' => $form_url]);
     }
 
     public function show_i2c_bus()
@@ -419,13 +428,14 @@ class SensorController extends Controller
         return view('i2c_bus', ['output' => $output]);
     }
     
-    public function show_soil_moistures()
+    public function show_soil_moistures(Request $request)
     {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
         $sensors = Sensor::where('sensor_type', '6')->get();
         $reader = new SensorReader();
         $readings = $reader->read_soil_moistures($sensors);
         
-        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $history = SensorValue::where('type', '4')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         
         
@@ -476,11 +486,17 @@ class SensorController extends Controller
             }
         }
         
-        return view('soil_moisture_list', ['sensors' => $sensors, 'readings'=>$readings, 'sensorIds'=>$sensorIds, 'history'=>$table, 'datasets' => $datasets, 'labels' => $labelSet]);
+        $form_url = "/soil_moistures";
+        
+        return view('soil_moisture_list', ['sensors' => $sensors, 'readings'=>$readings, 'sensorIds'=>$sensorIds, 'history'=>$table, 'datasets' => $datasets, 'labels' => $labelSet, 'form_url' => $form_url]);
     }
 
-    public function show_camera()
+    public function show_camera(Request $request)
     {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+
+        $pictures = null;
+        
         $cameras = Sensor::where('sensor_type', '7')->get();
         $readings = [];
         
@@ -491,24 +507,32 @@ class SensorController extends Controller
             }
         }
         
-        $pictures = null;
         
-        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $history = Picture::where('day', '>=', $horizon)->orderBy('created_at')->get();
 //        $history = Picture::all();
-        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures, 'history'=>$history]);
+
+        $form_url = "/camera";
+        
+        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures, 'history'=>$history, 'form_url' => $form_url]);
     }
     
     
     public function make_picture(Request $request)
     {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+        
         $cameras = Sensor::where('sensor_type', '7')->get();
         
         $reader = new SensorReader();
         $pictures = $reader->read_camera($cameras);
         
-        $history = Picture::all();
-        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures, 'history'=>$history]);
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
+        $history = Picture::where('day', '>=', $horizon)->orderBy('created_at')->get();
+        
+        $form_url = "/camera";
+        
+        return view('camera_list', ['cameras' => $cameras, 'pictures'=>$pictures, 'history'=>$history, 'form_url' => $form_url]);
     }
     
     
