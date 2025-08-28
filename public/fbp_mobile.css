@@ -29,7 +29,7 @@
 		  column-gap: 10px;
 	      row-gap: 20px;
 		}
-		.recipe-head-container 
+		.data-container 
 		{
 		  display: grid;
 		  grid-template-columns: 1fr;
@@ -82,7 +82,7 @@
 		    grid-template-columns: 1fr 1fr 1fr ;	
 		    grid-template-rows: 0.8fr 0.5fr 0.8fr;
 		    align-items:center;
-		    background: #f9f3ef; 
+		    background: #aafce3; 
 		    color:green;
 		}
 	   
@@ -91,32 +91,32 @@
 		  grid-row:    1 / 2;		
 		  margin-right:5px;
 		}
-		.nav_recipes {
+		.nav_zones {
 			grid-column: 3 / 4;
 		  grid-row:    1 / 2;		
 		  margin-left:5px; margin-right:5px;
 		}
-		.nav_ingredients {
+		.nav_sensors {
 			grid-column: 1 / 2;
 		  grid-row:    2 / 3;		
 		  margin-left:5px; margin-right:5px;
 		}
-		.nav_ernaehrung {
+		.nav_rs {
 			grid-column: 2 / 3;
 		  grid-row:    2 / 3;		
 		  margin-left:5px; margin-right:5px;
 		}
-		.nav_blog {
+		.nav_job {
 			grid-column: 3 / 4;
 		  grid-row:    2 / 3;		
 		  margin-left:5px; margin-right:5px;
 		}
-		.nav_about {
+		.nav_forecast {
 			grid-column: 1 / 2;
 		  grid-row:    3 / 4;	
 		  margin-left:5px; margin-right:5px; margin-bottom:10px;
 		}
-		.nav_search {
+		.nav_manual {
 			grid-column: 2/ 4;
 		  grid-row:    3 / 4;		
 		  margin-left:5px; margin-right:5px; margin-bottom:10px;
@@ -125,7 +125,7 @@
 		footer {
 		  grid-column: 1 / 4;
 		  grid-row:    3 / 4;		
-	      background: #f9f3ef; 
+		  background: #aafce3; 
 		}
 	
 		.footer_menu {
