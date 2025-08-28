@@ -6,7 +6,7 @@
 @section('content')
 @include('submenu')
 
-        <h1>Zone</h1>
+        <h1>Zone Details {{ $zone->name }}</h1>
 
 
 		<div class="data-container">
