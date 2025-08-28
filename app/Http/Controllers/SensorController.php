@@ -68,10 +68,14 @@ class SensorController extends Controller
     {
         $zone = Zone::find($id);
         
+        $outdoor = $zone->outdoor;
+        $rain_sensitive = $zone->rain_sensitive;
+        //        echo $outdoor;
+        
         $sensors = Sensor::where('zone_id', $id)->where('enabled', 1)->get();
                 
         $horizon = Carbon::now()->subDays(2)->toDateString();
-        echo ($horizon);
+//        echo ($horizon);
 
         $timeSeries = [];
         
@@ -84,10 +88,13 @@ class SensorController extends Controller
             $labels[] = $entry->created_at->format('Y-m-d H:i'); // einheitliche Zeitachse
             $temperatures[] = $entry->value;
         }
-        $timeSeries[] = ['name' => 'Temperature Sensor',
-            'unit' => '°C',
-            'values' => $temperatures,
-        ];
+        if (!$outdoor)
+        {
+            $timeSeries[] = ['name' => 'Temperature Sensor',
+                'unit' => '°C',
+                'values' => $temperatures,
+            ];
+        }
 
         foreach($sensors as $sensor)
         {
@@ -186,14 +193,20 @@ class SensorController extends Controller
 //                $rain_sum[] = 0.0;
             }
         }
-        $timeSeries[] = ['name' => 'Forecast Temperature',
-            'unit' => '°C',
-            'values' => $hourly_forecast_temperature,
-        ];
-        $timeSeries[] = ['name' => 'Precipitation',
-            'unit' => 'mm',
-            'values' => $hourly_forecast_precipitation,
-        ];
+        if ($outdoor)
+        {
+            $timeSeries[] = ['name' => 'Forecast Temperature',
+                'unit' => '°C',
+                'values' => $hourly_forecast_temperature,
+            ];
+            if ($rain_sensitive)
+            {
+                $timeSeries[] = ['name' => 'Precipitation',
+                    'unit' => 'mm',
+                    'values' => $hourly_forecast_precipitation,
+                ];
+            }
+        }
         $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '1')->get();
         $manual_decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '2')->get();
         
@@ -255,12 +268,6 @@ class SensorController extends Controller
             'unit' => 'l',
             'values' => $manual_watering,
         ];
-        
-//        print_r($timeSeries);
-//        echo("<br>");
-//        print_r($labels);
-//        print_r($temp_history);
-//        print_r($forecast_history);
         
         $thresholds = [
             ['y' => 1.7, 'unit' => 'V', 'label' => 'Soil Moisture 1'],

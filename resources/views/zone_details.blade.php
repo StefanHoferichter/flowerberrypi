@@ -16,12 +16,18 @@
                     <tr>
                         <th>Id</th>
                         <th>Zone</th>
+                        <th>Has Watering</th>
+                        <th>Rain Sensitive</th>
+                        <th>Outdoor</th>
                     </tr>
                 </thead>
                 <tbody>
                         <tr>
               <td> {{ $zone->id }}</td>
 				 <td>{{ $zone->name }}</td>
+				 <td>{{ $zone->has_watering }}</td>
+				 <td>{{ $zone->rain_sensitive }}</td>
+				 <td>{{ $zone->outdoor }}</td>
                 </tr>
                 </tbody>
             </table>        
