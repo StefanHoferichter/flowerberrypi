@@ -10,13 +10,60 @@
 
 
 		<div class="data-container">
-            <div class="grid-item">
+
+        	<table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Zone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+              <td> {{ $zone->id }}</td>
+				 <td>{{ $zone->name }}</td>
+                </tr>
+                </tbody>
+            </table>        
+            
+        	<h2>Sensors</h2>
+            <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>enabled</th>
+                    </tr>
+                </thead>
+                <tbody>
+        	
+            @foreach($sensors as $sensor) 
+               <tr>
+           			<td> {{ $sensor->id }} </td>
+               
+                @php
+                        $action = \App\Helpers\GlobalStuff::get_url_from_sensor_type($sensor->sensor_type);
+                @endphp            
+              <td><a  href="{{ $action }}">{{ $sensor->name }} </a></td>
+                @php
+                    if ($sensor->enabled == 1) 
+                    {
+                        $enabled = 'enabled';
+                    } 
+                    else 
+                    {
+                        $enabled = 'disabled';
+                    } 
+                @endphp            
+				 <td> {{ $enabled }} </td>
+                </tr>
+             
+            @endforeach
+                </tbody>
+            </table>        
+            
 			
-            Zone Id: {{ $zone->id }}<br>
-            Zone Name: {{ $zone->name }}<br>
-            
-            
-        	<h2>History</h2>
+        	<h2>Watering Decisions</h2>
         	<table border="1" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr>

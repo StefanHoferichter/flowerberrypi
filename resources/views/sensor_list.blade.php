@@ -18,7 +18,7 @@
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
-                        <th>enbaled</th>
+                        <th>enabled</th>
                         <th>Zone</th>
                         <th>enabled</th>
                     </tr>
@@ -30,34 +30,7 @@
            			<td> {{ $sensor->id }} </td>
                
                 @php
-                    if ($sensor->sensor_type == 1) 
-                    {
-                        $action = '/remote_sockets';
-                    } 
-                    else if ($sensor->sensor_type == 3) 
-                    {
-                        $action = '/relays';
-                    } 
-                    else if ($sensor->sensor_type == 4) 
-                    {
-                        $action = '/temperatures';
-                    } 
-                    else if ($sensor->sensor_type == 5) 
-                    {
-                        $action = '/distances';
-                    } 
-                    else if ($sensor->sensor_type == 6) 
-                    {
-                        $action = '/soil_moistures';
-                    } 
-                    else if ($sensor->sensor_type == 7) 
-                    {
-                        $action = '/camera';
-                    } 
-                    else 
-                    {
-                        $action = '/';
-                    }
+                        $action = \App\Helpers\GlobalStuff::get_url_from_sensor_type($sensor->sensor_type);
                 @endphp            
               <td><a  href="{{ $action }}">{{ $sensor->name }} </a></td>
                 @php

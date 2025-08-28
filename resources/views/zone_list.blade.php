@@ -40,8 +40,10 @@
                 	foreach($sensors as $sensor) 
                 	{
                 		if ($sensor->zone_id == $zone->id)
-                			$sensor_list= $sensor_list . $sensor->name . ',';
-                		
+                		{
+                			$action = \App\Helpers\GlobalStuff::get_url_from_sensor_type($sensor->sensor_type);
+                			$sensor_list= $sensor_list . '<a href="' . $action . '">'. $sensor->name . '</a>, ';
+                		}
                 	}   
                 	$rs_list="";
                 	foreach($remoteSockets as $rs) 
@@ -53,7 +55,7 @@
                 @endphp
                             
 				 <td> {{ $enabled }} </td>
-				 <td> {{ $sensor_list }} </td>
+				 <td> {!! $sensor_list !!} </td>
 				 <td> <a href="/remote_sockets">{{ $rs_list }} </a></td>
                 </tr>
              

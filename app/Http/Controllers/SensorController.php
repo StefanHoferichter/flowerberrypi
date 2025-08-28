@@ -267,7 +267,7 @@ class SensorController extends Controller
             ['y' => 2.3, 'unit' => 'V', 'label' => 'Soil Moisture 2']
         ];
         
-        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'manual_decisions' => $manual_decisions, 'thresholds' => $thresholds]);
+        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'manual_decisions' => $manual_decisions, 'thresholds' => $thresholds, 'sensors'=>$sensors]);
     }
     
     public function show_sensors()

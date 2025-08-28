@@ -23,6 +23,7 @@ class SensorResult extends Model
     // Initialwerte können direkt gesetzt werden
     public $value;
     public $name;
+    public $zone_name;
     public $sensor_id;
     
 }

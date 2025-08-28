@@ -68,5 +68,40 @@ class GlobalStuff
         return $classification;
     }
     
+    
+    public static function get_url_from_sensor_type($sensor_type)
+    {
+        if ($sensor_type == 1)
+        {
+            $action = '/remote_sockets';
+        }
+        else if ($sensor_type == 3)
+        {
+            $action = '/relays';
+        }
+        else if ($sensor_type == 4)
+        {
+            $action = '/temperatures';
+        }
+        else if ($sensor_type == 5)
+        {
+            $action = '/distances';
+        }
+        else if ($sensor_type == 6)
+        {
+            $action = '/soil_moistures';
+        }
+        else if ($sensor_type == 7)
+        {
+            $action = '/camera';
+        }
+        else
+        {
+            $action = '/';
+        }
+        
+        return $action;
+    }
+    
                 
 }

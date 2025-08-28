@@ -18,7 +18,6 @@
                     <tr>
                         <th>Id</th>
                         <th>Sensor</th>
-                        <th>Value</th>
                         <th>Temperature</th>
                         <th>Humidity</th>
                         <th>Classification</th>
@@ -36,7 +35,7 @@
                 <td>{{ $reading->temperature }}</td>
                 <td>{{ $reading->humidity }}</td>
                 <td>{{ $reading->classification }}</td>
-                <td>{{ $reading->zone_id }}</td>
+                <td><a href="/zone_details/{{$reading->zone_id}}">{{ $reading->zone_name }}</a></td>
             </tr>
         @endforeach
     </tbody>

@@ -37,7 +37,7 @@
                     <button name="action" value="off" type="submit">Off</button>
     	          </form>
 				</td>
-                <td>{{ $r->zone_id }}</td>
+                <td><a href="/zone_details/{{$r->zone_id}}">{{ $r->zone->name }}</a></td>
             </tr>
         @endforeach
     </tbody>

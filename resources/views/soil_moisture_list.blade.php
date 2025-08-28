@@ -32,7 +32,7 @@
                 <td>{{ $reading->name }}</td>
                 <td>{{ $reading->value  }}</td>
                 <td>{{ $reading->classification }}</td>
-                <td>{{ $reading->zone_id }}</td>
+                <td><a href="/zone_details/{{$reading->zone_id}}">{{ $reading->zone_name }}</a></td>
             </tr>
         @endforeach
     </tbody>

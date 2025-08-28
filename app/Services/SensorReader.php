@@ -38,6 +38,8 @@ class SensorReader
                     $newReading->humidity=(float)$hum;
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
+                    $newReading->zone_id=$sensor->zone_id;
+                    $newReading->zone_name=$sensor->zone->name;
                     $classification = GlobalStuff::get_classification_from_temperature($newReading->temperature);
                     $newReading->classification=$classification;
                                 
@@ -72,7 +74,9 @@ class SensorReader
                     $newReading->value=(float)$v0;
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
-                    
+                    $newReading->zone_id=$sensor->zone_id;
+                    $newReading->zone_name=$sensor->zone->name;
+                    $newReading->classification=0;
                     array_push($readings, $newReading);
                 }
             }
@@ -147,9 +151,11 @@ class SensorReader
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
                     $newReading->zone_id=$sensor->zone_id;
+                    $newReading->zone_name=$sensor->zone->name;
                     $classification = GlobalStuff::get_classification_from_soil_moisture($newReading->value);
                     $newReading->classification=$classification;
-                                        
+ //                   echo "{$newReading->zone_name}<br>";
+                    
                     array_push($readings, $newReading);
                 }
             }
