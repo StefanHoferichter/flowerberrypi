@@ -68,6 +68,13 @@ class GlobalStuff
         return $classification;
     }
     
+    public static function get_classification_from_distance($value)
+    {
+        $classification=0;
+                    
+        return $classification;
+    }
+    
     
     public static function get_url_from_sensor_type($sensor_type)
     {
