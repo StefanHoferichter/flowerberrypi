@@ -257,6 +257,7 @@ class ProcessData implements ShouldQueue
                             $wd->watering_classification = 1;
                         else
                             $wd->watering_classification=($wd->humidity_classification + $wd->forecast_classification) /2 ;
+                        $wd->job_id=$job->id;
                         $wd->save();
                         Log::info('watering decision for zone ' . $wd->zone_id . ' is ' . $wd->watering_classification);
                     }

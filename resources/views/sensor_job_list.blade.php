@@ -32,8 +32,8 @@
         	
             @foreach($history as $job) 
                <tr>
-           			<td> {{ $job->id }} </td>
-	                <td><a  href="">{{ $job->status }} </a></td>
+           			<td><a  href="/job_details/{{$job->id}}">{{ $job->id }}</a></td>
+	                <td><a  href="/job_details/{{$job->id}}">{{ $job->status }}</a></td>
                <td> {{ $job->created_at }} </td>
 				 <td> {{ $job->updated_at  }} </td>
                 </tr>

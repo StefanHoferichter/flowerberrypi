@@ -572,5 +572,14 @@ class SensorController extends Controller
         
         return view('sensor_job_list', ['history' => $history, 'form_url' => $form_url]);
     }
+
+    public function show_job_details($id)
+    {
+        $sensor_values = SensorValue::where('job_id', $id)->orderBy('created_at')->get();
+        $pictures = Picture::where('job_id', $id)->orderBy('created_at')->get();
+        $watering_decisions = WateringDecision::where('job_id', $id)->get();
+        
+        return view('job_details_list', ['sensor_values' => $sensor_values, 'pictures' => $pictures, 'watering_decisions' => $watering_decisions]);
+    }
     
 }

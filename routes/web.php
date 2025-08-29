@@ -17,6 +17,7 @@ Route::get('/soil_moistures', 'App\Http\Controllers\SensorController@show_soil_m
 Route::get('/camera', 'App\Http\Controllers\SensorController@show_camera');
 Route::post('/camera', 'App\Http\Controllers\SensorController@make_picture');
 Route::get('/jobs', 'App\Http\Controllers\SensorController@show_jobs');
+Route::get('/job_details/{id}', 'App\Http\Controllers\SensorController@show_job_details');
 Route::post('/trigger_job', 'App\Http\Controllers\SensorController@triggerJob');
 Route::get('/forecast', 'App\Http\Controllers\ForecastController@read_daily_api');
 Route::get('/zones', 'App\Http\Controllers\SensorController@show_zones');
