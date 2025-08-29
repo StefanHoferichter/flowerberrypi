@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\DBLock;
 use App\Helpers\GlobalStuff;
 use App\Models\Picture;
 use App\Models\SensorResult;
@@ -22,10 +23,22 @@ class SensorReader
             while (! $succ)
             {
                 Log::info('start reading temperatures ' . $sensor->gpio_in);
-                $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
+                $output = null;
+                while ($output === null)
+                {
+                    $output = DBLock::run('sensor_'. $sensor->id, 10, function () use ($sensor)
+                    {
+                        $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
+                        return $output;
+                    });
+                    
+                    if ($output === null)
+                        sleep(1);
+                }
                 Log::info('finished reading temperatures ' . $output);
                 
-                if (strpos($output, 'Fehler') !== false) {
+                if (strpos($output, 'Fehler') !== false) 
+                {
                     Log::info('error reading temperatures ' . $output);
                     sleep(2);
                 } 
@@ -62,7 +75,18 @@ class SensorReader
             if ($sensor->enabled > 0)
             {
                 Log::info('start reading distances ' . $sensor->gpio_out . ' ' . $sensor->gpio_in );
-                $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 20 2>&1');
+                $output = null;
+                while ($output === null)
+                {
+                    $output = DBLock::run('sensor_'. $sensor->id, 10, function () use ($sensor)
+                    {
+                        $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 20 2>&1');
+                        return $output;
+                    });
+                    
+                    if ($output === null)
+                        sleep(1);
+                }
                 Log::info('finished reading distance ' . $output);
                 
                 if (strpos($output, 'Fehler') !== false) {
@@ -88,7 +112,18 @@ class SensorReader
     public function read_i2c_bus()
     {
         Log::info('start reading i2c bus');
-        $output = shell_exec('sudo i2cdetect -y 1 2>&1');
+        $output = null;
+        while ($output === null)
+        {
+            $output = DBLock::run('i2cdetect', 10, function ()
+            {
+                $output = shell_exec('sudo i2cdetect -y 1 2>&1');
+                return $output;
+            });
+            
+            if ($output === null)
+                sleep(1);
+        }
         Log::info('finished reading i2c bus ' . $output);
         
         if (strpos($output, 'Fehler') !== false) {
@@ -138,7 +173,18 @@ class SensorReader
             {
                 usleep(500000); //halbe sekunde
                 Log::info('start reading moisture ' . $sensor->gpio_extra . ' ' . $sensor->gpio_in );
-                $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_humidity.py '. $sensor->gpio_extra . ' ' . $sensor->gpio_in . ' 2>&1');
+                $output = null;
+                while ($output === null)
+                {
+                    $output = DBLock::run('sensor_'. $sensor->id, 10, function () use ($sensor)
+                    {
+                        $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_humidity.py '. $sensor->gpio_extra . ' ' . $sensor->gpio_in . ' 2>&1');
+                        return $output;
+                    });
+                    
+                    if ($output === null)
+                        sleep(1);
+                }
                 Log::info('finished reading moisture ' . $output);
                 
                 if (strpos($output, 'Fehler') !== false) {
@@ -169,17 +215,30 @@ class SensorReader
     {
         $readings = [];
         
-        echo 1;
+//        echo 1;
         
         foreach ($sensors as $sensor)
         {
-            echo 2;
+//            echo 2;
             if ($sensor->enabled > 0)
             {
-                echo 3;
+//                echo 3;
                 $filename = 'pic_' . date('Y-m-d_H-i-s') . '.jpg';
-                echo $filename;
-                $output = shell_exec("rpicam-jpeg -o /var/www/html/flowerberrypi/public/" . $filename);
+//                echo $filename;
+                $output = null;
+                while ($output === null)
+                {
+                    $output = DBLock::run('sensor_'. $sensor->id, 10, function () use ($filename)
+                    {
+                        $output = shell_exec("rpicam-jpeg -o /var/www/html/flowerberrypi/public/" . $filename);
+                        $output = $filename;
+                        return $output;
+                    });
+                    
+                    if ($output === null)
+                        sleep(1);
+                }
+                
                 echo $output;
 
                 $newReading = new Picture();
