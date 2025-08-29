@@ -44,7 +44,7 @@
                     } 
                 @endphp            
 				 <td> {{ $enabled }} </td>
-               <td> {{ $sensor->zone->name }} </td>
+               <td><a  href="/zone_details/{{$sensor->zone->id}}">{{ $sensor->zone->name }}</a></td>
                 @php
                     if ($sensor->zone->enabled == 1) 
                     {
