@@ -348,11 +348,11 @@ class ProcessData implements ShouldQueue
         }
         if ($classification==2)
         {
-            $sleep=20;
+            $sleep=10;
         }
         if ($classification==3)
         {
-            $sleep=40;
+            $sleep=20;
         }
         
         $controller = new WateringController();
