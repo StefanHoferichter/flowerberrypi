@@ -27,10 +27,10 @@
       <header> 
         <nav>
               <div class="nav_logo"><a href="/"><img class="logo" src="/images/logo/flowerberrypi.jpg" alt="logo"></a></div>
+              <div class="nav_job"><a class="nav_item" href="/jobs">Jobs</a></div>
               <div class="nav_zones"><a class="nav_item" href="/zones">Zones</a></div>
               <div class="nav_sensors"><a class="nav_item"  href="/sensors">Sensors</a></div>
               <div class="nav_rs"><a class="nav_item"  href="/remote_sockets">Remote Sockets</a></div>
-              <div class="nav_job"><a class="nav_item" href="/jobs">Jobs</a></div>
               <div class="nav_forecast"><a class="nav_item" href="/forecast">Forecast</a></div>
               <div class="nav_manual"><a class="nav_item" href="/manual_watering">Manual Watering</a></div>
         </nav>

@@ -93,22 +93,22 @@
 		   margin-top:5px;
 		   margin-right:20px;
 		}
-		.nav_zones {
+		.nav_job {
 			grid-column: 2 / 3;
 		  grid-row:    1 / 2;		
 		  margin-left:20px; margin-right:20px;
 		}
-		.nav_sensors {
+		.nav_zones {
 			grid-column: 3 / 4;
 		  grid-row:    1 / 2;		
 		  margin-left:20px; margin-right:20px;
 		}
-		.nav_rs {
+		.nav_sensors {
 			grid-column: 4 / 5;
 		  grid-row:    1 / 2;		
 		  margin-left:20px; margin-right:20px;
 		}
-		.nav_job {
+		.nav_rs {
 			grid-column: 5 / 6;
 		  grid-row:    1 / 2;		
 		  margin-left:20px; margin-right:20px;
