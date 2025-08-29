@@ -10,17 +10,37 @@
 
 		<div class="data-container">
             <div class="grid-item">
-        	<h2>Current</h2>
-              Date: {{ $forecast->day}}<br>
-              Min temperature: {{ $forecast->min_temp }} °C<br>
-              Max temperature: {{ $forecast->max_temp }} °C<br>
-              Rain Sum: {{ $forecast->rain_sum}} mm<br>
-              Sunshine: {{ $forecast->sunshine_duration }} s<br>
-              Classification: {{ $forecast->classification }}<br><br>
+        	<h2>Current Daily Forecast</h2>
+            <table border="1" cellpadding="5" cellspacing="0">
+                    <tr>
+                        <th>Day</th>
+                        <th>Min Temperature (°C)</th>
+                        <th>Max Temperature (°C)</th>
+                        <th>Rain Sum (mm)</th>
+                        <th>Sunshine Duration (s)</th>
+                        <th>Classification</th>
+                    </tr>
+                        <tr>
+                            <td>{{ $forecast->day}}</td>
+                            <td>{{ $forecast->min_temp }}</td>
+                            <td>{{ $forecast->max_temp }}</td>
+                            <td>{{ $forecast->rain_sum}}</td>
+                            <td>{{ $forecast->sunshine_duration }}</td>
+                            <td>{{ $forecast->classification }}</td>
+                        </tr>
+            </table>        
         	</div>
   
+        	<h2>Current Hourly Forecast</h2>
             <div class="grid-item">
             <table border="1" cellpadding="5" cellspacing="0">
+                    <tr>
+                        <th>Date</th>
+                        <th>Hour</th>
+                        <th>Temperature</th>
+                        <th>Precipitation</th>
+                        <th>Cloud Cover</th>
+                    </tr>
                     @foreach($hourly_forecast as $hwf) 
                         <tr>
                             <td>{{ $hwf->day }}</td>
@@ -34,7 +54,7 @@
         	</div>
         	
             <div class="grid-item">
-        	<h2>History</h2>
+        	<h2>History Daily Forecasts</h2>
 
             <table border="1" cellpadding="5" cellspacing="0">
                 <thead>
