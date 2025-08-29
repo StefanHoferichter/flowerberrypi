@@ -28,7 +28,6 @@ class ProcessData implements ShouldQueue
      */
     public function __construct()
     {
-        //
     }
 
     /**
@@ -39,6 +38,7 @@ class ProcessData implements ShouldQueue
         Log::info('######### start handling hourly job');
         
         $job = new SensorJob();
+        $job->status = "S";
         $job->save();
 
         $hour = date('G');
@@ -62,6 +62,9 @@ class ProcessData implements ShouldQueue
         $this->make_watering_decisions($job, $tod, $day, $hour);
         
         $this->execute_watering_decisions($job, $tod, $day);
+        
+        $job->status = "E";
+        $job->save();
         
         Log::info('######### finished handling hourly job');
     }

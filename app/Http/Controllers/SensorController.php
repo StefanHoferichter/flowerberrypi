@@ -10,7 +10,7 @@ use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorValue;
 use App\Models\WateringDecision;
-use App\Models\WeatherForecast;
+use App\Models\SensorJob;
 use App\Models\Zone;
 use App\Services\SensorReader;
 use App\Services\WateringController;
@@ -553,17 +553,24 @@ class SensorController extends Controller
     }
     
     
-    public function triggerJob()
+    public function triggerJob(Request $request)
     {
-//        if ($request->adhoc == "true")
-//          ProcessData::dispatchSync();
+        if ($request->adhoc == "true")
+            ProcessData::dispatchSync();
+        else
             ProcessData::dispatch();
-            //            else
-//                SpellcheckBackgroundJob::dispatch($sc);
-                
-        $sensors = Sensor::all();
         
-        return view('sensor_list', ['sensors' => $sensors]);
+        return redirect('/jobs');
+    }
+    
+    public function show_jobs(Request $request)
+    {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
+        $history = SensorJob::where('created_at', '>=', $horizon)->orderBy('created_at')->get();
+        $form_url = "/jobs";
+        
+        return view('sensor_job_list', ['history' => $history, 'form_url' => $form_url]);
     }
     
 }
