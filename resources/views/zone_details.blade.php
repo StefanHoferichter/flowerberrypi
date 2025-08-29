@@ -45,13 +45,6 @@
                 <tbody>
         	
             @foreach($sensors as $sensor) 
-               <tr>
-           			<td> {{ $sensor->id }} </td>
-               
-                @php
-                        $action = \App\Helpers\GlobalStuff::get_url_from_sensor_type($sensor->sensor_type);
-                @endphp            
-              <td><a  href="{{ $action }}">{{ $sensor->name }} </a></td>
                 @php
                     if ($sensor->enabled == 1) 
                     {
@@ -61,8 +54,12 @@
                     {
                         $enabled = 'disabled';
                     } 
+                    $action = \App\Helpers\GlobalStuff::get_url_from_sensor_type($sensor->sensor_type);
                 @endphp            
-				 <td> {{ $enabled }} </td>
+               <tr>
+           			<td class="{{$enabled}}"> {{ $sensor->id }} </td>
+              <td class="{{$enabled}}"><a  class="{{$enabled}}" href="{{ $action }}">{{ $sensor->name }} </a></td>
+				 <td class="{{$enabled}}"> {{ $enabled }} </td>
                 </tr>
              
             @endforeach

@@ -24,9 +24,6 @@
                 <tbody>
         	
             @foreach($zones as $zone) 
-                        <tr>
-              <td>{{ $zone->id }}</td>
-              <td><a href="/zone_details/{{$zone->id}}">{{ $zone->name }} </a></td>
                 @php
                     if ($zone->enabled == 1) 
                     {
@@ -42,7 +39,7 @@
                 		if ($sensor->zone_id == $zone->id)
                 		{
                 			$action = \App\Helpers\GlobalStuff::get_url_from_sensor_type($sensor->sensor_type);
-                			$sensor_list= $sensor_list . '<a href="' . $action . '">'. $sensor->name . '</a>, ';
+                			$sensor_list= $sensor_list . '<a  class="' . $enabled .'" href="' . $action . '">'. $sensor->name . '</a>, ';
                 		}
                 	}   
                 	$rs_list="";
@@ -53,11 +50,14 @@
                 		
                 	}   
                 @endphp
+                  <tr>
+                      <td class="{{$enabled}}">{{ $zone->id }}</td>
+                      <td class="{{$enabled}}"><a  class="{{$enabled}}" href="/zone_details/{{$zone->id}}">{{ $zone->name }} </a></td>
                             
-				 <td> {{ $enabled }} </td>
-				 <td> {!! $sensor_list !!} </td>
-				 <td> <a href="/remote_sockets">{{ $rs_list }} </a></td>
-                </tr>
+    				 <td class="{{$enabled}}"> {{ $enabled }} </td>
+    				 <td class="{{$enabled}}"> {!! $sensor_list !!} </td>
+    				 <td class="{{$enabled}}"> <a  class="{{$enabled}}" href="/remote_sockets">{{ $rs_list }} </a></td>
+                    </tr>
              
             @endforeach
                 </tbody>

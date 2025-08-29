@@ -10,6 +10,8 @@
    html{color:black;background:white;text-size-adjust: none; -webkit-text-size-adjust: none;}
    .home,.dsgvo,h1,h2,h3,h4,h5,nav,.footer_menu{font-family:clean,sans-serif;}
    .home{font-weight:normal;color:black}
+   .disabled{font-weight:normal;color:gray}
+   .enabled{font-weight:normal;color:black}
    h1,h2,h3,h4,h5{font-weight:bold;color:black}
    a{color:black;text-decoration-line:underline;white-space:nowrap}
    .contact{padding: 5px}

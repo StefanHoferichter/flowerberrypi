@@ -73,7 +73,7 @@ class SensorController extends Controller
         $rain_sensitive = $zone->rain_sensitive;
         //        echo $outdoor;
         
-        $sensors = Sensor::where('zone_id', $id)->where('enabled', 1)->get();
+        $sensors = Sensor::where('zone_id', $id)->get();
                 
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
 //        echo ($horizon);
