@@ -15,7 +15,7 @@ def error_exit(msg):
 
 # --- Argumente prüfen ---
 if len(sys.argv) != 3:
-    print("❌ Verwendung: python3 read_ads_channel.py <i2c_address> <Kanalnummer 0-3>")
+    print("❌ Verwendung: python3 php_read_soil_moisture.py <i2c_address> <Kanalnummer 0-3>")
     sys.exit(1)
 
 # I2C-Adresse parsen

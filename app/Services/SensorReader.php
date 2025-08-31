@@ -208,7 +208,7 @@ class SensorReader
                 {
                     $output = DBLock::run('sensor_'. $sensor->id, 10, function () use ($sensor)
                     {
-                        $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_humidity.py '. $sensor->gpio_extra . ' ' . $sensor->gpio_in . ' 2>&1');
+                        $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_soil_moisture.py '. $sensor->gpio_extra . ' ' . $sensor->gpio_in . ' 2>&1');
                         return $output;
                     });
                     

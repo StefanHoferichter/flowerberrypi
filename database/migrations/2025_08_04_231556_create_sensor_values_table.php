@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('job_id');
             $table->unsignedBigInteger('sensor_id');
+            $table->foreign('sensor_id')->references('id')->on('sensors');
             $table->date('day');
             $table->unsignedInteger('hour');
-            $table->unsignedInteger('type');
+            $table->unsignedBigInteger('type');
+            $table->foreign('type')->references('id')->on('sensor_value_types');
             $table->double('value', $precision = 8, $scale = 2);
             $table->unsignedInteger('classification');
             $table->timestamps();
