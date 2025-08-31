@@ -59,11 +59,11 @@
             <table border="1" cellpadding="5" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Min Temp</th>
-                        <th>Max Temp</th>
-                        <th>Rain Sum</th>
-                        <th>Sunshine</th>
+                        <th>Day</th>
+                        <th>Min Temperature (°C)</th>
+                        <th>Max Temperature (°C)</th>
+                        <th>Rain Sum (mm)</th>
+                        <th>Sunshine Duration (s)</th>
                         <th>Classification</th>
                     </tr>
                 </thead>

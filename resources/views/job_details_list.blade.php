@@ -18,6 +18,7 @@
                         <th>Day</th>
                         <th>Hour</th>
                         <th>Sensor Id</th>
+                        <th>Sensor</th>
                         <th>Type</th>
                         <th>Value</th>
                         <th>Classification</th>
@@ -30,7 +31,8 @@
                             <td>{{ $hist->day }}</td>
                             <td>{{ $hist->hour }}</td>
                             <td>{{ $hist->sensor_id }}</td>
-                            <td>{{ $hist->type }}</td>
+                            <td>{{ $hist->sensor->name }}</td>
+                            <td>{{ $hist->sensor_value_type->name }}</td>
                             <td>{{ $hist->value }}</td>
                             <td>{{ $hist->classification }}</td>
                             <td>{{ $hist->created_at }}</td>

@@ -570,7 +570,7 @@ class SensorController extends Controller
 
     public function show_job_details($id)
     {
-        $sensor_values = SensorValue::where('job_id', $id)->orderBy('created_at')->get();
+        $sensor_values = SensorValue::with('sensor_value_type')->with('sensor')->where('job_id', $id)->orderBy('created_at')->get();
         $pictures = Picture::where('job_id', $id)->orderBy('created_at')->get();
         $watering_decisions = WateringDecision::where('job_id', $id)->get();
         
