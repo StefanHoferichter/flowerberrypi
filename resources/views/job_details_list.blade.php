@@ -61,9 +61,11 @@
                     <tr>
                         <th>Day</th>
                         <th>Time of Day</th>
+                        <th>Zone</th>
                         <th>Type</th>
                         <th>Forecast</th>
-                        <th>Humidity</th>
+                        <th>Soil Moisture</th>
+                        <th>Distance</th>
                         <th>Watering</th>
                     </tr>
                 </thead>
@@ -72,9 +74,11 @@
                         <tr>
               <td>{{ $dec->day }} </a></td>
 				 <td> {{ $dec->tod  }} </td>
+				 <td> {{ $dec->zone_id  }} </td>
 				 <td> {{ $dec->type }} </td>
 				 <td> {{ $dec->forecast_classification }} </td>
 				 <td> {{ $dec->humidity_classification }} </td>
+				 <td> {{ $dec->distance_classification }} </td>
 				 <td> {{ $dec->watering_classification }} </td>
                 </tr>
             @endforeach

@@ -31,9 +31,21 @@
                 <tbody>
         	
             @foreach($history as $job) 
-               <tr>
-           			<td><a  href="/job_details/{{$job->id}}">{{ $job->id }}</a></td>
-	                <td><a  href="/job_details/{{$job->id}}">{{ $job->status }}</a></td>
+               @php
+               		$hour = \Carbon\Carbon::parse($job->created_at)->hour;
+                    if (\App\Helpers\GlobalStuff::is_first_hour_of_tod($hour)) 
+                    {
+                        $highlighted = ' class="highlighted" ';
+                    } 
+                    else 
+                    {
+                        $highlighted = ' ';
+                    } 
+                @endphp            
+            
+               <tr {!! $highlighted !!}>
+           			<td><a {!! $highlighted !!} href="/job_details/{{$job->id}}">{{ $job->id }}</a></td>
+	                <td><a {!!$highlighted!!} href="/job_details/{{$job->id}}">{{ $job->status }}</a></td>
                <td> {{ $job->created_at }} </td>
 				 <td> {{ $job->updated_at  }} </td>
                 </tr>

@@ -4,8 +4,10 @@ namespace App\Services;
 
 use App\Helpers\DBLock;
 use App\Helpers\GlobalStuff;
+use App\Models\PercentageConversion;
 use App\Models\Picture;
 use App\Models\SensorResult;
+use App\Models\SensorValue;
 use App\Models\TemperatureSensorResult;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -74,6 +76,8 @@ class SensorReader
         {
             if ($sensor->enabled > 0)
             {
+                $conv = PercentageConversion::where('sensor_id', $sensor->id)->first();
+                
                 Log::info('start reading distances ' . $sensor->gpio_out . ' ' . $sensor->gpio_in );
                 $output = null;
                 while ($output === null)
@@ -93,14 +97,24 @@ class SensorReader
                     //                echo "Fehler beim Auslesen des DHT11-Sensors.";
                 } else {
                     list($v0) = explode(",", trim($output));
- //                          echo "Entfernung 0: {$v0}<br>";
+                    $current_value=(float)$v0;
+                    Log::info('raw value ' . $current_value);
+                    $perc = ($current_value-$conv->lower_limit)/($conv->upper_limit-$conv->lower_limit)*100.0;
+                    if ($conv->invert > 0)
+                        $perc = 100.0 - $perc;
+                    Log::info('converted value ' . $perc);
+                    $value = $this->calculate_moving_average($perc, $sensor);
+                    $value = round($value, 1);
+                    Log::info('moving average value ' . $value);
+                    
                     $newReading = new SensorResult();
-                    $newReading->value=(float)$v0;
+                    $newReading->value=$value;
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
                     $newReading->zone_id=$sensor->zone_id;
                     $newReading->zone_name=$sensor->zone->name;
                     $newReading->classification=GlobalStuff::get_classification_from_distance($newReading->value);
+                                            
                     array_push($readings, $newReading);
                 }
             }
@@ -109,6 +123,20 @@ class SensorReader
         return $readings;
     }
 
+    private function calculate_moving_average($current_value, $sensor)
+    {
+        $vector = [];
+        $hist = SensorValue::where('sensor_id', $sensor->id)->latest()->take(9)->get();
+        foreach($hist as $h)
+        {
+            array_push($vector, $h->value);
+        }
+        array_push($vector, $current_value);
+        $ma = round (array_sum($vector) / count($vector), 1);
+        
+        return $ma;
+    }
+    
     public function read_i2c_bus()
     {
         Log::info('start reading i2c bus');
@@ -172,6 +200,8 @@ class SensorReader
             if ($sensor->enabled > 0)
             {
                 usleep(500000); //halbe sekunde
+                $conv = PercentageConversion::where('sensor_id', $sensor->id)->first();
+                
                 Log::info('start reading moisture ' . $sensor->gpio_extra . ' ' . $sensor->gpio_in );
                 $output = null;
                 while ($output === null)
@@ -191,16 +221,22 @@ class SensorReader
                     //                echo "Fehler beim Auslesen des DHT11-Sensors.";
                 } else {
                     list($v0) = explode(",", trim($output));
+                    Log::info('raw value ' . $v0);
                     //                echo "Entfernung 0: {$v0}<br>";
+                    $perc = ($v0-$conv->lower_limit)/($conv->upper_limit-$conv->lower_limit)*100.0;
+                    if ($conv->invert > 0)
+                        $perc = 100.0 - $perc;
+//                        echo "abs {$v0} in % {$perc}<br>";
+                    $perc = round($perc, 1);
+                    Log::info('converted value ' . $perc);
                     $newReading = new SensorResult();
-                    $newReading->value=$v0;
+                    $newReading->value=$perc;
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
                     $newReading->zone_id=$sensor->zone_id;
                     $newReading->zone_name=$sensor->zone->name;
                     $classification = GlobalStuff::get_classification_from_soil_moisture($newReading->value);
                     $newReading->classification=$classification;
- //                   echo "{$newReading->zone_name}<br>";
                     
                     array_push($readings, $newReading);
                 }

@@ -73,9 +73,9 @@
                     <tr>
                         <th>Day</th>
                         <th>Time of Day</th>
-                        <th>Type</th>
                         <th>Forecast</th>
-                        <th>Humidity</th>
+                        <th>Soil Moisture</th>
+                        <th>Tank</th>
                         <th>Watering</th>
                     </tr>
                 </thead>
@@ -84,9 +84,9 @@
                         <tr>
               <td>{{ $dec->day }} </a></td>
 				 <td> {{ $dec->tod  }} </td>
-				 <td> {{ $dec->type }} </td>
 				 <td> {{ $dec->forecast_classification }} </td>
-				 <td> {{ $dec->humidity_classification }} </td>
+				 <td> {{ $dec->soil_moisture_classification }} </td>
+				 <td> {{ $dec->tank_classification }} </td>
 				 <td> {{ $dec->watering_classification }} </td>
                 </tr>
             @endforeach
@@ -98,10 +98,7 @@
                 <thead>
                     <tr>
                         <th>Day</th>
-                        <th>Time of Day</th>
-                        <th>Type</th>
-                        <th>Forecast</th>
-                        <th>Humidity</th>
+                        <th>Hour</th>
                         <th>Watering</th>
                     </tr>
                 </thead>
@@ -109,10 +106,7 @@
             @foreach($manual_decisions as $dec) 
                         <tr>
               <td>{{ $dec->day }} </a></td>
-				 <td> {{ $dec->tod  }} </td>
-				 <td> {{ $dec->type }} </td>
-				 <td> {{ $dec->forecast_classification }} </td>
-				 <td> {{ $dec->humidity_classification }} </td>
+				 <td> {{ $dec->hour  }} </td>
 				 <td> {{ $dec->watering_classification }} </td>
                 </tr>
             @endforeach

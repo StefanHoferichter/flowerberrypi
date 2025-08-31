@@ -123,7 +123,7 @@ class SensorSeeder extends Seeder
         ]);
         DB::table('sensors')->insert([
             'name' => 'ADS1115 Moisture Sensor B Geranie',
-            'enabled' => '0',
+            'enabled' => '1',
             'sensor_type' => '6',
             'zone_id' => '2',
             'GPIO_IN' => '1',

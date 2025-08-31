@@ -68,9 +68,9 @@ class GlobalStuff
     public static function get_classification_from_soil_moisture($value)
     {
         if ($value < GlobalStuff::get_soil_moisture_threshold_low())
-            $classification=1;
-        else if ($value > GlobalStuff::get_soil_moisture_threshold_high())
             $classification=3;
+        else if ($value > GlobalStuff::get_soil_moisture_threshold_high())
+            $classification=1;
         else
             $classification=2;
                     
@@ -79,16 +79,24 @@ class GlobalStuff
     
     public static function get_soil_moisture_threshold_low()
     {
-        return 1.7;
+        return 40.0;
     }
     public static function get_soil_moisture_threshold_high()
     {
-        return 2.3;
+        return 65.0;
     }
     
     public static function get_classification_from_distance($value)
     {
         $classification=0;
+        
+        if ($value < 10.0)
+            $classification=3;
+        else if ($value < 20.0)
+            $classification=2;
+        else
+            $classification=1;
+                    
                     
         return $classification;
     }

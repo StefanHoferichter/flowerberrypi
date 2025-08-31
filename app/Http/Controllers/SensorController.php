@@ -10,6 +10,7 @@ use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorValue;
 use App\Models\WateringDecision;
+use App\Models\ManualWateringDecision;
 use App\Models\SensorJob;
 use App\Models\Zone;
 use App\Services\SensorReader;
@@ -28,7 +29,7 @@ class SensorController extends Controller
     public function show_manual_watering()
     {
         $horizon = Carbon::now()->subDays(2)->toDateString();
-        $manual_waterings = WateringDecision::where('day', '>=', $horizon)->where('type', '2')->get();
+        $manual_waterings = ManualWateringDecision::where('day', '>=', $horizon)->get();
         $zones = Zone::all();
         
         return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings]);
@@ -36,19 +37,15 @@ class SensorController extends Controller
     
     public function show_manual_watering2(Request $request)
     {
-        $wd = new WateringDecision();
+        $wd = new ManualWateringDecision();
         $wd->zone_id = $request->zone_id;
         $wd->watering_classification = $request->watering_classification;
-        $wd->forecast_classification = 0;
-        $wd->humidity_classification = 0;
-        $wd->type = 2;
-        $wd->executed = 1;
         $wd->day =$request->day;
-        $wd->tod =$request->tod;
+        $wd->hour =$request->hour;
         $wd->save();
         
         $horizon = Carbon::now()->subDays(2)->toDateString();
-        $manual_waterings = WateringDecision::where('day', '>=', $horizon)->where('type', '2')->get();
+        $manual_waterings = ManualWateringDecision::where('day', '>=', $horizon)->get();
         $zones = Zone::all();
         
         return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings]);
@@ -127,7 +124,7 @@ class SensorController extends Controller
                         $data[] = 0.0;
                 }
                 $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->name,
-                    'unit' => 'V',
+                    'unit' => '%',
                     'values' => $data,
                 ];
             }
@@ -161,12 +158,14 @@ class SensorController extends Controller
                         $data[] = 0.0;
                 }
                 $timeSeries[] = ['name' => 'Water level ' . $sensor->name,
-                    'unit' => 'cm',
+                    'unit' => '%',
                     'values' => $data,
                 ];
             }
         }
 
+        $hourly_forecast_temperature = [];
+        $hourly_forecast_precipitation = [];
         $hourly_forecast_history = HourlyWeatherForecast::where('day', '>=', $horizon)->get();
         foreach ($temp_history as $temp)
         {
@@ -210,16 +209,17 @@ class SensorController extends Controller
                 ];
             }
         }
-        $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '1')->get();
-        $manual_decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->where('type', '2')->get();
+        $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
+        $manual_decisions = ManualWateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
         
         $watering = [];
         $manual_watering = [];
         foreach ($temp_history as $temp)
         {
             $day=$temp->created_at->format(('Y-m-d'));
-            $tod=GlobalStuff::get_tod_from_hour($temp->created_at->format('H'));
-            $ifh=GlobalStuff::is_first_hour_of_tod($temp->created_at->format('H'));
+            $hour=$temp->created_at->format('H');
+            $tod=GlobalStuff::get_tod_from_hour($hour);
+            $ifh=GlobalStuff::is_first_hour_of_tod($hour);
 //            echo $day . " " . $temp->created_at->format('H') . " " . $tod . " " . $ifh . " ";
             $found = false;
             foreach ($decisions as $dec)
@@ -249,15 +249,10 @@ class SensorController extends Controller
             foreach ($manual_decisions as $dec)
             {
                 if ($day == $dec->day and
-                    $tod == $dec->tod)
+                    $hour == $dec->hour)
                 {
                     $found = true;
-                    if ($ifh)
-                    {
-                        $manual_watering[] = 3;
-                    }
-                    else
-                        $manual_watering[] = 0;
+                    $manual_watering[] = $dec->watering_classification;
                     break;
                 }
             }
@@ -277,8 +272,8 @@ class SensorController extends Controller
         
         if ($found_moistures)
             $thresholds = [
-                ['y' => GlobalStuff::get_soil_moisture_threshold_low(), 'unit' => 'V', 'label' => 'Soil Moisture 1'],
-                ['y' => GlobalStuff::get_soil_moisture_threshold_high(), 'unit' => 'V', 'label' => 'Soil Moisture 2'],
+                ['y' => GlobalStuff::get_soil_moisture_threshold_low(), 'unit' => '%', 'label' => 'Soil Moisture 1'],
+                ['y' => GlobalStuff::get_soil_moisture_threshold_high(), 'unit' => '%', 'label' => 'Soil Moisture 2'],
                 ['y' => GlobalStuff::get_temperature_threshold_low(), 'unit' => '°C', 'label' => 'Temperature 1'],
                 ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
             ];

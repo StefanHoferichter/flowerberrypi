@@ -124,7 +124,7 @@ class ProcessData implements ShouldQueue
             $v->sensor_id=$reading->sensor_id;
             $v->hour = date('G');
             $v->day = date('Y-m-d');
-            $v->classification=0;
+            $v->classification=$reading->classification;
             $exists = SensorValue::where('day', $v->day)->where('hour', $v->hour)->where('type', $v->type)->where('sensor_id', $v->sensor_id)->exists();
             if (!$exists)
                 $v->save();
@@ -223,12 +223,13 @@ class ProcessData implements ShouldQueue
                 foreach($zones as $zone)
                 {
                     Log::info('analyzing zone ' . $zone->name);
-                    $exists = WateringDecision::where('day', $day)->where('tod', $tod)->where('zone_id', $zone->id)->where('type', '1')->exists();
+                    $exists = WateringDecision::where('day', $day)->where('tod', $tod)->where('zone_id', $zone->id)->exists();
                     if (!$exists)
                     {
                         Log::info('no watering decision found for ' . $zone->name . ' tod ' .  $tod);
                         $sensors = Sensor::where('zone_id', $zone->id)->get();
-                        $max_humidity_classification = 0;
+                        $max_moisture_classification = 0;
+                        $max_tank_classification = 0;
                         foreach($sensors as $sensor)
                         {
                             Log::info('analyzing sensor ' . $sensor->name . ' ' .  $sensor->sensor_type);
@@ -236,27 +237,42 @@ class ProcessData implements ShouldQueue
                             {
                                 Log::info('analyzing sensor ' . $sensor->id . ' hour ' . $hour);
                                 $v = SensorValue::where('sensor_id', $sensor->id)->where('day', $day)->where('hour', $hour)->first();
-                                Log::info('humidity classification ' . $v->classification);
+                                Log::info('moisture classification ' . $v->classification);
                                 
-                                if ($max_humidity_classification < $v->classification)
-                                    $max_humidity_classification = $v->classification;
+                                if ($max_moisture_classification < $v->classification)
+                                    $max_moisture_classification = $v->classification;
+                            }
+                            if ($sensor->sensor_type == 5 and $sensor->enabled)
+                            {
+                                Log::info('analyzing sensor ' . $sensor->id . ' hour ' . $hour);
+                                $v = SensorValue::where('sensor_id', $sensor->id)->where('day', $day)->where('hour', $hour)->first();
+                                Log::info('tank classification ' . $v->classification);
+                                
+                                if ($max_tank_classification < $v->classification)
+                                    $max_tank_classification = $v->classification;
                             }
                         }
                         $wd = new WateringDecision();
                         $wd->zone_id=$zone->id;
-                        $wd->humidity_classification=$max_humidity_classification;
+                        $wd->soil_moisture_classification=$max_moisture_classification;
+                        $wd->tank_classification=$max_tank_classification;
                         if ($zone->outdoor)
                             $wd->forecast_classification=$wf->classification;
                         else
                             $wd->forecast_classification=$tempSensor->classification;
                         $wd->day=date('Y-m-d');
                         $wd->tod=$tod;
-                        $wd->type=1;
                         
-                        if ($wd->humidity_classification == 1)
+                        if ($wd->soil_moisture_classification == 1)
                             $wd->watering_classification = 1;
                         else
-                            $wd->watering_classification=($wd->humidity_classification + $wd->forecast_classification) /2 ;
+                            $wd->watering_classification=($wd->soil_moisture_classification + $wd->forecast_classification) /2 ;
+                        
+                        if ($wd->tank_classification == 3 and $wd->watering_classification > 1)
+                        {
+                            Log::info('lowering watering decision for zone ' . $wd->zone_id . ' because of high distance classification');
+                            $wd->watering_classification--;
+                        }
                         $wd->job_id=$job->id;
                         $wd->save();
                         Log::info('watering decision for zone ' . $wd->zone_id . ' is ' . $wd->watering_classification);
@@ -348,11 +364,11 @@ class ProcessData implements ShouldQueue
         }
         if ($classification==2)
         {
-            $sleep=10;
+            $sleep=5;
         }
         if ($classification==3)
         {
-            $sleep=20;
+            $sleep=10;
         }
         
         $controller = new WateringController();

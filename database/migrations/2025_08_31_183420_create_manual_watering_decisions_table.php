@@ -11,17 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('watering_decisions', function (Blueprint $table) {
+        Schema::create('manual_watering_decisions', function (Blueprint $table) {
             $table->id();
             $table->date('day');
-            $table->unsignedInteger('tod');
-            $table->foreignId('job_id')->constrained('sensor_jobs');
+            $table->unsignedInteger('hour');
             $table->foreignId('zone_id')->constrained('zones');
-            $table->unsignedInteger('forecast_classification');
-            $table->unsignedInteger('soil_moisture_classification');
-            $table->unsignedInteger('tank_classification')->default(0);
             $table->unsignedInteger('watering_classification');
-            $table->boolean('executed')->default(false);
             $table->timestamps();
         });
     }
@@ -31,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('watering_decisions');
+        Schema::dropIfExists('manual_watering_decisions');
     }
 };

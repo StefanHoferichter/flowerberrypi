@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sensor_jobs', function (Blueprint $table) {
+        Schema::create('percentage_conversions', function (Blueprint $table) {
             $table->id();
-            $table->String('status')->default('Q');
+            $table->unsignedInteger('sensor_id');
+            $table->double('lower_limit', $precision = 8, $scale = 2);
+            $table->double('upper_limit', $precision = 8, $scale = 2);
+            $table->unsignedInteger('invert');
             $table->timestamps();
         });
     }
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sensor_jobs');
+        Schema::dropIfExists('percentage_conversions');
     }
 };

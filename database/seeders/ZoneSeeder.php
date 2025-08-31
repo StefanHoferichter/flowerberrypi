@@ -17,7 +17,7 @@ class ZoneSeeder extends Seeder
             'name' => 'All Zones',
             'enabled' => '1',
             'has_watering' => '0',
-            'rain_sensitive' => '1',
+            'rain_sensitive' => '0',
             'outdoor' => '0',
         ]);
         DB::table('zones')->insert([
@@ -37,8 +37,8 @@ class ZoneSeeder extends Seeder
         DB::table('zones')->insert([
             'name' => 'SZ innen, no pump',
             'enabled' => '1',
-            'has_watering' => '1',
-            'rain_sensitive' => '1',
+            'has_watering' => '0',
+            'rain_sensitive' => '0',
             'outdoor' => '0',
         ]);
         DB::table('zones')->insert([
