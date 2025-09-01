@@ -4,7 +4,7 @@ import time
 import pigpio
 
 PULSE_LENGTH = 185  # exakt wie in 433Utils
-REPEAT = 10         # wie oft der Code gesendet wird
+REPEAT = 20         # wie oft der Code gesendet wird
 BITS = 24           # codesend sendet immer 24 Bits
 DEFAULT_GPIO = 17
 
@@ -37,7 +37,7 @@ def send_code(pi, gpio_pin, code):
         for _ in range(REPEAT):
             pi.wave_send_once(wave_id)
             while pi.wave_tx_busy():
-                time.sleep(0.002)
+                time.sleep(0.01)
         pi.wave_delete(wave_id)
     else:
         print("❌ Wellenform konnte nicht erstellt werden.")

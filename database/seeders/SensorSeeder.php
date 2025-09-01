@@ -86,10 +86,10 @@ class SensorSeeder extends Seeder
             'GPIO_EXTRA' => '0',
         ]);
         DB::table('sensors')->insert([
-            'name' => 'HC-SR04 Ultrasonic B',
-            'enabled' => '0',
+            'name' => 'HC-SR04 Ultrasonic B Geranie',
+            'enabled' => '1',
             'sensor_type' => '5',
-            'zone_id' => '3',
+            'zone_id' => '2',
             'GPIO_IN' => '7',
             'GPIO_OUT' => '8',
             'GPIO_EXTRA' => '0',

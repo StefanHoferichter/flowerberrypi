@@ -264,9 +264,15 @@ class ProcessData implements ShouldQueue
                         $wd->tod=$tod;
                         
                         if ($wd->soil_moisture_classification == 1)
+                        {
+                            Log::info('watering decision for zone ' . $wd->zone_id . ' is 1 because of high moisture classification');
                             $wd->watering_classification = 1;
+                        }
                         else
+                        {
+                            Log::info('watering decision for zone ' . $wd->zone_id . ' is avg of moisture and temp classification');
                             $wd->watering_classification=($wd->soil_moisture_classification + $wd->forecast_classification) /2 ;
+                        }
                         
                         if ($wd->tank_classification == 3 and $wd->watering_classification > 1)
                         {
@@ -329,7 +335,7 @@ class ProcessData implements ShouldQueue
         if ($classification==1)
         {
             $loops=0;
-            $sleep=1;
+            $sleep=2;
         }
         if ($classification==2)
         {
@@ -344,11 +350,15 @@ class ProcessData implements ShouldQueue
         
         for ($i = 0; $i < $loops; $i++)
         {
+            Log::info('switching  off remote socket ' . $remoteSocket->name . ' as stability measure');
+            $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_off);
+            sleep(2);
             Log::info('switching  on remote socket ' . $remoteSocket->name);
             $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_on);
             sleep($sleep);
             $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_off);
             Log::info('switching off remote socket ' . $remoteSocket->name);
+            sleep(2);
         }
 
         Log::info('finished watering with remote socket ' . $remoteSocket->name);

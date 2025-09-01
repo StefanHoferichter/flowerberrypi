@@ -232,7 +232,11 @@ class SensorController extends Controller
                     {
                         $wc = $dec->watering_classification;
                         if ($wc == 1)
-                            $wc = 0.1;
+                            $wc = 10.0;
+                        if ($wc == 2)
+                            $wc = 50.0;
+                        if ($wc == 3)
+                            $wc = 100.0;
                         $watering[] = $wc;
                     }
                     else
@@ -252,7 +256,14 @@ class SensorController extends Controller
                     $hour == $dec->hour)
                 {
                     $found = true;
-                    $manual_watering[] = $dec->watering_classification;
+                    $wc = $dec->watering_classification;
+                    if ($wc == 1)
+                        $wc = 10.0;
+                    if ($wc == 2)
+                        $wc = 50.0;
+                    if ($wc == 3)
+                        $wc = 100.0;
+                    $manual_watering[] = $wc;
                     break;
                 }
             }
@@ -262,11 +273,11 @@ class SensorController extends Controller
             }
         }
         $timeSeries[] = ['name' => 'Watering',
-            'unit' => 'l',
+            'unit' => '%',
             'values' => $watering,
         ];
         $timeSeries[] = ['name' => 'Manual Watering',
-            'unit' => 'l',
+            'unit' => '%',
             'values' => $manual_watering,
         ];
         
