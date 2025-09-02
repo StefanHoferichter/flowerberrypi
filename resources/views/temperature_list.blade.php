@@ -26,9 +26,6 @@
                     </tr>
                 </thead>
                 <tbody>
-        </tr>
-    </thead>
-    <tbody>
             @foreach($readings as $reading) 
              <tr>
                 <td>{{ $reading->sensor_id }}</td>
@@ -39,10 +36,9 @@
                 <td><a href="/zone_details/{{$reading->zone_id}}">{{ $reading->zone_name }}</a></td>
             </tr>
         @endforeach
-    </tbody>
-</table>
+            </tbody>
+        </table>
         	
-        	</div>
         
         	<h2>History</h2>
             <table border="1" cellpadding="5" cellspacing="0">
@@ -156,6 +152,7 @@
         }
     });
 </script>
+        	</div>
         	
 
 @endsection
