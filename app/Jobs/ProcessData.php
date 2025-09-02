@@ -347,6 +347,9 @@ class ProcessData implements ShouldQueue
             $loops=2;
             $sleep=60;
         }
+
+        $wt = $loops*$sleep;
+        Log::info('watering time ' . $wt);
         
         for ($i = 0; $i < $loops; $i++)
         {
@@ -366,8 +369,12 @@ class ProcessData implements ShouldQueue
  
     private function water_via_relay($classification, $relay)
     {
-        Log::info('start watering with relay ' . $relay->name . ' classification ' . $classification);
+        Log::info('start watering with relay ' . $relay->name . ' factor ' . $relay->gpio_extra . ' classification ' . $classification);
 
+        $factor = $relay->gpio_extra;
+        if ($factor==0)
+            $factor=1;
+        
         if ($classification==1)
         {
             $sleep=0;
@@ -380,6 +387,9 @@ class ProcessData implements ShouldQueue
         {
             $sleep=10;
         }
+        
+        $sleep = $sleep*$factor;
+        Log::info('watering time ' . $sleep);
         
         $controller = new WateringController();
         if ($sleep > 0)

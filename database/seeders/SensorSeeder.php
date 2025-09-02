@@ -38,7 +38,7 @@ class SensorSeeder extends Seeder
             'zone_id' => '6',
             'GPIO_IN' => '0',
             'GPIO_OUT' => '21',
-            'GPIO_EXTRA' => '0',
+            'GPIO_EXTRA' => '3',
         ]);
         DB::table('sensors')->insert([
             'name' => 'Relay B graue Box',
@@ -47,7 +47,7 @@ class SensorSeeder extends Seeder
             'zone_id' => '7',
             'GPIO_IN' => '0',
             'GPIO_OUT' => '20',
-            'GPIO_EXTRA' => '0',
+            'GPIO_EXTRA' => '1',
         ]);
         DB::table('sensors')->insert([
             'name' => 'Relay C',
