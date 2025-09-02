@@ -137,12 +137,8 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
-
-
-
-    <script>
-    
-            const ChartAnnotations = window['chartjs-plugin-annotation'];
+<script>
+        const ChartAnnotations = window['chartjs-plugin-annotation'];
         Chart.register(ChartAnnotations);
     
     const ctx = document.getElementById('lineChart').getContext('2d');
@@ -166,12 +162,18 @@
             '#8DA0CB'  // lavendelblau
         ];
         const datasets = rawSeries.map((series, index) => ({
-           type: series.type === 'bar' ? 'bar' : 'line',
+           	type: series.type === 'bar' ? 'scatter' : 'line',
+//           	type: series.type === 'bar' ? 'bar' : 'line',
+//           	type: 'line',
             label: `${series.name} (${series.unit})`,
             data: series.values,
             fill: false,
             borderColor: colorPalette[index % colorPalette.length],
             borderWidth: 3,
+//			barPercentage: series.type === 'bar' ? 1.0 : 1.0,
+//			categoryPercentage: series.type === 'bar' ? 0.5 : 0.5,
+			pointStyle: series.type === 'bar' ? 'rectRot': 'circle', 
+			pointRadius: series.type === 'bar' ? 10.0: 1.0, 
             tension: 0.1,
             yAxisID: series.unit,
         }));
@@ -197,7 +199,20 @@
             };
         });
         
-        const scales = {};
+       const scales = {
+            x: {
+              type: 'category',
+              offset: false,
+              grid: {
+                drawOnChartArea: true,
+                color: '#cccccc',
+              },
+              ticks: {
+                autoSkip: false,
+                align: 'center',
+              }
+            }         
+		};
 
         // Wechsle Seiten der Achsen (links/rechts), wenn mehrere Einheiten
         units.forEach((unit, index) => {
@@ -247,7 +262,7 @@
                         annotations: annotations
                     }
                 },
-                scales: scales
+                scales: scales	
             }
         });
 
