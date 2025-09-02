@@ -166,10 +166,12 @@
             '#8DA0CB'  // lavendelblau
         ];
         const datasets = rawSeries.map((series, index) => ({
+           type: series.type === 'bar' ? 'bar' : 'line',
             label: `${series.name} (${series.unit})`,
             data: series.values,
             fill: false,
             borderColor: colorPalette[index % colorPalette.length],
+            borderWidth: 3,
             tension: 0.1,
             yAxisID: series.unit,
         }));
@@ -219,7 +221,6 @@
 
 
         new Chart(ctx, {
-            type: 'line',
             data: {
                 labels: labels,
                 datasets: datasets

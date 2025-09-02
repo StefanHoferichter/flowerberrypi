@@ -89,6 +89,7 @@ class SensorController extends Controller
         if (!$outdoor)
         {
             $timeSeries[] = ['name' => 'Temperature Sensor',
+                'type' => 'line',
                 'unit' => '°C',
                 'values' => $temperatures,
             ];
@@ -124,6 +125,7 @@ class SensorController extends Controller
                         $data[] = 0.0;
                 }
                 $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->name,
+                    'type' => 'line',
                     'unit' => '%',
                     'values' => $data,
                 ];
@@ -160,6 +162,7 @@ class SensorController extends Controller
                         $data[] = 0.0;
                 }
                 $timeSeries[] = ['name' => 'Water level ' . $sensor->name,
+                    'type' => 'line',
                     'unit' => '%',
                     'values' => $data,
                 ];
@@ -200,12 +203,14 @@ class SensorController extends Controller
         if ($outdoor)
         {
             $timeSeries[] = ['name' => 'Forecast Temperature',
+                'type' => 'line',
                 'unit' => '°C',
                 'values' => $hourly_forecast_temperature,
             ];
             if ($rain_sensitive)
             {
                 $timeSeries[] = ['name' => 'Precipitation',
+                    'type' => 'line',
                     'unit' => 'mm',
                     'values' => $hourly_forecast_precipitation,
                 ];
@@ -275,10 +280,12 @@ class SensorController extends Controller
             }
         }
         $timeSeries[] = ['name' => 'Watering',
+            'type' => 'bar',
             'unit' => '%',
             'values' => $watering,
         ];
         $timeSeries[] = ['name' => 'Manual Watering',
+            'type' => 'bar',
             'unit' => '%',
             'values' => $manual_watering,
         ];
