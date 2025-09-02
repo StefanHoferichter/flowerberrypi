@@ -69,13 +69,36 @@
                     	<h2>Graph</h2>
         	
             <canvas id="lineChart" width="600" height="400"></canvas>
-            <script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
+<script>
     const ctx = document.getElementById('lineChart').getContext('2d');
 
     const labels = @json($labels);
     const temperature = @json($temperatures);
     
-const chart = new Chart(ctx, {
+    const thresholds = @json($thresholds);
+    
+    const annotations = {};
+    thresholds.forEach((t, i) => {
+        annotations['line' + i] = {
+            type: 'line',
+            yMin: t.y,
+            yMax: t.y,
+            borderColor: '#555555',
+            borderWidth: 1.5,
+            label: {
+                content: t.label + ` (${t.unit})`,
+                enabled: true,
+                position: 'start',
+                backgroundColor: 'rgba(255,255,255,0.7)',
+                color: '#555555'
+            },
+   			yScaleID: 'y'
+        };
+    });
+    
+	const chart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
@@ -85,7 +108,7 @@ const chart = new Chart(ctx, {
                     data: temperature,
                     borderColor: 'rgba(255, 99, 132, 1)',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: 'yTemp',
+                    yAxisID: 'y',
                     fill: false,
                     tension: 0.3,
                 }
@@ -93,8 +116,29 @@ const chart = new Chart(ctx, {
         },
         options: {
             responsive: true,
+                            plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Zeitreihen mit Einheiten & Achsen'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const unit = context.dataset.yAxisID;
+                                return `${context.dataset.label}: ${context.formattedValue} ${unit}`;
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: annotations
+                    }
+                },
+            
             scales: {
-                yTemp: {
+                y: {
                     type: 'linear',
                     display: true,
                     position: 'left',

@@ -397,13 +397,20 @@ class SensorController extends Controller
         
         $form_url = "/temperatures";
         
+        $thresholds = [
+            ['y' => GlobalStuff::get_temperature_threshold_low(), 'unit' => '°C', 'label' => 'Temperature 1'],
+            ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
+        ];
+        
+        
         return view('temperature_list', [
             'sensors' => $sensors,
             'readings' => $readings,
             'history' => $history,
             'labels' => $labels,
             'temperatures' => $temperatures,
-            'form_url' => $form_url
+            'form_url' => $form_url,
+            'thresholds' => $thresholds
         ]);
     }
 
