@@ -116,7 +116,7 @@
         },
         options: {
             responsive: true,
-                            plugins: {
+            plugins: {
                     legend: {
                         position: 'top',
                     },
@@ -136,7 +136,6 @@
                         annotations: annotations
                     }
                 },
-            
             scales: {
                 y: {
                     type: 'linear',

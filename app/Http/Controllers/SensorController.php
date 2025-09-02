@@ -535,7 +535,13 @@ class SensorController extends Controller
         
         $form_url = "/soil_moistures";
         
-        return view('soil_moisture_list', ['sensors' => $sensors, 'readings'=>$readings, 'sensorIds'=>$sensorIds, 'history'=>$table, 'datasets' => $datasets, 'labels' => $labelSet, 'form_url' => $form_url]);
+        $thresholds = [
+            ['y' => GlobalStuff::get_soil_moisture_threshold_low(), 'unit' => '%', 'label' => 'Soil Moisture 1'],
+            ['y' => GlobalStuff::get_soil_moisture_threshold_high(), 'unit' => '%', 'label' => 'Soil Moisture 2'],
+        ];
+        
+        
+        return view('soil_moisture_list', ['sensors' => $sensors, 'readings'=>$readings, 'sensorIds'=>$sensorIds, 'history'=>$table, 'datasets' => $datasets, 'labels' => $labelSet, 'form_url' => $form_url, 'thresholds' => $thresholds]);
     }
 
     public function show_camera(Request $request)
