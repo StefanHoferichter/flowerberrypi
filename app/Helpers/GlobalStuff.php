@@ -86,19 +86,28 @@ class GlobalStuff
         return 65.0;
     }
     
-    public static function get_classification_from_distance($value)
+    public static function get_classification_from_tank($value)
     {
         $classification=0;
         
-        if ($value < 10.0)
+        if ($value < GlobalStuff::get_tank_threshold_low())
             $classification=3;
-        else if ($value < 20.0)
+            else if ($value < GlobalStuff::get_tank_threshold_high())
             $classification=2;
         else
             $classification=1;
                     
                     
         return $classification;
+    }
+
+    public static function get_tank_threshold_low()
+    {
+        return 10.0;
+    }
+    public static function get_tank_threshold_high()
+    {
+        return 20.0;
     }
     
     

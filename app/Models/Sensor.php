@@ -10,4 +10,8 @@ class Sensor extends Model
     {
         return $this->belongsTo(Zone::class);
     }
+    public function type()
+    {
+        return $this->belongsTo(SensorType::class, 'sensor_type');
+    }
 }

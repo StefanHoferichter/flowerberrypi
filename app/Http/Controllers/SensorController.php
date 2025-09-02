@@ -130,12 +130,14 @@ class SensorController extends Controller
             }
         }
 
+        $found_tank = false;
         foreach($sensors as $sensor)
         {
             $distances = SensorValue::where('type', '3')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
             
             if (!$distances->isEmpty())
             {
+                $found_tank = true;
                 $data = [];
                 foreach ($temp_history as $temp)
                 {
@@ -281,19 +283,28 @@ class SensorController extends Controller
             'values' => $manual_watering,
         ];
         
+        $thresholds = [
+            ['y' => GlobalStuff::get_temperature_threshold_low(), 'unit' => '°C', 'label' => 'Temperature 1'],
+            ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
+        ];
+        
         if ($found_moistures)
-            $thresholds = [
+        {
+            $moisture_thresholds = [
                 ['y' => GlobalStuff::get_soil_moisture_threshold_low(), 'unit' => '%', 'label' => 'Soil Moisture 1'],
                 ['y' => GlobalStuff::get_soil_moisture_threshold_high(), 'unit' => '%', 'label' => 'Soil Moisture 2'],
-                ['y' => GlobalStuff::get_temperature_threshold_low(), 'unit' => '°C', 'label' => 'Temperature 1'],
-                ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
             ];
-        else
-            $thresholds = [
-                ['y' => GlobalStuff::get_temperature_threshold_low(), 'unit' => '°C', 'label' => 'Temperature 1'],
-                ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
+            $thresholds = array_merge($moisture_thresholds, $thresholds);
+        }
+        if ($found_tank)
+        {
+            $tank_thresholds = [
+                ['y' => GlobalStuff::get_tank_threshold_low(), 'unit' => '%', 'label' => 'Tank 1'],
+                ['y' => GlobalStuff::get_tank_threshold_high(), 'unit' => '%', 'label' => 'Tank 2'],
             ];
-            
+            $thresholds = array_merge($tank_thresholds, $thresholds);
+        }
+        
         $form_url = "/zone_details/" . $id;
         
         
@@ -302,7 +313,7 @@ class SensorController extends Controller
     
     public function show_sensors()
     {
-        $sensors = Sensor::all();
+        $sensors = Sensor::with('type')->get();
         
         return view('sensor_list', ['sensors' => $sensors]);
     }
@@ -406,7 +417,7 @@ class SensorController extends Controller
         $readings = $reader->read_distances($sensors);
 
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
-        $history = SensorValue::where('type', '3')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        $history = SensorValue::with('sensor')->where('type', '3')->where('day', '>=', $horizon)->orderBy('created_at')->get();
 
         $datasets = [];
         $labelSet = [];
@@ -438,9 +449,15 @@ class SensorController extends Controller
             }
         }
         
+        $thresholds = [
+            ['y' => GlobalStuff::get_tank_threshold_low(), 'unit' => '%', 'label' => 'Tank 1'],
+            ['y' => GlobalStuff::get_tank_threshold_high(), 'unit' => '%', 'label' => 'Tank 2'],
+        ];
+        
+        
         $form_url = "/distances";
         
-        return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings, 'history' => $history, 'datasets' => $datasets, 'labels' => $labelSet, 'form_url' => $form_url]);
+        return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings, 'history' => $history, 'datasets' => $datasets, 'labels' => $labelSet, 'form_url' => $form_url, 'thresholds' => $thresholds]);
     }
 
     public function show_i2c_bus()

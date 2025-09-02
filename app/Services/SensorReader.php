@@ -113,7 +113,7 @@ class SensorReader
                     $newReading->sensor_id=$sensor->id;
                     $newReading->zone_id=$sensor->zone_id;
                     $newReading->zone_name=$sensor->zone->name;
-                    $newReading->classification=GlobalStuff::get_classification_from_distance($newReading->value);
+                    $newReading->classification=GlobalStuff::get_classification_from_tank($newReading->value);
                                             
                     array_push($readings, $newReading);
                 }

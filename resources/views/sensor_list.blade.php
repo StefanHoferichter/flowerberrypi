@@ -18,6 +18,7 @@
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
+                        <th>Type</th>
                         <th>enabled</th>
                         <th>Zone</th>
                         <th>enabled</th>
@@ -50,7 +51,8 @@
                 @php
                         $action = \App\Helpers\GlobalStuff::get_url_from_sensor_type($sensor->sensor_type);
                 @endphp            
-              <td class="{{$enabled}}"><a class="{{$enabled}}" href="{{ $action }}">{{ $sensor->name }} </a></td>
+              <td class="{{$enabled}}"><a class="{{$enabled}}" href="{{ $action }}">{{ $sensor->name }}</a></td>
+				 <td  class="{{$enabled}}"><a class="{{$enabled}}" href="{{ $action }}">{{ $sensor->type->name }}</a></td>
 				 <td  class="{{$enabled}}"> {{ $enabled }} </td>
                <td><a class="{{$zone_enabled}}" href="/zone_details/{{$sensor->zone->id}}">{{ $sensor->zone->name }}</a></td>
                 @php

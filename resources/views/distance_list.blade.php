@@ -12,7 +12,7 @@
 
 
 		<div class="data-container">
-        	<h2>Kategorien</h2>
+        	<h2>Current</h2>
         	
         	<table border="1" cellpadding="5" cellspacing="0">
                 <thead>
@@ -48,15 +48,17 @@
                 <thead>
                     <tr>
                         <th>Sensor Id</th>
+                        <th>Name</th>
                         <th>Value</th>
                         <th>Classification</th>
-                        <th>timestamp</th>
+                        <th>Timestamp</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($history as $hist) 
                         <tr>
                             <td>{{ $hist->sensor_id }}</td>
+                            <td>{{ $hist->sensor->name }}</td>
                             <td>{{ $hist->value }}</td>
                             <td>{{ $hist->classification }}</td>
                             <td>{{ $hist->created_at }}</td>
@@ -69,6 +71,7 @@
 
 <canvas id="lineChart" width="600" height="400"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
 
 <script>
     const ctx = document.getElementById('lineChart').getContext('2d');
@@ -95,6 +98,27 @@
         tension: 0.3
     }));
 
+        const thresholds = @json($thresholds);
+        
+        const annotations = {};
+        thresholds.forEach((t, i) => {
+            annotations['line' + i] = {
+                type: 'line',
+                yMin: t.y,
+                yMax: t.y,
+                borderColor: '#555555',
+                borderWidth: 1.5,
+                label: {
+                    content: t.label + ` (${t.unit})`,
+                    enabled: true,
+                    position: 'start',
+                    backgroundColor: 'rgba(255,255,255,0.7)',
+                    color: '#555555'
+                },
+       			yScaleID: 'y'
+            };
+        });
+
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -103,6 +127,26 @@
         },
         options: {
             responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Zeitreihen mit Einheiten & Achsen'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const unit = context.dataset.yAxisID;
+                                return `${context.dataset.label}: ${context.formattedValue} ${unit}`;
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: annotations
+                    }
+                },
             scales: {
                 y: {
                     title: {
