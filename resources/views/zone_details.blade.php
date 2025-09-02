@@ -173,8 +173,17 @@
 //			barPercentage: series.type === 'bar' ? 1.0 : 1.0,
 //			categoryPercentage: series.type === 'bar' ? 0.5 : 0.5,
 			pointStyle: series.type === 'bar' ? 'rectRot': 'circle', 
-			pointRadius: series.type === 'bar' ? 10.0: 1.0, 
-            tension: 0.1,
+            pointRadius: context => {
+                const value = context.raw ?? context.parsed?.y;
+                if (series.type === 'bar') {
+                    // Bar: Radius 10, außer Wert ist 0 → 0
+                    return value === 0 ? 0 : 8;
+                } else {
+                    // Nicht Bar: Radius 3
+                    return 2;
+                }
+            },
+              tension: 0.1,
             yAxisID: series.unit,
         }));
         
