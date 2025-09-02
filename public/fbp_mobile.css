@@ -3,7 +3,7 @@
 	    	width:100px;
 	   }
 		
-	  .logo {width: 100px;
+	  .logo {width: 140px;
 					  margin-left:0px; margin-right:10px;
 					  margin-top:0px; margin-bottom:0px;
 	  }
@@ -82,14 +82,17 @@
 		    grid-template-columns: 1fr 1fr 1fr ;	
 		    grid-template-rows: 0.8fr 0.5fr 0.5fr;
 		    align-items:center;
-		    background: #aafce3; 
+/*		    background: #aafce3; */
+		    background: #1d7907;
 		    color:green;
 		}
 	   
 	  	.nav_logo {
 			grid-column: 1 / 2;
 		  grid-row:    1 / 2;		
-		  margin-right:5px;
+		   margin-top:5px;
+		  margin-left:5px;
+		  margin-right:0px;
 		}
 		.nav_job {
 			grid-column: 2 / 3;
@@ -125,7 +128,7 @@
 		footer {
 		  grid-column: 1 / 4;
 		  grid-row:    3 / 4;		
-		  background: #aafce3; 
+		    background: #1d7907;
 		}
 	
 		.footer_menu {

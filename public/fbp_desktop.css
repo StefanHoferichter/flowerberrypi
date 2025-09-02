@@ -83,14 +83,15 @@
 		    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;	
 		    grid-template-rows: 1fr;
 		    align-items:center;
-		    background: #aafce3; 
+/*		    background: #aafce3; */
+		    background: #1d7907;
 		    color:green;
 		}
 	   
 	   	.nav_logo {
 			grid-column: 1 / 2;
 		  grid-row:    1 / 2;		
-		   margin-top:5px;
+		   margin-top:20px;
 		   margin-right:20px;
 		}
 		.nav_job {
@@ -129,7 +130,7 @@
 		footer {
 		  grid-column: 1 / 4;
 		  grid-row:    3 / 4;		
-		  background: #aafce3; 
+		    background: #1d7907;
 		}
 	
 		.footer_menu {
