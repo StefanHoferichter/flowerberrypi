@@ -583,7 +583,7 @@ class SensorController extends Controller
     {
         $sensor_values = SensorValue::with('sensor_value_type')->with('sensor')->where('job_id', $id)->orderBy('created_at')->get();
         $pictures = Picture::where('job_id', $id)->orderBy('created_at')->get();
-        $watering_decisions = WateringDecision::where('job_id', $id)->get();
+        $watering_decisions = WateringDecision::with('zone')->where('job_id', $id)->get();
         
         return view('job_details_list', ['sensor_values' => $sensor_values, 'pictures' => $pictures, 'watering_decisions' => $watering_decisions]);
     }
