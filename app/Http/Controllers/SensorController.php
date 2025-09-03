@@ -63,6 +63,21 @@ class SensorController extends Controller
     
     public function show_zone_details($id, Request $request)
     {
+        $colorPalette = [
+            '#E41A1C', //0 rot = temp
+            '#377EB8', //1 blau = precipation / humidity
+            '#4DAF4A', //2 grün = water level
+            '#984EA3', //3 violett = moist1
+            '#FF7F00', //4 orange  = moist2
+            '#FFFF33', //5 gelb    = moist3
+            '#A65628', //6 braun   = moist4
+            '#F781BF', //7 pink    = watering
+            '#66C2A5', //8 türkis  = manual watering
+            '#999999', //9 grau
+            '#FC8D62', //10 lachs
+            '#8DA0CB'  //11 lavendelblau
+        ];
+                
         $time_horizon_days = $request->query('time_horizon_days', 3);
         $zone = Zone::find($id);
         
@@ -78,24 +93,37 @@ class SensorController extends Controller
         $timeSeries = [];
         
         $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        $hum_history = SensorValue::where('type', '2')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         
         $labels = [];
         $temperatures = [];
-        foreach ($temp_history as $entry) 
+        foreach ($temp_history as $entry)
         {
             $labels[] = $entry->created_at->format('Y-m-d H:i'); // einheitliche Zeitachse
             $temperatures[] = $entry->value;
         }
+        foreach ($hum_history as $entry)
+        {
+            $humidities[] = $entry->value;
+        }
         if (!$outdoor)
         {
             $timeSeries[] = ['name' => 'Temperature Sensor',
+                'color' => $colorPalette[0],
                 'type' => 'line',
                 'unit' => '°C',
                 'values' => $temperatures,
             ];
+            $timeSeries[] = ['name' => 'Humidity Sensor',
+                'color' => $colorPalette[1],
+                'type' => 'line',
+                'unit' => '%',
+                'values' => $humidities,
+            ];
         }
 
         $found_moistures = false;
+        $i=0;
         foreach($sensors as $sensor)
         {
             $moistures = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
@@ -125,10 +153,12 @@ class SensorController extends Controller
                         $data[] = 0.0;
                 }
                 $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->name,
+                    'color' => $colorPalette[3 + $i],
                     'type' => 'line',
                     'unit' => '%',
                     'values' => $data,
                 ];
+                $i++;
             }
         }
 
@@ -162,6 +192,7 @@ class SensorController extends Controller
                         $data[] = 0.0;
                 }
                 $timeSeries[] = ['name' => 'Water level ' . $sensor->name,
+                    'color' => $colorPalette[2],
                     'type' => 'line',
                     'unit' => '%',
                     'values' => $data,
@@ -203,6 +234,7 @@ class SensorController extends Controller
         if ($outdoor)
         {
             $timeSeries[] = ['name' => 'Forecast Temperature',
+                'color' => $colorPalette[0],
                 'type' => 'line',
                 'unit' => '°C',
                 'values' => $hourly_forecast_temperature,
@@ -210,6 +242,7 @@ class SensorController extends Controller
             if ($rain_sensitive)
             {
                 $timeSeries[] = ['name' => 'Precipitation',
+                    'color' => $colorPalette[1],
                     'type' => 'line',
                     'unit' => 'mm',
                     'values' => $hourly_forecast_precipitation,
@@ -280,11 +313,13 @@ class SensorController extends Controller
             }
         }
         $timeSeries[] = ['name' => 'Watering',
+            'color' => $colorPalette[7],
             'type' => 'bar',
             'unit' => '%',
             'values' => $watering,
         ];
         $timeSeries[] = ['name' => 'Manual Watering',
+            'color' => $colorPalette[8],
             'type' => 'bar',
             'unit' => '%',
             'values' => $manual_watering,
