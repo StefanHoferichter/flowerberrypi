@@ -535,8 +535,12 @@ class SensorController extends Controller
         $readings = $reader->read_soil_moistures($sensors);
         
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
-        $history = SensorValue::where('type', '4')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        foreach ($temp_history as $entry) {
+            $labels[] = $entry->created_at->format('Y-m-d H:i'); // oder nur Zeit
+        }
         
+        $history = SensorValue::where('type', '4')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         
         $sensorIds = collect($history)->pluck('sensor_id')->unique()->sort()->values();
         $table = [];
@@ -553,7 +557,8 @@ class SensorController extends Controller
             $table[$timestamp][$sensorId]['classification'] = $classification;
         }
         ksort($table);
-        
+
+        /*
         $datasets = [];
         $labelSet = [];
 
@@ -584,6 +589,48 @@ class SensorController extends Controller
                 $labelSet = $labels;
             }
         }
+*/        
+        
+        $found_moistures = false;
+        $i=0;
+        foreach($sensors as $sensor)
+        {
+            $moistures = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
+            
+            if (!$moistures->isEmpty())
+            {
+                $found_moistures = true;
+                $data = [];
+                foreach ($temp_history as $temp)
+                {
+                    $temp_day=$temp->day;
+                    $temp_hour=$temp->hour;
+                    $found = false;
+                    foreach ($moistures as $mois)
+                    {
+                        $mois_hour = $mois->hour;
+                        $mois_day = $mois->day;
+                        if ($temp_day == $mois_day and $temp_hour == $mois_hour)
+                        {
+                            //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
+                            $found = true;
+                            $data[] = $mois->value;
+                            break;
+                        }
+                    }
+                    if (!$found)
+                        $data[] = 0.0;
+                }
+                $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->name,
+                    'color' => GlobalStuff::get_soil_moisture_color($i),
+                    'type' => 'line',
+                    'unit' => '%',
+                    'values' => $data,
+                ];
+                $i++;
+            }
+        }
+        
         
         $form_url = "/soil_moistures";
         
@@ -593,7 +640,7 @@ class SensorController extends Controller
         ];
         
         
-        return view('soil_moisture_list', ['sensors' => $sensors, 'readings'=>$readings, 'sensorIds'=>$sensorIds, 'history'=>$table, 'datasets' => $datasets, 'labels' => $labelSet, 'form_url' => $form_url, 'thresholds' => $thresholds]);
+        return view('soil_moisture_list', ['sensors' => $sensors, 'readings'=>$readings, 'sensorIds'=>$sensorIds, 'history'=>$table, 'timeseries' => $timeSeries, 'labels' => $labels, 'form_url' => $form_url, 'thresholds' => $thresholds]);
     }
 
     public function show_camera(Request $request)
