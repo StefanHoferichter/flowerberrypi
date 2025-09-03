@@ -478,6 +478,28 @@ class SensorController extends Controller
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $history = SensorValue::with('sensor')->where('type', '3')->where('day', '>=', $horizon)->orderBy('created_at')->get();
 
+        $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        foreach ($temp_history as $entry) {
+            $labels[] = $entry->created_at->format('Y-m-d H:i'); // oder nur Zeit
+        }
+        
+        $sensorIds = collect($history)->pluck('sensor_id')->unique()->sort()->values();
+        $table = [];
+        foreach ($history as $entry) {
+            $day = $entry['day'];
+            $hour = $entry['hour'];
+            
+            $timestamp = $day . " " . sprintf("%02d", $hour) . ":00";
+            $sensorId = $entry['sensor_id'];
+            $value = $entry['value'];
+            $classification = $entry['classification'];
+            
+            $table[$timestamp][$sensorId]['value'] = $value;
+            $table[$timestamp][$sensorId]['classification'] = $classification;
+        }
+        ksort($table);
+                
+        /*
         $datasets = [];
         $labelSet = [];
         // Gruppiere Werte nach Sensor
@@ -508,15 +530,76 @@ class SensorController extends Controller
             }
         }
         
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
+        $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        foreach ($temp_history as $entry) {
+            $labels[] = $entry->created_at->format('Y-m-d H:i'); // oder nur Zeit
+        }
+        
+        $history = SensorValue::where('type', '4')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        
+        $sensorIds = collect($history)->pluck('sensor_id')->unique()->sort()->values();
+        $table = [];
+        foreach ($history as $entry) {
+            $day = $entry['day'];
+            $hour = $entry['hour'];
+            
+            $timestamp = $day . " " . sprintf("%02d", $hour) . ":00";
+            $sensorId = $entry['sensor_id'];
+            $value = $entry['value'];
+            $classification = $entry['classification'];
+            
+            $table[$timestamp][$sensorId]['value'] = $value;
+            $table[$timestamp][$sensorId]['classification'] = $classification;
+        }
+        ksort($table);
+        
+*/
+        $i=0;
+        foreach($sensors as $sensor)
+        {
+            $distances = SensorValue::where('type', '3')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
+            
+            if (!$distances->isEmpty())
+            {
+                $data = [];
+                foreach ($temp_history as $temp)
+                {
+                    $temp_day=$temp->day;
+                    $temp_hour=$temp->hour;
+                    $found = false;
+                    foreach ($distances as $dist)
+                    {
+                        $dist_hour = $dist->hour;
+                        $dist_day = $dist->day;
+                        if ($temp_day == $dist_day and $temp_hour == $dist_hour)
+                        {
+                            $found = true;
+                            $data[] = $dist->value;
+                            break;
+                        }
+                    }
+                    if (!$found)
+                        $data[] = 0.0;
+                }
+                $timeSeries[] = ['name' => 'Tank ' . $sensor->name,
+                    'color' => GlobalStuff::get_soil_moisture_color($i),
+                    'type' => 'line',
+                    'unit' => '%',
+                    'values' => $data,
+                ];
+                $i++;
+            }
+        }
+        
         $thresholds = [
             ['y' => GlobalStuff::get_tank_threshold_low(), 'unit' => '%', 'label' => 'Tank 1'],
             ['y' => GlobalStuff::get_tank_threshold_high(), 'unit' => '%', 'label' => 'Tank 2'],
         ];
         
-        
         $form_url = "/distances";
         
-        return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings, 'history' => $history, 'datasets' => $datasets, 'labels' => $labelSet, 'form_url' => $form_url, 'thresholds' => $thresholds]);
+        return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings, 'sensorIds'=>$sensorIds, 'history' => $table, 'timeseries' => $timeSeries, 'labels' => $labels, 'form_url' => $form_url, 'thresholds' => $thresholds]);
     }
 
     public function show_i2c_bus()
@@ -558,40 +641,7 @@ class SensorController extends Controller
         }
         ksort($table);
 
-        /*
-        $datasets = [];
-        $labelSet = [];
-
-        // Gruppiere Werte nach Sensor
-        $grouped = $history->groupBy('sensor_id');
         
-        foreach ($grouped as $sensorId => $values) 
-        {
-            $sensor = $values->first()->sensor ?? null;
-            $label = $sensor ? $sensor->name : "Sensor $sensorId";
-            
-            $data = [];
-            $labels = [];
-            
-            foreach ($values as $entry) 
-            {
-                $labels[] = $entry->created_at->format('Y-m-d H:i'); // einheitliche Zeitachse pro Sensor
-                $data[] = $entry->value;
-            }
-            
-            $datasets[] = [
-                'label' => $label,
-                'data' => $data,
-            ];
-            
-            // Für die Labels nehmen wir einfach die Zeitpunkte des ersten Sensors
-            if (empty($labelSet)) {
-                $labelSet = $labels;
-            }
-        }
-*/        
-        
-        $found_moistures = false;
         $i=0;
         foreach($sensors as $sensor)
         {
@@ -599,7 +649,6 @@ class SensorController extends Controller
             
             if (!$moistures->isEmpty())
             {
-                $found_moistures = true;
                 $data = [];
                 foreach ($temp_history as $temp)
                 {
@@ -630,7 +679,6 @@ class SensorController extends Controller
                 $i++;
             }
         }
-        
         
         $form_url = "/soil_moistures";
         
