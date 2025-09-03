@@ -63,21 +63,6 @@ class SensorController extends Controller
     
     public function show_zone_details($id, Request $request)
     {
-        $colorPalette = [
-            '#E41A1C', //0 rot = temp
-            '#377EB8', //1 blau = precipation / humidity
-            '#4DAF4A', //2 grün = water level
-            '#984EA3', //3 violett = moist1
-            '#FF7F00', //4 orange  = moist2
-            '#FFFF33', //5 gelb    = moist3
-            '#A65628', //6 braun   = moist4
-            '#F781BF', //7 pink    = watering
-            '#66C2A5', //8 türkis  = manual watering
-            '#999999', //9 grau
-            '#FC8D62', //10 lachs
-            '#8DA0CB'  //11 lavendelblau
-        ];
-                
         $time_horizon_days = $request->query('time_horizon_days', 3);
         $zone = Zone::find($id);
         
@@ -109,13 +94,13 @@ class SensorController extends Controller
         if (!$outdoor)
         {
             $timeSeries[] = ['name' => 'Temperature Sensor',
-                'color' => $colorPalette[0],
+                'color' => GlobalStuff::get_temperature_color(),
                 'type' => 'line',
                 'unit' => '°C',
                 'values' => $temperatures,
             ];
             $timeSeries[] = ['name' => 'Humidity Sensor',
-                'color' => $colorPalette[1],
+                'color' => GlobalStuff::get_precipitation_color(),
                 'type' => 'line',
                 'unit' => '%',
                 'values' => $humidities,
@@ -153,7 +138,7 @@ class SensorController extends Controller
                         $data[] = 0.0;
                 }
                 $timeSeries[] = ['name' => 'Soil Moisture ' . $sensor->name,
-                    'color' => $colorPalette[3 + $i],
+                    'color' => GlobalStuff::get_soil_moisture_color($i),
                     'type' => 'line',
                     'unit' => '%',
                     'values' => $data,
@@ -192,7 +177,7 @@ class SensorController extends Controller
                         $data[] = 0.0;
                 }
                 $timeSeries[] = ['name' => 'Water level ' . $sensor->name,
-                    'color' => $colorPalette[2],
+                    'color' => GlobalStuff::get_water_level_color(),
                     'type' => 'line',
                     'unit' => '%',
                     'values' => $data,
@@ -219,7 +204,8 @@ class SensorController extends Controller
                     $found = true;
                     $hourly_forecast_temperature[] = $forecast->temperature;
                     $hourly_forecast_precipitation[] = $forecast->precipitation;
-//                    $rain_sum[] = $forecast->rain_sum;
+                    $hourly_forecast_cloud_cover[] = $forecast->cloud_cover;
+                    //                    $rain_sum[] = $forecast->rain_sum;
                     break;
                 }
             }
@@ -234,7 +220,7 @@ class SensorController extends Controller
         if ($outdoor)
         {
             $timeSeries[] = ['name' => 'Forecast Temperature',
-                'color' => $colorPalette[0],
+                'color' => GlobalStuff::get_temperature_color(),
                 'type' => 'line',
                 'unit' => '°C',
                 'values' => $hourly_forecast_temperature,
@@ -242,10 +228,16 @@ class SensorController extends Controller
             if ($rain_sensitive)
             {
                 $timeSeries[] = ['name' => 'Precipitation',
-                    'color' => $colorPalette[1],
+                    'color' => GlobalStuff::get_precipitation_color(),
                     'type' => 'line',
                     'unit' => 'mm',
                     'values' => $hourly_forecast_precipitation,
+                ];
+                $timeSeries[] = ['name' => 'Cloud Cover',
+                    'color' => GlobalStuff::get_cloud_cover_color(),
+                    'type' => 'line',
+                    'unit' => '%',
+                    'values' => $hourly_forecast_cloud_cover,
                 ];
             }
         }
@@ -313,13 +305,13 @@ class SensorController extends Controller
             }
         }
         $timeSeries[] = ['name' => 'Watering',
-            'color' => $colorPalette[7],
+            'color' => GlobalStuff::get_watering_color(),
             'type' => 'bar',
             'unit' => '%',
             'values' => $watering,
         ];
         $timeSeries[] = ['name' => 'Manual Watering',
-            'color' => $colorPalette[8],
+            'color' => GlobalStuff::get_manual_watering_color(),
             'type' => 'bar',
             'unit' => '%',
             'values' => $manual_watering,
@@ -426,15 +418,20 @@ class SensorController extends Controller
         $readings = $reader->read_temperatures($sensors);
 
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
-        $history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        $hum_history = SensorValue::where('type', '2')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         
         // Extrahiere Zeit (X-Achse) und Temperaturwerte (Y-Achse)
         $labels = [];
         $temperatures = [];
+        $humidities = [];
         
-        foreach ($history as $entry) {
+        foreach ($temp_history as $entry) {
             $labels[] = $entry->created_at->format('Y-m-d H:i'); // oder nur Zeit
             $temperatures[] = $entry->value;
+        }
+        foreach ($hum_history as $entry) {
+            $humidities[] = $entry->value;
         }
         
         $form_url = "/temperatures";
@@ -444,13 +441,26 @@ class SensorController extends Controller
             ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
         ];
         
+        $timeSeries[] = ['name' => 'Temperature',
+            'color' => GlobalStuff::get_temperature_color(),
+            'type' => 'line',
+            'unit' => '°C',
+            'values' => $temperatures,
+        ];
+        $timeSeries[] = ['name' => 'Humidity',
+            'color' => GlobalStuff::get_precipitation_color(),
+            'type' => 'line',
+            'unit' => '%',
+            'values' => $humidities,
+        ];
         
         return view('temperature_list', [
             'sensors' => $sensors,
             'readings' => $readings,
-            'history' => $history,
+            'temp_history' => $temp_history,
+            'hum_history' => $hum_history,
             'labels' => $labels,
-            'temperatures' => $temperatures,
+            'timeseries' => $timeSeries,
             'form_url' => $form_url,
             'thresholds' => $thresholds
         ]);

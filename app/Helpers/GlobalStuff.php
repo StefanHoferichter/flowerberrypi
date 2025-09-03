@@ -4,6 +4,45 @@ namespace App\Helpers;
 
 class GlobalStuff 
 {
+    public static function get_temperature_color()
+    {
+        return '#E41A1C'; //rot
+    }
+    public static function get_precipitation_color()
+    {
+        return '#377EB8'; //blau
+    }
+    public static function get_cloud_cover_color()
+    {
+        return '#66C2A5'; //türkis
+    }
+    public static function get_water_level_color()
+    {
+        return '#984EA3'; //violett
+    }
+    public static function get_watering_color()
+    {
+        return '#8DA0CB'; //lavendel
+    }
+    public static function get_manual_watering_color()
+    {
+        return '#F781BF'; //pink
+    }
+    public static function get_soil_moisture_color($index)
+    {
+        $colorPalette = [
+            '#4DAF4A', // grün =  moist1
+            '#FF7F00', // orange  = moist2
+            '#FFFF33', // gelb    = moist3
+            '#A65628', // braun   = moist4
+            '#999999', // grau
+            '#FC8D62', // lachs
+            '#A6CEE3', // hellblau (NEU)
+            '#1F78B4'  // kräftiges blau (NEU)
+        ];
+        
+        return $colorPalette[$index];
+    }
     
     public static function get_tod_from_hour($hour)
     {
