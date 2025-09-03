@@ -1,9 +1,18 @@
 <?php
 namespace App\Helpers;
 
+use App\Models\Threshold;
+use Illuminate\Support\Facades\Cache;
+
 
 class GlobalStuff 
 {
+    protected static function getAllThresholds(): array
+    {
+        return Cache::remember('thresholds_all', now()->addHours(1), function () {
+            return Threshold::all()->keyBy('type')->toArray();
+        });
+    }
     public static function get_temperature_color()
     {
         return '#E41A1C'; //rot
@@ -96,11 +105,17 @@ class GlobalStuff
 
     public static function get_temperature_threshold_low()
     {
-        return 15;
+        $thresholds = self::getAllThresholds();
+        
+        return $thresholds[1]['lower_limit'] ?? null;
+//        return 15;
     }
     public static function get_temperature_threshold_high()
     {
-        return 24;
+        $thresholds = self::getAllThresholds();
+        
+        return $thresholds[1]['upper_limit'] ?? null;
+//        return 24;
     }
     
 
@@ -118,11 +133,18 @@ class GlobalStuff
     
     public static function get_soil_moisture_threshold_low()
     {
-        return 40.0;
+        $thresholds = self::getAllThresholds();
+            
+        return $thresholds[4]['lower_limit'] ?? null;
+//        return 40.0;
     }
     public static function get_soil_moisture_threshold_high()
     {
-        return 65.0;
+//        Cache::forget('thresholds_all');
+        $thresholds = self::getAllThresholds();
+        
+        return $thresholds[4]['upper_limit'] ?? null;
+//        return 65.0;
     }
     
     public static function get_classification_from_tank($value)
@@ -142,11 +164,18 @@ class GlobalStuff
 
     public static function get_tank_threshold_low()
     {
-        return 10.0;
+        $thresholds = self::getAllThresholds();
+        
+        return $thresholds[3]['lower_limit'] ?? null;
+//        return 10.0;
     }
     public static function get_tank_threshold_high()
     {
-        return 20.0;
+        $thresholds = self::getAllThresholds();
+        
+        return $thresholds[3]['upper_limit'] ?? null;
+        
+//        return 20.0;
     }
     
     

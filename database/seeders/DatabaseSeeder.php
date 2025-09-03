@@ -36,6 +36,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PercentageConversionSeeder::class,
         ]);
+        $this->call([
+            ThresholdSeeder::class,
+        ]);
         
     }
 }
