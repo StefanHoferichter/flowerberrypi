@@ -31,8 +31,9 @@ class SensorController extends Controller
         $horizon = Carbon::now()->subDays(2)->toDateString();
         $manual_waterings = ManualWateringDecision::where('day', '>=', $horizon)->get();
         $zones = Zone::all();
+        $waterings = WateringDecision::where('day', '>=', $horizon)->get();
         
-        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings]);
+        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'waterings' => $waterings]);
     }
     
     public function show_manual_watering2(Request $request)
