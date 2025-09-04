@@ -48,8 +48,9 @@ class SensorController extends Controller
         $horizon = Carbon::now()->subDays(2)->toDateString();
         $manual_waterings = ManualWateringDecision::where('day', '>=', $horizon)->get();
         $zones = Zone::all();
+        $waterings = WateringDecision::where('day', '>=', $horizon)->get();
         
-        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings]);
+        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'waterings' => $waterings]);
     }
     
     
@@ -234,13 +235,13 @@ class SensorController extends Controller
                     'unit' => 'mm',
                     'values' => $hourly_forecast_precipitation,
                 ];
-                $timeSeries[] = ['name' => 'Cloud Cover',
+/*                $timeSeries[] = ['name' => 'Cloud Cover',
                     'color' => GlobalStuff::get_cloud_cover_color(),
                     'type' => 'line',
                     'unit' => '%',
                     'values' => $hourly_forecast_cloud_cover,
                 ];
-            }
+*/            }
         }
         $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
         $manual_decisions = ManualWateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
