@@ -103,9 +103,9 @@ class SensorReader
                     if ($conv->invert > 0)
                         $perc = 100.0 - $perc;
                     Log::info('converted value ' . $perc);
-                    $value = $this->calculate_moving_average($perc, $sensor);
-                    $value = round($value, 1);
-                    Log::info('moving average value ' . $value);
+//                    $value = $this->calculate_moving_average($perc, $sensor);
+                    $value = round($perc, 1);
+                    Log::info('rounded value ' . $value);
                     
                     $newReading = new SensorResult();
                     $newReading->value=$value;
@@ -126,7 +126,7 @@ class SensorReader
     private function calculate_moving_average($current_value, $sensor)
     {
         $vector = [];
-        $hist = SensorValue::where('sensor_id', $sensor->id)->latest()->take(9)->get();
+        $hist = SensorValue::where('sensor_id', $sensor->id)->latest()->take(4)->get();
         foreach($hist as $h)
         {
             array_push($vector, $h->value);
