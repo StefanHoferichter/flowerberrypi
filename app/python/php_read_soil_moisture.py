@@ -21,7 +21,7 @@ if len(sys.argv) != 3:
 # I2C-Adresse parsen
 try:
     i2c_address = int(sys.argv[1])
-    if i2c_address not in (72,73):
+    if i2c_address not in (72,73,74,75):
         raise ValueError
 except ValueError:
     error_exit("Ungültige I2C-Adresse. Bitte dezimal (72/73) oder hex (0x48/0x49) angeben.")
