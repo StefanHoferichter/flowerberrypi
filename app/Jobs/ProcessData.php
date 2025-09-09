@@ -271,7 +271,7 @@ class ProcessData implements ShouldQueue
                         else
                         {
                             Log::info('watering decision for zone ' . $wd->zone_id . ' is avg of moisture and temp classification');
-                            $wd->watering_classification=($wd->soil_moisture_classification + $wd->forecast_classification) /2 ;
+                            $wd->watering_classification=round(($wd->soil_moisture_classification + $wd->forecast_classification)/2);
                         }
                         
                         if ($wd->tank_classification == 3)
