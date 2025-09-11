@@ -75,7 +75,6 @@
 				margin: 0em;
 		    grid-template-columns: 1fr 1fr 1fr;	
 		    grid-template-rows: 110px 1fr 80px;
-		    grid-template-rows: 110px 1fr 80px;
 		}
 
 		nav {
@@ -172,6 +171,31 @@
 			display: inline-block;
 		}
 		.nav_dummy {
+			margin-top:0px;
+			margin-left:20px; margin-right:20px;
+			display: inline-block;
+		}
+		.nav_setup_percentage_conversion {
+			margin-top:0px;
+			margin-left:20px; margin-right:20px;
+			display: inline-block;
+		}
+		.nav_setup_remote_sockets {
+			margin-top:0px;
+			margin-left:20px; margin-right:20px;
+			display: inline-block;
+		}
+		.nav_setup_sensors {
+			margin-top:0px;
+			margin-left:20px; margin-right:20px;
+			display: inline-block;
+		}
+		.nav_setup_thresholds {
+			margin-top:0px;
+			margin-left:20px; margin-right:20px;
+			display: inline-block;
+		}
+		.nav_setup_zones {
 			margin-top:0px;
 			margin-left:20px; margin-right:20px;
 			display: inline-block;

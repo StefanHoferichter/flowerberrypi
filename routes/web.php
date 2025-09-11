@@ -24,6 +24,8 @@ Route::get('/zones', 'App\Http\Controllers\SensorController@show_zones');
 Route::get('/zone_details/{id}', 'App\Http\Controllers\SensorController@show_zone_details');
 Route::get('/manual_watering', 'App\Http\Controllers\SensorController@show_manual_watering');
 Route::post('/manual_watering', 'App\Http\Controllers\SensorController@show_manual_watering2');
+Route::get('/setup', 'App\Http\Controllers\SetupController@show_setup');
+Route::get('/setup_percentage_conversions', 'App\Http\Controllers\SetupController@show_percentage_conversions');
 
 /*
 Route::get('/', function () {
