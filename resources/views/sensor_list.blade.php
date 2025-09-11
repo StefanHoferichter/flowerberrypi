@@ -1,10 +1,10 @@
 @extends('flowerberrypi')
- 
 @section('title', 'Sensoren')
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
-
+@section('submenu')
+@include ('include_submenu')  
+@endsection
 @section('content')
-@include('submenu')
         <h1>Sensors</h1>
 
 

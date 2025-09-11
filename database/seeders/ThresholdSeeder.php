@@ -20,12 +20,12 @@ class ThresholdSeeder extends Seeder
         ]);
         DB::table('thresholds')->insert([
             'type' => '3',
-            'lower_limit' => '15',
-            'upper_limit' => '30',
+            'lower_limit' => '20',
+            'upper_limit' => '40',
         ]);
         DB::table('thresholds')->insert([
             'type' => '4',
-            'lower_limit' => '40',
+            'lower_limit' => '45',
             'upper_limit' => '65',
         ]);
     }

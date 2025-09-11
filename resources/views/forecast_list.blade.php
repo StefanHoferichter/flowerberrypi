@@ -2,11 +2,15 @@
  
 @section('title', 'Sensoren')
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
+@section('submenu')
+@include ('include_dummy_menu')  
+@endsection
 
 @section('content')
-@include('submenu')
-        <h1>Forecast</h1>
 
+@include('time_horizon_menu')
+
+        <h1>Forecast</h1>
 
 		<div class="data-container">
             <div class="grid-item">

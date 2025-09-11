@@ -2,12 +2,15 @@
  
 @section('title', 'Sensoren')
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
+@section('submenu')
+@include ('include_dummy_menu')  
+@endsection
 
 @section('content')
-@include('submenu')
+
+@include('time_horizon_menu')
 
         <h1>Manual Waterings</h1>
-
 
 		<div class="data-container">
             <div class="grid-item">
@@ -54,7 +57,7 @@
             @foreach($manual_waterings as $dec) 
                         <tr>
               <td>{{ $dec->zone_id }} </a></td>
-              <td>{{ $dec->zone->name }} </a></td>
+              <td><a href="/zone_details/{{$dec->zone_id}}">{{ $dec->zone->name }}</a></td>
               <td>{{ $dec->day }} </a></td>
 				 <td> {{ $dec->hour  }} </td>
 				 <td> {{ $dec->watering_classification }} </td>
@@ -88,7 +91,7 @@
             @foreach($waterings as $dec) 
                         <tr>
               <td>{{ $dec->zone_id }} </a></td>
-              <td>{{ $dec->zone->name }} </a></td>
+              <td><a href="/zone_details/{{$dec->zone_id}}">{{ $dec->zone->name }}</a></td>
               <td>{{ $dec->day }} </a></td>
 				 <td> {{ $dec->tod  }} </td>
 				 <td> {{ $dec->watering_classification }} </td>

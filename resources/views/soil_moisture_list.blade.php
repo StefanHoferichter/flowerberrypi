@@ -2,13 +2,14 @@
  
 @section('title', 'Sensoren')
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
-
+@section('submenu')
+@include ('include_submenu')  
+@endsection
 @section('content')
-@include('submenu')
+
 @include('time_horizon_menu')
 
         <h1>Soil Moistures</h1>
-
 
 		<div class="data-container">
             <div class="grid-item">

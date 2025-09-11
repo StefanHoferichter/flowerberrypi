@@ -26,14 +26,16 @@ class SensorController extends Controller
         return view('home');
     }
     
-    public function show_manual_watering()
+    public function show_manual_watering(Request $request)
     {
-        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $manual_waterings = ManualWateringDecision::where('day', '>=', $horizon)->get();
         $zones = Zone::all();
         $waterings = WateringDecision::where('day', '>=', $horizon)->get();
+        $form_url = "/manual_watering";
         
-        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'waterings' => $waterings]);
+        return view('watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'waterings' => $waterings, 'form_url' => $form_url]);
     }
     
     public function show_manual_watering2(Request $request)
@@ -45,12 +47,14 @@ class SensorController extends Controller
         $wd->hour =$request->hour;
         $wd->save();
         
-        $horizon = Carbon::now()->subDays(2)->toDateString();
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $manual_waterings = ManualWateringDecision::where('day', '>=', $horizon)->get();
         $zones = Zone::all();
         $waterings = WateringDecision::where('day', '>=', $horizon)->get();
+        $form_url = "/manual_watering";
         
-        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'waterings' => $waterings]);
+        return view('watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'waterings' => $waterings, 'form_url' => $form_url]);
     }
     
     

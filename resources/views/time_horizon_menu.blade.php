@@ -1,3 +1,6 @@
+        	<table border="1" cellpadding="5" cellspacing="0" style="margin-left: auto; margin-right: 0;">
+                        <tr>
+              <td> 
 <form action="{{ $form_url }}" method="get">
     <label for="time_horizon_days">Choose Time Horizon:</label>
     <select name="time_horizon_days" id="time_horizon_days">
@@ -9,4 +12,8 @@
     </select>
     <button type="submit">Submit</button>
 </form>
+</td>
+                </tr>
+                </tbody>
+            </table>        
 

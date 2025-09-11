@@ -48,7 +48,9 @@ class ForecastController extends Controller
             ['y' => GlobalStuff::get_temperature_threshold_high(), 'unit' => '°C', 'label' => 'Temperature 2'],
         ];
         
-        return view('forecast_list', ['forecast'=>$wf, 'hourly_forecast'=>$hwf, 'history'=>$history, 'labels'=>$labels, 'timeseries'=>$timeSeries, 'thresholds'=>$thresholds]);
+        $form_url = "/forecast";
+        
+        return view('forecast_list', ['forecast'=>$wf, 'hourly_forecast'=>$hwf, 'history'=>$history, 'labels'=>$labels, 'timeseries'=>$timeSeries, 'thresholds'=>$thresholds, 'form_url' => $form_url]);
     }
     
 }

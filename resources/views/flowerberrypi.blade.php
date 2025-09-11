@@ -30,9 +30,10 @@
               <div class="nav_job"><a class="nav_item" href="/jobs">Jobs</a></div>
               <div class="nav_zones"><a class="nav_item" href="/zones">Zones</a></div>
               <div class="nav_sensors"><a class="nav_item"  href="/sensors">Sensors</a></div>
-              <div class="nav_rs"><a class="nav_item"  href="/remote_sockets">Sockets</a></div>
               <div class="nav_forecast"><a class="nav_item" href="/forecast">Forecast</a></div>
               <div class="nav_manual"><a class="nav_item" href="/manual_watering">Watering</a></div>
+              <div class="nav_setup"><a class="nav_item" href="/setup">Setup</a></div>
+                            @yield('submenu')
         </nav>
 	 </header>
 	 <article>

@@ -2,13 +2,15 @@
  
 @section('title', 'Sensoren')
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
+@section('submenu')
+@include ('include_dummy_menu')  
+@endsection
 
 @section('content')
-@include('submenu')
+
 @include('time_horizon_menu')
 
         <h1>Zone Details {{ $zone->name }}</h1>
-
 
 		<div class="data-container">
 
