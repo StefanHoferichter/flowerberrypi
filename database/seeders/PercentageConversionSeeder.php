@@ -22,7 +22,7 @@ class PercentageConversionSeeder extends Seeder
         DB::table('percentage_conversions')->insert([
             'sensor_id' => '9',
             'lower_limit' => '2',
-            'upper_limit' => '24',
+            'upper_limit' => '25',
             'invert' => '1',
         ]);
         DB::table('percentage_conversions')->insert([

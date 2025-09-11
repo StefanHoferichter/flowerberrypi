@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('percentage_conversions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('sensor_id');
+            $table->foreignId('sensor_id')->constrained('sensors');
             $table->double('lower_limit', $precision = 8, $scale = 2);
             $table->double('upper_limit', $precision = 8, $scale = 2);
             $table->unsignedInteger('invert');

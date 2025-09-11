@@ -29,10 +29,10 @@
             @foreach($pcs as $pc) 
              <tr>
                 <td>{{ $pc->id }}</td>
-                <td>{{ $pc->sensor_id }}</td>
-                <td>{{ $pc->lower_limit }}</td>
-                <td>{{ $pc->upper_limit }}</td>
-                <td>{{ $pc->invert }}</td>
+                <td>{{ $pc->sensor->name }}</td>
+                <td><input type="number" step="0.1" name="lower_limit" value="{{ $pc->lower_limit }}"></td>
+                <td><input type="number" step="0.1" name="upper_limit" value="{{ $pc->upper_limit }}"></td>
+                <td><input type="checkbox" name="invert" value="1" @if ($pc->invert > 0) checked @endif></td>
             </tr>
         @endforeach
     </tbody>
