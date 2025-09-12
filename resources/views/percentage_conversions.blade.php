@@ -28,11 +28,15 @@
     <tbody>
             @foreach($pcs as $pc) 
              <tr>
+             	<form method="post" action="/setup_percentage_conversions">        @csrf
                 <td>{{ $pc->id }}</td>
+                <input type="hidden" name="id" value="{{ $pc->id }}">
                 <td>{{ $pc->sensor->name }}</td>
                 <td><input type="number" step="0.1" name="lower_limit" value="{{ $pc->lower_limit }}"></td>
                 <td><input type="number" step="0.1" name="upper_limit" value="{{ $pc->upper_limit }}"></td>
                 <td><input type="checkbox" name="invert" value="1" @if ($pc->invert > 0) checked @endif></td>
+                <td><button name="action" value="on" type="submit">Save</button></td>
+             	</form>
             </tr>
         @endforeach
     </tbody>

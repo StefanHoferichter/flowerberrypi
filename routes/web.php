@@ -26,6 +26,7 @@ Route::get('/manual_watering', 'App\Http\Controllers\SensorController@show_manua
 Route::post('/manual_watering', 'App\Http\Controllers\SensorController@show_manual_watering2');
 Route::get('/setup', 'App\Http\Controllers\SetupController@show_setup');
 Route::get('/setup_percentage_conversions', 'App\Http\Controllers\SetupController@show_percentage_conversions');
+Route::post('/setup_percentage_conversions', 'App\Http\Controllers\SetupController@save_percentage_conversions');
 
 /*
 Route::get('/', function () {
