@@ -31,6 +31,8 @@ Route::get('/setup_remote_sockets', 'App\Http\Controllers\SetupController@show_r
 Route::post('/setup_remote_sockets', 'App\Http\Controllers\SetupController@save_remote_sockets');
 Route::get('/setup_sensors', 'App\Http\Controllers\SetupController@show_sensors');
 Route::post('/setup_sensors', 'App\Http\Controllers\SetupController@save_sensors');
+Route::get('/setup_thresholds', 'App\Http\Controllers\SetupController@show_thresholds');
+Route::post('/setup_thresholds', 'App\Http\Controllers\SetupController@save_thresholds');
 
 /*
 Route::get('/', function () {

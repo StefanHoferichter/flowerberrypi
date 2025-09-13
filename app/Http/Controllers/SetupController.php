@@ -6,6 +6,8 @@ use App\Models\PercentageConversion;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorType;
+use App\Models\SensorValueType;
+use App\Models\Threshold;
 use App\Models\Zone;
 use Illuminate\Http\Request;
 
@@ -85,6 +87,25 @@ class SetupController extends Controller
         $sensor_types = SensorType::all();
         $zones = Zone::all();
         return view('sensors', ['sensors' => $sensors, 'zones' => $zones, 'sensor_types' => $sensor_types]);
+    }
+
+    public function show_thresholds()
+    {
+        $thresholds = Threshold::all();
+        $sensor_value_types = SensorValueType::all();
+        return view('thresholds', ['thresholds' => $thresholds, 'sensor_value_types' => $sensor_value_types]);
+    }
+    public function save_thresholds(Request $request)
+    {
+        $id = $request->id;
+        $th = Threshold::find($id);
+        $th->lower_limit = $request->lower_limit;
+        $th->upper_limit = $request->upper_limit;
+        $th->save();
+                
+        $thresholds = Threshold::all();
+        $sensor_value_types = SensorValueType::all();
+        return view('thresholds', ['thresholds' => $thresholds, 'sensor_value_types' => $sensor_value_types]);
     }
     
 }

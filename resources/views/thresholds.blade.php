@@ -1,0 +1,47 @@
+@extends('flowerberrypi')
+ 
+@section('title', 'Sensoren')
+@section('url', 'https://www.rezeptexperte.de/show_categories') 
+@section('submenu')
+@include ('include_setup_menu')  
+@endsection
+@section('content')
+        <h1>Thresholds</h1>
+
+		<div class="data-container">
+            <div class="grid-item">
+        	<h2>Current</h2>
+        	
+        	  <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Sensor Value Type</th>
+                        <th>Lower Limit</th>
+                        <th>Upper Limit</th>
+                        <th>Save</th>
+                    </tr>
+                </thead>
+                <tbody>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach($thresholds as $threshold) 
+             <tr>
+             	<form method="post" action="/setup_thresholds">        @csrf
+                <td>{{ $threshold->id }}</td>
+                <input type="hidden" name="id" value="{{ $threshold->id }}">
+                <td>{{ $threshold->sensor_value_type->name }}</td>
+                <td><input type="number" step="0.1" name="lower_limit" value="{{ $threshold->lower_limit }}"></td>
+                <td><input type="number" step="0.1" name="upper_limit" value="{{ $threshold->upper_limit }}"></td>
+                <td><button name="action" value="on" type="submit">Save</button></td>
+             	</form>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+
+        	</div>
+        	<br>
+
+@endsection
