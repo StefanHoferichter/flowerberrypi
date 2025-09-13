@@ -33,6 +33,8 @@ Route::get('/setup_sensors', 'App\Http\Controllers\SetupController@show_sensors'
 Route::post('/setup_sensors', 'App\Http\Controllers\SetupController@save_sensors');
 Route::get('/setup_thresholds', 'App\Http\Controllers\SetupController@show_thresholds');
 Route::post('/setup_thresholds', 'App\Http\Controllers\SetupController@save_thresholds');
+Route::get('/setup_zones', 'App\Http\Controllers\SetupController@show_zones');
+Route::post('/setup_zones', 'App\Http\Controllers\SetupController@save_zones');
 
 /*
 Route::get('/', function () {

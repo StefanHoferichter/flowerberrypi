@@ -107,5 +107,41 @@ class SetupController extends Controller
         $sensor_value_types = SensorValueType::all();
         return view('thresholds', ['thresholds' => $thresholds, 'sensor_value_types' => $sensor_value_types]);
     }
+
+    public function show_zones()
+    {
+        $zones = Zone::all();
+        return view('zones', ['zones' => $zones]);
+    }
+    public function save_zones(Request $request)
+    {
+        $id = $request->id;
+        $zone = Zone::find($id);
+        $zone->name = $request->name;
+        if ($request->enabled > 0)
+            $zone->enabled = 1;
+        else
+            $zone->enabled = 0;
+        
+        if ($request->has_watering > 0)
+            $zone->has_watering = 1;
+        else
+            $zone->has_watering = 0;
+                    
+        if ($request->rain_sensitive > 0)
+            $zone->rain_sensitive = 1;
+        else
+            $zone->rain_sensitive= 0;
+
+        if ($request->outdoor > 0)
+            $zone->outdoor = 1;
+        else
+            $zone->outdoor = 0;
+                    
+        $zone->save();
+                
+        $zones = Zone::all();
+        return view('zones', ['zones' => $zones]);
+    }
     
 }
