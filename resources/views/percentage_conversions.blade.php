@@ -20,6 +20,7 @@
                         <th>Lower Limit</th>
                         <th>Upper Limit</th>
                         <th>Invert</th>
+                        <th>Save</th>
                     </tr>
                 </thead>
                 <tbody>

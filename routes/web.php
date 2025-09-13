@@ -27,6 +27,8 @@ Route::post('/manual_watering', 'App\Http\Controllers\SensorController@show_manu
 Route::get('/setup', 'App\Http\Controllers\SetupController@show_setup');
 Route::get('/setup_percentage_conversions', 'App\Http\Controllers\SetupController@show_percentage_conversions');
 Route::post('/setup_percentage_conversions', 'App\Http\Controllers\SetupController@save_percentage_conversions');
+Route::get('/setup_remote_sockets', 'App\Http\Controllers\SetupController@show_remote_sockets');
+Route::post('/setup_remote_sockets', 'App\Http\Controllers\SetupController@save_remote_sockets');
 
 /*
 Route::get('/', function () {
