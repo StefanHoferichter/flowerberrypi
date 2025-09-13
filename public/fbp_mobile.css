@@ -80,7 +80,7 @@
 /*		    margin:5px; */
 			display: grid;
 		    grid-template-columns: 1fr 1fr 1fr ;	
-		    grid-template-rows: 1fr 1fr 1fr 0.5fr;
+		    grid-template-rows: 1fr 0.5fr 0.5fr 0.5fr;
 		    align-items:center;
 		    background: #1d7907;
 		    color:green;
@@ -144,57 +144,57 @@
 		}
 		.nav_i2c_bus {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_temperatures {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_relays {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_remote_sockets {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_camera {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_dummy {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_setup_percentage_conversion {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_setup_remote_sockets {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_setup_sensors {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_setup_thresholds {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 		.nav_setup_zones {
 			margin-top:0px;
-			margin-left:20px; margin-right:20px;
+			margin-left:5px; margin-right:5px;
 			display: inline-block;
 		}
 	
