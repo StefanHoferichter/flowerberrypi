@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\PercentageConversion;
 use App\Models\RemoteSocket;
+use App\Models\Sensor;
+use App\Models\SensorType;
 use App\Models\Zone;
 use Illuminate\Http\Request;
 
@@ -56,4 +58,33 @@ class SetupController extends Controller
         $zones = Zone::all();
         return view('remote_sockets', ['remoteSockets' => $rss, 'zones' => $zones]);
     }
+
+    public function show_sensors()
+    {
+        $sensors = Sensor::all();
+        $sensor_types = SensorType::all();
+        $zones = Zone::all();
+        return view('sensors', ['sensors' => $sensors, 'zones' => $zones, 'sensor_types' => $sensor_types]);
+    }
+    public function save_sensors(Request $request)
+    {
+        $id = $request->id;
+        $sensor = Sensor::find($id);
+        $sensor->name= $request->name;
+        $sensor->sensor_type= $request->sensor_type;
+        $sensor->zone_id = $request->zone_id;
+        $sensor->gpio_in = $request->gpio_in;
+        $sensor->gpio_out = $request->gpio_out;
+        $sensor->gpio_extra = $request->gpio_extra;
+        
+        echo $id . "-" . $request->name;
+        
+        $sensor->save();
+        
+        $sensors = Sensor::all();
+        $sensor_types = SensorType::all();
+        $zones = Zone::all();
+        return view('sensors', ['sensors' => $sensors, 'zones' => $zones, 'sensor_types' => $sensor_types]);
+    }
+    
 }

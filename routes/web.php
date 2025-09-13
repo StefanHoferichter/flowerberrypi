@@ -29,6 +29,8 @@ Route::get('/setup_percentage_conversions', 'App\Http\Controllers\SetupControlle
 Route::post('/setup_percentage_conversions', 'App\Http\Controllers\SetupController@save_percentage_conversions');
 Route::get('/setup_remote_sockets', 'App\Http\Controllers\SetupController@show_remote_sockets');
 Route::post('/setup_remote_sockets', 'App\Http\Controllers\SetupController@save_remote_sockets');
+Route::get('/setup_sensors', 'App\Http\Controllers\SetupController@show_sensors');
+Route::post('/setup_sensors', 'App\Http\Controllers\SetupController@save_sensors');
 
 /*
 Route::get('/', function () {
