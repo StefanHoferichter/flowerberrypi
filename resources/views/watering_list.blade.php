@@ -84,6 +84,7 @@
                         <th>Day</th>
                         <th>Time of Day</th>
                         <th>Watering</th>
+                        <th>Executed</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,6 +96,7 @@
               <td>{{ $dec->day }} </a></td>
 				 <td> {{ $dec->tod  }} </td>
 				 <td> {{ $dec->watering_classification }} </td>
+				 <td> {{ $dec->executed }} </td>
                 </tr>
              
             @endforeach

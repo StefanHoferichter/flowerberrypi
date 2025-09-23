@@ -73,129 +73,106 @@
 				gap: 0px;
 				margin: 0em;
 		    grid-template-columns: 1fr 1fr 1fr;	
-		    grid-template-rows: 300px 1fr 160px;
+		    grid-template-rows: 200px 1fr 160px;
 		}
 
 		nav {
 /*		    margin:5px; */
 			display: grid;
-		    grid-template-columns: 1fr 1fr 1fr ;	
+			grid-template-columns: repeat(3, 1fr);
+			grid-template-rows: repeat(3, 1fr);
+/*		    grid-template-columns: 1fr 1fr 1fr ;	
 		    grid-template-rows: 1fr 0.5fr 0.5fr 0.5fr;
-		    align-items:center;
+*/		    align-items:center;
 		    background: #1d7907;
 		    color:green;
 		}
 		.nav_submenu 
 		{
-			padding-left: 5px;
+		  display: grid;
+		  grid-template-columns: repeat(3, 1fr);
+  			grid-column: 1 / -1; /* über alle Spalten */
+			padding-left: 0px;
 			background: #134D05; 
-			grid-column: 1 / 8;
-			grid-row:    4 / 6;		
+		
 			margin-top:0px;
 			margin-left:0px; margin-right:0px;
 		}	   
 	   	.nav_logo {
-			grid-column: 1 / 2;
-		  grid-row:    1 / 2;		
 		   margin-top:5px;
 		  margin-left:5px;
 		  margin-right:0px;
 		}
 		.nav_job {
-			grid-column: 2 / 3;
-		  grid-row:    1 / 2;		
 		  margin-left:5px; margin-right:5px;
 		}
 		.nav_zones {
-			grid-column: 3 / 4;
-		  grid-row:    1 / 2;		
 		  margin-left:5px; margin-right:5px;
 		}
 		.nav_sensors {
-			grid-column: 1 / 2;
-		  grid-row:    2 / 3;		
 		  margin-left:5px; margin-right:5px;
 		}
 		.nav_forecast {
-			grid-column: 2 / 3;
-		  grid-row:    2 / 3;	
 		  margin-left:5px; margin-right:5px;
 		}
 		.nav_manual {
-			grid-column: 3/ 4;
-		  grid-row:    2 / 3;		
 		  margin-left:5px; margin-right:5px; 
 		}
 		.nav_setup {
-			grid-column: 1 / 2;
-		  grid-row:    3 / 4;	
 		  margin-left:5px; margin-right:5px;margin-bottom:10px;
 		}
 
 		.nav_soil_moistures {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_tank_level {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_i2c_bus {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_temperatures {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_relays {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_remote_sockets {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_camera {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_dummy {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_setup_percentage_conversion {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_setup_remote_sockets {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_setup_sensors {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_setup_thresholds {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 		.nav_setup_zones {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
-			display: inline-block;
 		}
 	
 		footer {
