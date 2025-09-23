@@ -73,7 +73,7 @@
 				gap: 0px;
 				margin: 0em;
 		    grid-template-columns: 1fr 1fr 1fr;	
-		    grid-template-rows: 200px 1fr 160px;
+		    grid-template-rows: 180px 1fr 160px;
 		}
 
 		nav {
