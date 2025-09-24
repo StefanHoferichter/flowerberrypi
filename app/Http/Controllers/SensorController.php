@@ -5,18 +5,20 @@ namespace App\Http\Controllers;
 use App\Helpers\GlobalStuff;
 use App\Jobs\ProcessData;
 use App\Models\HourlyWeatherForecast;
+use App\Models\ManualWateringDecision;
 use App\Models\Picture;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
+use App\Models\SensorJob;
 use App\Models\SensorValue;
 use App\Models\WateringDecision;
-use App\Models\ManualWateringDecision;
-use App\Models\SensorJob;
 use App\Models\Zone;
 use App\Services\SensorReader;
 use App\Services\WateringController;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use function collect;
 
 class SensorController extends Controller
 {
@@ -608,13 +610,6 @@ class SensorController extends Controller
         return view('distance_list', ['sensors' => $sensors, 'readings'=>$readings, 'sensorIds'=>$sensorIds, 'history' => $table, 'timeseries' => $timeSeries, 'labels' => $labels, 'form_url' => $form_url, 'thresholds' => $thresholds]);
     }
 
-    public function show_i2c_bus()
-    {
-        $reader = new SensorReader();
-        $output = $reader->read_i2c_bus();
-        
-        return view('i2c_bus', ['output' => $output]);
-    }
     
     public function show_soil_moistures(Request $request)
     {

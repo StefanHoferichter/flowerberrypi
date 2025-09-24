@@ -80,7 +80,7 @@
 		nav {
 /*		    margin:10px;*/
 			display: grid;
-			grid-template-columns: repeat(7, 1fr);
+			grid-template-columns: repeat(8, 1fr);
 			grid-template-rows: repeat(2, 1fr);
 /*		    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr; */	
 		    grid-template-rows: 1fr 0.5fr;		    
@@ -91,7 +91,7 @@
 		.nav_submenu 
 		{
 		  display: grid;
-		  grid-template-columns: repeat(7, 1fr);
+		  grid-template-columns: repeat(8, 1fr);
   			grid-column: 1 / -1; /* über alle Spalten */
 			padding-left: 5px;
 			background: #134D05; 
@@ -123,6 +123,10 @@
 		/*  background:green; */	
 		  margin-left:20px; margin-right:20px;
 		}
+		.nav_diagnosis {
+		/*  background:green; */	
+		  margin-left:20px; margin-right:20px;
+		}
 
 		.nav_soil_moistures {
 			margin-top:0px;
@@ -145,6 +149,10 @@
 			margin-left:20px; margin-right:20px;
 		}
 		.nav_remote_sockets {
+			margin-top:0px;
+			margin-left:20px; margin-right:20px;
+		}
+		.nav_sniff {
 			margin-top:0px;
 			margin-left:20px; margin-right:20px;
 		}

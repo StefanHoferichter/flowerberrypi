@@ -2,7 +2,7 @@
 @section('title', 'Sensoren')
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 @section('submenu')
-@include ('include_submenu')  
+@include ('include_sensor_menu')  
 @endsection
 @section('content')
         <h1>Sensors</h1>

@@ -121,6 +121,9 @@
 		.nav_setup {
 		  margin-left:5px; margin-right:5px;margin-bottom:10px;
 		}
+		.nav_diagnosis {
+		  margin-left:5px; margin-right:5px;margin-bottom:10px;
+		}
 
 		.nav_soil_moistures {
 			margin-top:0px;
@@ -143,6 +146,10 @@
 			margin-left:5px; margin-right:5px;
 		}
 		.nav_remote_sockets {
+			margin-top:0px;
+			margin-left:5px; margin-right:5px;
+		}
+		.nav_sniff {
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
 		}

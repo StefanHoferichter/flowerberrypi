@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use Carbon\Exceptions\Exception;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
 
 class WateringController
@@ -34,4 +37,50 @@ class WateringController
         echo $output;
         Log::info('finished controlling relay ' . $code . ' ' . $gpio_out . ' ' . $output );
     }
+    
+    public function sniff($timeout)
+    {
+        Log::info('start reading 433MHz');
+        $cmd = ['sudo', '/var/www/html/flowerberrypi/app/python/RFSniffer'];
+        
+        $process = new Process($cmd);
+        $process->setTimeout($timeout); // optional Timeout
+        
+        $output = '';
+        
+        try {
+            $process->run();
+            
+            $output = trim($process->getOutput());
+            $errorOutput = trim($process->getErrorOutput());
+            
+            if (!$process->isSuccessful()) 
+            {
+                // Beispiel: Device busy oder andere Fehler
+                Log::error("RFSniffer failed: $errorOutput");
+                return $errorOutput;
+            }
+            
+            // Gib hier den Output zurück, je nachdem wie RFSniffer ihn liefert
+            return $output;
+            
+        }
+        catch (ProcessTimedOutException $e)
+        {
+            $output = trim($process->getOutput());
+//            echo $output;
+            Log::error('RFSniffer timeout exception: ' . $output);
+            return $output;
+        }
+        catch (Exception $e) 
+        {
+            Log::error('RFSniffer execution exception: ' . $e->getMessage());
+            return $e->getMessage();
+        }
+        
+        Log::info('finished reading 433MHz');
+        
+    }
 }
+
+

@@ -12,7 +12,6 @@ Route::get('/relays', 'App\Http\Controllers\SensorController@show_relays');
 Route::post('/relays', 'App\Http\Controllers\SensorController@control_relays');
 Route::get('/temperatures', 'App\Http\Controllers\SensorController@show_temperatures');
 Route::get('/distances', 'App\Http\Controllers\SensorController@show_distances');
-Route::get('/i2c_bus', 'App\Http\Controllers\SensorController@show_i2c_bus');
 Route::get('/soil_moistures', 'App\Http\Controllers\SensorController@show_soil_moistures');
 Route::get('/camera', 'App\Http\Controllers\SensorController@show_camera');
 Route::post('/camera', 'App\Http\Controllers\SensorController@make_picture');
@@ -35,6 +34,10 @@ Route::get('/setup_thresholds', 'App\Http\Controllers\SetupController@show_thres
 Route::post('/setup_thresholds', 'App\Http\Controllers\SetupController@save_thresholds');
 Route::get('/setup_zones', 'App\Http\Controllers\SetupController@show_zones');
 Route::post('/setup_zones', 'App\Http\Controllers\SetupController@save_zones');
+Route::get('/diagnosis', 'App\Http\Controllers\DiagnosisController@show_diagnosis');
+Route::get('/i2c_bus', 'App\Http\Controllers\DiagnosisController@show_i2c_bus');
+Route::get('/sniff', 'App\Http\Controllers\DiagnosisController@show_433mhz_start');
+Route::post('/sniff', 'App\Http\Controllers\DiagnosisController@show_433mhz');
 
 /*
 Route::get('/', function () {

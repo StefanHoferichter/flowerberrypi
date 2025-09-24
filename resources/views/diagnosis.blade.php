@@ -3,7 +3,7 @@
 @section('title', 'Sensoren')
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 @section('submenu')
-@include ('include_setup_menu')  
+@include ('include_diagnosis_menu')  
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
 
 		<div class="grid-container">
             <div class="grid-item">
-				Here you can configure your setup.
+				Here you can diagnose your hardware.
 			</div>
         </div>
 @endsection

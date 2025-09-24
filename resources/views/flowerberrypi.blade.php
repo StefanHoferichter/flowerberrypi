@@ -33,6 +33,7 @@
               <div class="nav_forecast"><a class="nav_item" href="/forecast">Forecast</a></div>
               <div class="nav_manual"><a class="nav_item" href="/manual_watering">Watering</a></div>
               <div class="nav_setup"><a class="nav_item" href="/setup">Setup</a></div>
+              <div class="nav_diagnosis"><a class="nav_item" href="/diagnosis">Diagnosis</a></div>
                             @yield('submenu')
         </nav>
 	 </header>
