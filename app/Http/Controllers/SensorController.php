@@ -362,7 +362,7 @@ class SensorController extends Controller
     
     public function show_remote_sockets()
     {
-        $remoteSockets = RemoteSocket::all();
+        $remoteSockets = RemoteSocket::with('zone')->get();
         
         return view('remote_socket_list', ['remoteSockets' => $remoteSockets]);
     }

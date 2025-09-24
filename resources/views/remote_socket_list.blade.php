@@ -37,7 +37,8 @@
                     <button name="action" value="off" type="submit">Off</button>
     	          </form>
 				</td>
-                <td>{{ $remoteSocket->zone_id  }}</td>
+                <td><a href="/zone_details/{{$remoteSocket->zone->id}}">{{ $remoteSocket->zone->name }}</a></td>
+                
             </tr>
         @endforeach
     </tbody>
