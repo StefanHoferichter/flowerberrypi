@@ -22,6 +22,7 @@
                         <th>Value</th>
                         <th>Classification</th>
                         <th>Zone</th>
+                        <th>Error</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,6 +33,7 @@
                 <td>{{ $reading->value  }}</td>
                 <td>{{ $reading->classification }}</td>
                 <td><a href="/zone_details/{{$reading->zone_id}}">{{ $reading->zone_name }}</a></td>
+                <td>{{ $reading->error }}</td>
             </tr>
         @endforeach
             </tbody>

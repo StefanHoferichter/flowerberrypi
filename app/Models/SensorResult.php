@@ -25,5 +25,6 @@ class SensorResult extends Model
     public $name;
     public $zone_name;
     public $sensor_id;
+    public $error;
     
 }

@@ -40,11 +40,11 @@ def send_code(pi, gpio_pin, code):
                 time.sleep(0.01)
         pi.wave_delete(wave_id)
     else:
-        print("❌ Wellenform konnte nicht erstellt werden.")
+        print("ERROR: could not create wave.")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Verwendung: python3 codesend_compatible.py <CODE> [GPIO_PIN]")
+        print("ERROR: python3 codesend_compatible.py <CODE> [GPIO_PIN]")
         sys.exit(1)
 
     code = int(sys.argv[1])

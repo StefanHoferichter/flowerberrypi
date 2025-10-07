@@ -15,7 +15,7 @@ def error_exit(msg):
 
 # --- Argumente prüfen ---
 if len(sys.argv) != 3:
-    print("❌ Verwendung: python3 php_read_soil_moisture.py <i2c_address> <Kanalnummer 0-3>")
+    print("ERROR: python php_read_soil_moisture.py <i2c_address> <channel 0-3>")
     sys.exit(1)
 
 # I2C-Adresse parsen
@@ -24,7 +24,7 @@ try:
     if i2c_address not in (72,73,74,75):
         raise ValueError
 except ValueError:
-    error_exit("Ungültige I2C-Adresse. Bitte dezimal (72/73) oder hex (0x48/0x49) angeben.")
+    error_exit("ERROR: Invalid I2C-Address. Valid range (72/73/74/75).")
     sys.exit(1)
 
 # Kanalnummer prüfen
@@ -33,14 +33,14 @@ try:
     if channel_number not in (0, 1, 2, 3):
         raise ValueError
 except ValueError:
-    print("❌ Ungültiger Kanal. Bitte 0, 1, 2 oder 3 angeben.")
+    print("ERROR: Invalid channel. Use 0, 1, 2 oder 3.")
     sys.exit(1)
 
 # I2C starten
 try:
 	i2c = busio.I2C(board.SCL, board.SDA)
 except Exception as e:
-    error_exit(f"I2C-Initialisierung fehlgeschlagen: {e}")
+    error_exit(f"ERROR: I2C-Init failed: {e}")
 
 # ADS1115 mit angegebener I2C-Adresse initialisieren
 try:
@@ -52,4 +52,4 @@ try:
     time.sleep(0.05)
     print(f"{chan.voltage:.3f}")
 except Exception as e:
-    error_exit(f"ADS1115 Zugriff fehlgeschlagen: {e}")
+    error_exit(f"ERROR: ADS1115 read failed: {e}")

@@ -52,7 +52,7 @@ def measure_distance(trigger_pin, echo_pin, temp):
 
 # --- Kommandozeilenargumente prüfen ---
 if len(sys.argv) != 4:
-    print("❌ Verwendung: python3 script.py <TRIG> <ECHO> <TEMP>")
+    print("ERROR: python php_read_distance.py <TRIG> <ECHO> <TEMP>")
     sys.exit(1)
 
 try:
@@ -60,7 +60,7 @@ try:
     echo1 = int(sys.argv[2])
     temp = int(sys.argv[3])
 except ValueError:
-    print("❌ Bitte nur Ganzzahlen für GPIO-Pins verwenden.")
+    print("ERROR: Please use only Integers for GPIO-Pins.")
     sys.exit(1)
 
 # --- Messen ---

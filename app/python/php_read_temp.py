@@ -5,20 +5,19 @@ import sys
 
 # Kommandozeilenargument prüfen
 if len(sys.argv) != 2:
-    print("❌ Verwendung: python3 script.py <GPIO_PIN>")
-    print("Beispiel: python3 script.py 22")
+    print("ERROR: python php_read_temp.py <GPIO_PIN>")
     sys.exit(1)
 
 
 try:
     gpio_pin = int(sys.argv[1])
 except ValueError:
-    print("❌ Ungültiger GPIO-Pin. Bitte eine Zahl angeben.")
+    print("ERROR: Invalid GPIO-Pin. ")
     sys.exit(1)
 
 pi = pigpio.pi()
 if not pi.connected:
-    print("❌ pigpio daemon nicht verbunden. Bitte 'sudo pigpiod' starten.")
+    print("ERROR: pigpio daemon not connected. run 'sudo pigpiod'.")
     exit(1)
     
 # Sensor initialisieren
@@ -28,6 +27,6 @@ result = sensor.read()
 if result['valid']:
     print(f"{result['temp_c']},{result['humidity']}")
 else:
-    print("❌ Fehler beim Lesen")
+    print("ERROR: during reading of sensor.")
 
 pi.stop()

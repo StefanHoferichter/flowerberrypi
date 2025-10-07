@@ -217,16 +217,25 @@ class SensorReader
                 }
                 Log::info('finished reading moisture ' . $output);
                 
-                if (strpos($output, 'Fehler') !== false) {
-                    //                echo "Fehler beim Auslesen des DHT11-Sensors.";
-                } else {
+                if (strpos($output, 'ERROR:') !== false) 
+                {
+                    $newReading = new SensorResult();
+                    $newReading->value=-1;
+                    $newReading->name=$sensor->name;
+                    $newReading->sensor_id=$sensor->id;
+                    $newReading->zone_id=$sensor->zone_id;
+                    $newReading->zone_name=$sensor->zone->name;
+                    $newReading->classification=0;
+                    $newReading->error=$output;
+                    array_push($readings, $newReading);
+                } 
+                else 
+                {
                     list($v0) = explode(",", trim($output));
                     Log::info('raw value ' . $v0);
-                    //                echo "Entfernung 0: {$v0}<br>";
                     $perc = ($v0-$conv->lower_limit)/($conv->upper_limit-$conv->lower_limit)*100.0;
                     if ($conv->invert > 0)
                         $perc = 100.0 - $perc;
-//                        echo "abs {$v0} in % {$perc}<br>";
                     $perc = round($perc, 1);
                     Log::info('converted value ' . $perc);
                     $newReading = new SensorResult();
