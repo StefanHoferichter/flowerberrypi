@@ -116,6 +116,28 @@
             @endforeach
                 </tbody>
             </table>        
+
+        	<h2>What-If Decisions</h2>
+        	<table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Forecast</th>
+                        <th>Soil Moisture</th>
+                        <th>Tank</th>
+                        <th>Watering</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+              <td>{{ $whatif_decision->day }} </a></td>
+				 <td> {{ $whatif_decision->forecast_classification }} </td>
+				 <td> {{ $whatif_decision->soil_moisture_classification }} </td>
+				 <td> {{ $whatif_decision->tank_classification }} </td>
+				 <td> {{ $whatif_decision->watering_classification }} </td>
+                </tr>
+                </tbody>
+            </table>        
         	
         	</div>
 
