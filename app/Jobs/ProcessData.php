@@ -209,15 +209,18 @@ class ProcessData implements ShouldQueue
         Log::info('start making watering decisions');
         if ($tod > 0)
         {
+            $max_temp_classification = 0;
             $tempSensor = SensorValue::where('type', '1')->where('day', $day)->where('hour', $hour)->first();
             if ($tempSensor != null)
             {
                 Log::info(' indoor temp classification ' . $tempSensor->classification);
+                $max_temp_classification = $tempSensor->classification;
             }
             $wf = WeatherForecast::where('day', $day)->first();
             if ($wf != null)
             {
                 Log::info('outdoor temp classification ' . $wf->classification);
+                $max_forecast_classification = $wf->classification;
                 
                 $zones = Zone::where('enabled', 1)->where('has_watering', 1)->get();
                 foreach($zones as $zone)
@@ -252,38 +255,10 @@ class ProcessData implements ShouldQueue
                                     $max_tank_classification = $v->classification;
                             }
                         }
-                        $wd = new WateringDecision();
-                        $wd->zone_id=$zone->id;
-                        $wd->soil_moisture_classification=$max_moisture_classification;
-                        $wd->tank_classification=$max_tank_classification;
-                        if ($zone->outdoor)
-                            $wd->forecast_classification=$wf->classification;
-                        else
-                            $wd->forecast_classification=$tempSensor->classification;
-                        $wd->day=date('Y-m-d');
+
+                        $controller = new WateringController();
+                        $wd = $controller->make_watering_decision($zone, $max_moisture_classification, $max_tank_classification, $max_temp_classification, $max_forecast_classification);
                         $wd->tod=$tod;
-                        
-                        if ($wd->soil_moisture_classification == 1)
-                        {
-                            Log::info('watering decision for zone ' . $wd->zone_id . ' is 1 because of high moisture classification');
-                            $wd->watering_classification = 1;
-                        }
-                        else
-                        {
-                            Log::info('watering decision for zone ' . $wd->zone_id . ' is avg of moisture and temp classification');
-                            $wd->watering_classification=round(($wd->soil_moisture_classification + $wd->forecast_classification)/2);
-                        }
-                        
-                        if ($wd->tank_classification == 3)
-                        {
-                            Log::info('lowering watering decision to 1 for zone ' . $wd->zone_id . ' because of low tank level classification');
-                            $wd->watering_classification = 1;
-                        }
-                        if ($wd->tank_classification == 2 and $wd->watering_classification == 3)
-                        {
-                                Log::info('lowering watering decision for zone ' . $wd->zone_id . ' because of medium tank level classification');
-                                $wd->watering_classification--;
-                        }
                         $wd->job_id=$job->id;
                         $wd->save();
                         Log::info('watering decision for zone ' . $wd->zone_id . ' is ' . $wd->watering_classification);

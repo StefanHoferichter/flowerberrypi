@@ -6,7 +6,7 @@ use Carbon\Exceptions\Exception;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
-
+use App\Models\WateringDecision;
 
 class WateringController
 {
@@ -80,6 +80,45 @@ class WateringController
         
         Log::info('finished reading 433MHz');
         
+    }
+    
+    public function make_watering_decision($zone, $max_moisture_classification, $max_tank_classification, $max_temp_classification, $max_forecast_classification)
+    {
+        $wd = new WateringDecision();
+        $wd->zone_id=$zone->id;
+        $wd->soil_moisture_classification=$max_moisture_classification;
+        $wd->tank_classification=$max_tank_classification;
+        if ($zone->outdoor)
+            $wd->forecast_classification=$max_forecast_classification;
+        else
+            $wd->forecast_classification=$max_temp_classification;
+                
+        $wd->day=date('Y-m-d');
+        
+        if ($wd->soil_moisture_classification == 1)
+        {
+            Log::info('watering decision for zone ' . $wd->zone_id . ' is 1 because of high moisture classification');
+            $wd->watering_classification = 1;
+        }
+        else
+        {
+            Log::info('watering decision for zone ' . $wd->zone_id . ' is avg of moisture and temp classification');
+            $wd->watering_classification=round(($wd->soil_moisture_classification + $wd->forecast_classification)/2);
+        }
+        
+        if ($wd->tank_classification == 3)
+        {
+            Log::info('lowering watering decision to 1 for zone ' . $wd->zone_id . ' because of low tank level classification');
+            $wd->watering_classification = 1;
+        }
+        if ($wd->tank_classification == 2 and $wd->watering_classification == 3)
+        {
+            Log::info('lowering watering decision for zone ' . $wd->zone_id . ' because of medium tank level classification');
+            $wd->watering_classification--;
+        }
+        Log::info('watering decision for zone ' . $wd->zone_id . ' is ' . $wd->watering_classification);
+        
+        return $wd;
     }
 }
 
