@@ -15,6 +15,7 @@ use App\Models\WateringDecision;
 use App\Models\Zone;
 use App\Services\SensorReader;
 use App\Services\WateringController;
+use App\Services\ForecastReader; 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -45,7 +46,7 @@ class SensorController extends Controller
         $wd = new ManualWateringDecision();
         $wd->zone_id = $request->zone_id;
         $wd->watering_classification = $request->watering_classification;
-        $wd->day =$request->day;
+        $wd->day =$request->day; 
         $wd->hour =$request->hour;
         $wd->save();
         
@@ -349,8 +350,9 @@ class SensorController extends Controller
         
         $form_url = "/zone_details/" . $id;
         
+        $whatif_decision = $this->make_watering_whatif_decision($zone);
         
-        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'manual_decisions' => $manual_decisions, 'thresholds' => $thresholds, 'sensors'=>$sensors, 'form_url' => $form_url]);
+        return view('zone_details', ['zone'=>$zone, 'timeseries' => $timeSeries, 'labels' => $labels, 'decisions' => $decisions, 'manual_decisions' => $manual_decisions, 'whatif_decision' => $whatif_decision, 'thresholds' => $thresholds, 'sensors'=>$sensors, 'form_url' => $form_url]);
     }
     
     public function show_sensors()
@@ -766,4 +768,84 @@ class SensorController extends Controller
         return view('job_details_list', ['sensor_values' => $sensor_values, 'pictures' => $pictures, 'watering_decisions' => $watering_decisions]);
     }
     
+    
+    private function make_watering_whatif_decision($zone)
+    {
+        Log::info('analyzing zone ' . $zone->name);
+        
+        $reader = new ForecastReader();
+        $wf = $reader->read_daily_api();
+        
+        $tempSensors = Sensor::where('sensor_type', 4)->get();
+        $distanceSensors = Sensor::where('zone_id', $zone->id)->where('sensor_type', 5)->get();
+        $moistureSensors = Sensor::where('zone_id', $zone->id)->where('sensor_type', 6)->get();
+        $max_moisture_classification = 0;
+        $max_tank_classification = 0;
+        $max_temp_classification = 0;
+        $reader = new SensorReader();
+        $readings = $reader->read_distances($distanceSensors);
+        
+        foreach($readings as $v)
+        {
+            Log::info('tank classification ' . $v->classification);
+            
+            if ($max_tank_classification < $v->classification)
+                $max_tank_classification = $v->classification;
+        }
+
+        $readings = $reader->read_soil_moistures($moistureSensors);
+        foreach($readings as $v)
+        {
+            Log::info('moisture classification ' . $v->classification);
+            
+            if ($max_moisture_classification < $v->classification)
+                $max_moisture_classification = $v->classification;
+        }
+
+        $readings = $reader->read_temperatures($tempSensors);
+        foreach($readings as $v)
+        {
+            Log::info('temp classification ' . $v->classification);
+            
+            if ($max_temp_classification < $v->classification)
+                $max_temp_classification = $v->classification;
+        }
+        
+        $wd = new WateringDecision();
+        $wd->zone_id=$zone->id;
+        $wd->soil_moisture_classification=$max_moisture_classification;
+        $wd->tank_classification=$max_tank_classification;
+        if ($zone->outdoor)
+            $wd->forecast_classification=$wf->classification;
+        else
+            $wd->forecast_classification=$max_temp_classification;
+
+        $wd->day=date('Y-m-d');
+                
+        if ($wd->soil_moisture_classification == 1)
+        {
+            Log::info('watering decision for zone ' . $wd->zone_id . ' is 1 because of high moisture classification');
+            $wd->watering_classification = 1;
+        }
+        else
+        {
+            Log::info('watering decision for zone ' . $wd->zone_id . ' is avg of moisture and temp classification');
+            $wd->watering_classification=round(($wd->soil_moisture_classification + $wd->forecast_classification)/2);
+        }
+                
+        if ($wd->tank_classification == 3)
+        {
+            Log::info('lowering watering decision to 1 for zone ' . $wd->zone_id . ' because of low tank level classification');
+            $wd->watering_classification = 1;
+        }
+        if ($wd->tank_classification == 2 and $wd->watering_classification == 3)
+        {
+            Log::info('lowering watering decision for zone ' . $wd->zone_id . ' because of medium tank level classification');
+            $wd->watering_classification--;
+        }
+        Log::info('watering decision for zone ' . $wd->zone_id . ' is ' . $wd->watering_classification);
+        
+        return $wd;
+    }
+
 }
