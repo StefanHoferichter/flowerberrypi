@@ -78,7 +78,11 @@ class SetupController extends Controller
         $sensor->gpio_in = $request->gpio_in;
         $sensor->gpio_out = $request->gpio_out;
         $sensor->gpio_extra = $request->gpio_extra;
-        
+        if ($request->enabled > 0)
+            $sensor->enabled = 1;
+        else
+            $sensor->enabled = 0;
+                
         echo $id . "-" . $request->name;
         
         $sensor->save();

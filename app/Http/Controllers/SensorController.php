@@ -489,6 +489,7 @@ class SensorController extends Controller
         $history = SensorValue::with('sensor')->where('type', '3')->where('day', '>=', $horizon)->orderBy('created_at')->get();
 
         $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        $labels = [];
         foreach ($temp_history as $entry) {
             $labels[] = $entry->created_at->format('Y-m-d H:i'); // oder nur Zeit
         }
@@ -566,6 +567,7 @@ class SensorController extends Controller
         
 */
         $i=0;
+        $timeSeries = [];
         foreach($sensors as $sensor)
         {
             $distances = SensorValue::where('type', '3')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
@@ -622,6 +624,7 @@ class SensorController extends Controller
         
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
+        $labels = [];
         foreach ($temp_history as $entry) {
             $labels[] = $entry->created_at->format('Y-m-d H:i'); // oder nur Zeit
         }
@@ -646,6 +649,7 @@ class SensorController extends Controller
 
         
         $i=0;
+        $timeSeries = [];
         foreach($sensors as $sensor)
         {
             $moistures = SensorValue::where('type', '4')->where('sensor_id', $sensor->id)->where('day', '>=', $horizon)->orderBy('created_at')->get();
