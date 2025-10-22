@@ -23,12 +23,6 @@ use function collect;
 
 class SensorController extends Controller
 {
-    public function show_home()
-    {
-        
-        return view('home');
-    }
-    
     public function show_manual_watering(Request $request)
     {
         $time_horizon_days = $request->query('time_horizon_days', 3);
@@ -510,62 +504,6 @@ class SensorController extends Controller
         }
         ksort($table);
                 
-        /*
-        $datasets = [];
-        $labelSet = [];
-        // Gruppiere Werte nach Sensor
-        $grouped = $history->groupBy('sensor_id');
-        
-        foreach ($grouped as $sensorId => $values)
-        {
-            $sensor = $values->first()->sensor ?? null;
-            $label = $sensor ? $sensor->name : "Sensor $sensorId";
-            
-            $data = [];
-            $labels = [];
-            
-            foreach ($values as $entry)
-            {
-                $labels[] = $entry->created_at->format('Y-m-d H:i'); // einheitliche Zeitachse pro Sensor
-                $data[] = $entry->value;
-            }
-            
-            $datasets[] = [
-                'label' => $label,
-                'data' => $data,
-            ];
-            
-            // Für die Labels nehmen wir einfach die Zeitpunkte des ersten Sensors
-            if (empty($labelSet)) {
-                $labelSet = $labels;
-            }
-        }
-        
-        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
-        $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
-        foreach ($temp_history as $entry) {
-            $labels[] = $entry->created_at->format('Y-m-d H:i'); // oder nur Zeit
-        }
-        
-        $history = SensorValue::where('type', '4')->where('day', '>=', $horizon)->orderBy('created_at')->get();
-        
-        $sensorIds = collect($history)->pluck('sensor_id')->unique()->sort()->values();
-        $table = [];
-        foreach ($history as $entry) {
-            $day = $entry['day'];
-            $hour = $entry['hour'];
-            
-            $timestamp = $day . " " . sprintf("%02d", $hour) . ":00";
-            $sensorId = $entry['sensor_id'];
-            $value = $entry['value'];
-            $classification = $entry['classification'];
-            
-            $table[$timestamp][$sensorId]['value'] = $value;
-            $table[$timestamp][$sensorId]['classification'] = $classification;
-        }
-        ksort($table);
-        
-*/
         $i=0;
         $timeSeries = [];
         foreach($sensors as $sensor)

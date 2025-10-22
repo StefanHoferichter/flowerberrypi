@@ -8,12 +8,12 @@
 
 @section('content')
 
-        <h1>Home</h1>
+        <h1>Shutdown</h1>
 
 
 		<div class="grid-container">
             <div class="grid-item">
-				Welcome to FlowerBerryPi, your smart personal watering solution for your flowers and plants.
+				The system will shut down in a few seconds.
 			</div>
         </div>
 @endsection
