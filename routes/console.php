@@ -1,7 +1,6 @@
 <?php
 
 use App\Jobs\ProcessData;
-use App\Models\SensorJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
