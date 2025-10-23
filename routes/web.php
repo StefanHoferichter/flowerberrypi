@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'App\Http\Controllers\SystemController@show_home');
 Route::get('/reboot', 'App\Http\Controllers\SystemController@reboot');
 Route::get('/shutdown', 'App\Http\Controllers\SystemController@shutdown');
+Route::get('/impressum', 'App\Http\Controllers\SystemController@show_impressum');
 
 Route::get('/sensors', 'App\Http\Controllers\SensorController@show_sensors');
 Route::get('/remote_sockets', 'App\Http\Controllers\SensorController@show_remote_sockets');

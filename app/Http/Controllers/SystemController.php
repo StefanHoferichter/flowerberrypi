@@ -25,4 +25,10 @@ class SystemController extends Controller
         exec('sudo reboot');
         return view('reboot');
     }
+
+    public function show_impressum()
+    {
+        
+        return view('impressum');
+    }
 }

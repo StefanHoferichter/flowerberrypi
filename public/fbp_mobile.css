@@ -210,38 +210,13 @@
 		    margin-left:5px; margin-right:5px;
 		  		
 		}
-		.footer_datenschutz {
+		.footer_threads {
 			grid-column: 2 / 3;
 		    grid-row:    1 / 2;
 		    margin-left:5px; margin-right:5px;
 		  		
 		}
-		.footer_pinterest {
-			grid-column: 1 / 2;
-		  grid-row:    2 / 3;		
-		    margin-left:5px; margin-right:5px;
-		}
-		.footer_instagram {
-			grid-column: 2 / 3;
-		  grid-row:    2 / 3;		
-		   margin-left:5px; margin-right:5px;
-		}
-		.footer_facebook {
-			grid-column: 3 / 4;
-		  grid-row:    2 / 3;		
-		   margin-left:5px; margin-right:5px;
-		}
-		.footer_threads {
-			grid-column: 1 / 2;
-		  grid-row:    3 / 4;		
-		   margin-left:5px; margin-right:5px;
-		}
-		.footer_youtube {
-			grid-column: 2 / 3;
-		  grid-row:    3 / 4;		
-		   margin-left:10px; margin-right:10px;
-		}
-
+	
 		 .float_text_img 
 		 {
 		   float: right; 
