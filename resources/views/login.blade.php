@@ -15,8 +15,8 @@
     @csrf
     <table>
         <tr>
-            <td><label for="email">Email</label></td>
-            <td><input id="email" type="email" name="email" required autofocus autocomplete="username"></td>
+            <td><label for="email">Username</label></td>
+            <td><input id="email" type="text" name="email" required autofocus autocomplete="username"></td>
         </tr>
         <tr>
             <td><label for="password">Password</label></td>

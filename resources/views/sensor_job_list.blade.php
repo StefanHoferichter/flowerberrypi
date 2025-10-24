@@ -13,10 +13,9 @@
 	<form action="/trigger_job" target="_top" method="post">
 	        @csrf
 			<table>
-			 <tbody><tr><td>Adhoc:<input type="checkbox" id="adhoc" name="adhoc" value="false"></td><td><button dusk="job_submit" type="submit">Start</button></td></tr>
+			 <tbody><tr><td>Adhoc:<input type="checkbox" id="adhoc" name="adhoc" value="false"></td><td><button type="submit">Start</button></td><td><button type="submit" formaction="/jobs" formmethod="GET">Refresh</button></td></tr>
             </tbody></table>
 		</form>
-
 
 		<div class="data-container">
             <div class="grid-item">

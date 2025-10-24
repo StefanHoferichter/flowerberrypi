@@ -71,6 +71,7 @@
                         <th>Soil Moisture</th>
                         <th>Distance</th>
                         <th>Watering</th>
+                        <th>Executed</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,6 +84,7 @@
 				 <td> {{ $dec->soil_moisture_classification }} </td>
 				 <td> {{ $dec->tank_classification }} </td>
 				 <td> {{ $dec->watering_classification }} </td>
+                 <td> {{ $dec->executed }}</td>
                 </tr>
             @endforeach
                 </tbody>
