@@ -39,12 +39,19 @@ class SensorReader
                 }
                 Log::info('finished reading temperatures ' . $output);
                 
-                if (strpos($output, 'Fehler') !== false) 
+                if (strpos($output, 'ERROR:') !== false)
                 {
-                    Log::info('error reading temperatures ' . $output);
-                    sleep(2);
-                } 
-                else 
+                    $newReading = new SensorResult();
+                    $newReading->value=-1;
+                    $newReading->name=$sensor->name;
+                    $newReading->sensor_id=$sensor->id;
+                    $newReading->zone_id=$sensor->zone_id;
+                    $newReading->zone_name=$sensor->zone->name;
+                    $newReading->classification=0;
+                    $newReading->error=$output;
+                    array_push($readings, $newReading);
+                }
+                else
                 {
                     $succ =true;
                     list($temp, $hum) = explode(",", trim($output));
@@ -93,9 +100,20 @@ class SensorReader
                 }
                 Log::info('finished reading distance ' . $output);
                 
-                if (strpos($output, 'Fehler') !== false) {
-                    //                echo "Fehler beim Auslesen des DHT11-Sensors.";
-                } else {
+                if (strpos($output, 'ERROR:') !== false)
+                {
+                    $newReading = new SensorResult();
+                    $newReading->value=-1;
+                    $newReading->name=$sensor->name;
+                    $newReading->sensor_id=$sensor->id;
+                    $newReading->zone_id=$sensor->zone_id;
+                    $newReading->zone_name=$sensor->zone->name;
+                    $newReading->classification=0;
+                    $newReading->error=$output;
+                    array_push($readings, $newReading);
+                }
+                else
+                {
                     list($v0) = explode(",", trim($output));
                     $current_value=(float)$v0;
                     Log::info('raw value ' . $current_value);

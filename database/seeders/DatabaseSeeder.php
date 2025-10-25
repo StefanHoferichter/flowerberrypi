@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin',
             'password' => bcrypt('flowerberry#()PI'),
         ]);
-        
+      /*  
         $this->call([
             ZoneSeeder::class,
         ]);
@@ -39,6 +39,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ThresholdSeeder::class,
         ]);
-        
+        */
     }
 }
