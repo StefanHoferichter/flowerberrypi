@@ -42,7 +42,8 @@ class SensorReader
                 if (strpos($output, 'ERROR:') !== false)
                 {
                     $newReading = new SensorResult();
-                    $newReading->value=-1;
+                    $newReading->temperature=-1;
+                    $newReading->humidity=-1;
                     $newReading->name=$sensor->name;
                     $newReading->sensor_id=$sensor->id;
                     $newReading->zone_id=$sensor->zone_id;
