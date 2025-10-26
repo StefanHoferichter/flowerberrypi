@@ -49,6 +49,7 @@
 	        <div class="footer_menu">
               <div class="footer_impressum"><a class="nav_item" href="/impressum">Impressum</a></div>
               <div class="footer_threads"><a class="nav_item" target="_blank" href="https://www.threads.net/@stefanhoferichter"><img src="/images/icon/threads-logo.png" width="20" alt="Threads"></a></div>
+              <div class="footer_hostname"><div class="menu_item">{{ $hostname }}</div></div>
  			</div>
   		</footer>
   </body>

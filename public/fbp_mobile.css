@@ -73,7 +73,7 @@
 				gap: 0px;
 				margin: 0em;
 		    grid-template-columns: 1fr 1fr 1fr;	
-		    grid-template-rows: 180px 1fr 160px;
+		    grid-template-rows: 180px 1fr auto;
 		}
 
 		nav {
@@ -195,11 +195,11 @@
 		.footer_menu {
 		    margin:0px;
 			display: grid;
-		    grid-template-columns: 1fr 1fr 1fr 10fr;	
-		    grid-template-rows: 1fr 1fr 1fr;
+			grid-template-columns: auto auto 1fr; /* links, Mitte, rechts */
+		    grid-template-rows: 1fr ;
 		    align-items:center;
-		    padding-top: 25px;
-		    padding-bottom: 25px;
+		    padding-top:10px;
+		    padding-bottom: 10px;
 		    padding-left: 5px;
 		    padding-right: 0px;
 		}
@@ -214,7 +214,12 @@
 			grid-column: 2 / 3;
 		    grid-row:    1 / 2;
 		    margin-left:5px; margin-right:5px;
-		  		
+		}
+		.footer_hostname {
+			grid-column: 3 / 4;
+		    grid-row:    1 / 2;
+		    margin-left:5px; margin-right:20px;
+		    justify-self: end;
 		}
 	
 		 .float_text_img 

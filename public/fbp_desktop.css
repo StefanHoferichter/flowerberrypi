@@ -198,9 +198,9 @@
 		.footer_menu {
 		    margin:0px;
 			display: grid;
-		    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 10fr;	
-		    grid-template-rows: 1fr;
-		    align-items:center;
+			grid-template-columns: auto auto 1fr; /* links, Mitte, rechts */
+			align-items: center;
+  		    grid-template-rows: 1fr;
 		    padding-top: 25px;
 		    padding-bottom: 25px;
 		    padding-left: 20px;
@@ -218,6 +218,12 @@
 		    grid-row:    1 / 2;
 		    margin-left:20px; margin-right:20px;
 		  		
+		}
+		.footer_hostname {
+			grid-column: 3 / 4;
+		    grid-row:    1 / 2;
+		    margin-left:20px; margin-right:20px;
+		    justify-self: end;
 		}
 
 		 .float_text_img 
