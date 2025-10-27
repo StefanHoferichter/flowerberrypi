@@ -28,7 +28,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/zones', 'App\Http\Controllers\SensorController@show_zones');
     Route::get('/zone_details/{id}', 'App\Http\Controllers\SensorController@show_zone_details');
     Route::get('/manual_watering', 'App\Http\Controllers\SensorController@show_manual_watering');
-    Route::post('/manual_watering', 'App\Http\Controllers\SensorController@show_manual_watering2');
+    Route::post('/track_watering', 'App\Http\Controllers\SensorController@track_watering');
+    Route::get('/triggered_watering', 'App\Http\Controllers\SensorController@show_triggered_watering');
+    Route::post('/trigger_watering', 'App\Http\Controllers\SensorController@trigger_watering');
+    Route::get('/automated_watering', 'App\Http\Controllers\SensorController@show_automated_watering');
     
     Route::get('/setup', 'App\Http\Controllers\SetupController@show_setup');
     Route::get('/setup_percentage_conversions', 'App\Http\Controllers\SetupController@show_percentage_conversions');

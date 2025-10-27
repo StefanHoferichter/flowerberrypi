@@ -289,12 +289,12 @@ class ProcessData implements ShouldQueue
                 $remoteSocket = RemoteSocket::where('zone_id', $decision->zone_id)->first();
                 if ($remoteSocket != null)
                 {
-                    $this->water_via_remote_socket($decision->watering_classification, $sensor, $remoteSocket);
+                    self::water_via_remote_socket($decision->watering_classification, $sensor, $remoteSocket);
                 }
                 $relay = Sensor::where('sensor_type', '3')->where('zone_id', $decision->zone_id)->first();
                 if ($relay != null)
                 {
-                    $this->water_via_relay($decision->watering_classification, $relay);
+                    self::water_via_relay($decision->watering_classification, $relay);
                 }
                 
                 $decision->executed=1;
@@ -305,7 +305,7 @@ class ProcessData implements ShouldQueue
         
     }
     
-    private function water_via_remote_socket($classification, $sensor, $remoteSocket)
+    public static function water_via_remote_socket($classification, $sensor, $remoteSocket)
     {
         Log::info('start watering with remote socket ' . $remoteSocket->name . ' classification ' . $classification);
         
@@ -347,7 +347,7 @@ class ProcessData implements ShouldQueue
         Log::info('finished watering with remote socket ' . $remoteSocket->name);
     }
  
-    private function water_via_relay($classification, $relay)
+    public static function water_via_relay($classification, $relay)
     {
         Log::info('start watering with relay ' . $relay->name . ' factor ' . $relay->gpio_extra . ' classification ' . $classification);
 

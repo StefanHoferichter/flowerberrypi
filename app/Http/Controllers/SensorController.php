@@ -11,31 +11,41 @@ use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorJob;
 use App\Models\SensorValue;
+use App\Models\TriggeredWateringDecision;
 use App\Models\WateringDecision;
 use App\Models\Zone;
+use App\Services\ForecastReader;
 use App\Services\SensorReader;
 use App\Services\WateringController;
-use App\Services\ForecastReader; 
+use App\Jobs\TriggeredWatering;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use function collect;
 
 class SensorController extends Controller
 {
+    public function show_automated_watering(Request $request)
+    {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
+        $zones = Zone::all();
+        $waterings = WateringDecision::where('day', '>=', $horizon)->get();
+        $form_url = "/automated_watering";
+        
+        return view('automated_watering_list', ['zones' => $zones, 'waterings' => $waterings, 'form_url' => $form_url]);
+    }
     public function show_manual_watering(Request $request)
     {
         $time_horizon_days = $request->query('time_horizon_days', 3);
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $manual_waterings = ManualWateringDecision::where('day', '>=', $horizon)->get();
         $zones = Zone::all();
-        $waterings = WateringDecision::where('day', '>=', $horizon)->get();
         $form_url = "/manual_watering";
         
-        return view('watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'waterings' => $waterings, 'form_url' => $form_url]);
+        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'form_url' => $form_url]);
     }
     
-    public function show_manual_watering2(Request $request)
+    public function track_watering(Request $request)
     {
         $wd = new ManualWateringDecision();
         $wd->zone_id = $request->zone_id;
@@ -48,10 +58,40 @@ class SensorController extends Controller
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         $manual_waterings = ManualWateringDecision::where('day', '>=', $horizon)->get();
         $zones = Zone::all();
-        $waterings = WateringDecision::where('day', '>=', $horizon)->get();
         $form_url = "/manual_watering";
         
-        return view('watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'waterings' => $waterings, 'form_url' => $form_url]);
+        return view('manual_watering_list', ['zones' => $zones, 'manual_waterings' => $manual_waterings, 'form_url' => $form_url]);
+    }
+
+    public function show_triggered_watering(Request $request)
+    {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
+        $triggered_waterings = TriggeredWateringDecision::where('day', '>=', $horizon)->get();
+        $zones = Zone::all();
+        $form_url = "/triggered_watering";
+        
+        return view('triggered_watering_list', ['zones' => $zones, 'triggered_waterings' => $triggered_waterings, 'form_url' => $form_url]);
+    }
+    public function trigger_watering(Request $request)
+    {
+        $time_horizon_days = $request->query('time_horizon_days', 3);
+        $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
+        
+        $wd = new TriggeredWateringDecision();
+        $wd->zone_id = $request->zone_id;
+        $wd->watering_classification = $request->watering_classification;
+        $wd->day = date('Y-m-d');
+        $wd->hour = date('G');
+        $wd->save();
+        
+        TriggeredWatering::dispatch();
+
+        $triggered_waterings = TriggeredWateringDecision::where('day', '>=', $horizon)->get();
+        $zones = Zone::all();
+        $form_url = "/triggered_watering";
+        
+        return view('triggered_watering_list', ['zones' => $zones, 'triggered_waterings' => $triggered_waterings, 'form_url' => $form_url]);
     }
     
     
