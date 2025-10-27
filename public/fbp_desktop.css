@@ -1,8 +1,3 @@
-	   canvas
-	   {
-	    	width:200px;
-	   }
-	
 	  .logo {width: 300px;
 					  margin-left:20px; margin-right:20px;
 					  margin-top:0px; margin-bottom:0px;
@@ -16,8 +11,6 @@
 					  margin-left:20px; margin-right:20px;
 					  margin-top:0px; margin-bottom:20px;
 	   				  float: right; 
-					  }
-	  .recipe {	  float: none; 
 					  }
 		.grid-container 
 		{

@@ -78,6 +78,7 @@ class ForecastReader
              else
                 $wf->classification=2;
         }
+        else
         {
             $wf->min_temp = -1;
             $wf->max_temp = 1;
