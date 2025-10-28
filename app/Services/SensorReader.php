@@ -172,22 +172,15 @@ class SensorReader
                 sleep(1);
         }
         Log::info('finished reading i2c bus ' . $output);
-        
-        if (strpos($output, 'Fehler') !== false) {
-            //                echo "Fehler beim Auslesen des DHT11-Sensors.";
-        } else {
-   //         echo "Output: {$output}<br>";
-        }
-        
+                
         $t = [];
         $lines = explode("\n", trim($output));
         
-        // erste Zeile: Spaltenüberschriften
         $header = array_map('trim', preg_split('/\s+/', array_shift($lines)));
         
         $i=1;
         $t[0][0] = 'x';
-        // HTML-Tabelle starten
+
         foreach ($header as $h) 
         {
             $t[0][$i] = $h;
@@ -279,16 +272,11 @@ class SensorReader
     {
         $readings = [];
         
-//        echo 1;
-        
         foreach ($sensors as $sensor)
         {
-//            echo 2;
             if ($sensor->enabled > 0)
             {
-//                echo 3;
                 $filename = 'pic_' . date('Y-m-d_H-i-s') . '.jpg';
-//                echo $filename;
                 $output = null;
                 while ($output === null)
                 {
@@ -303,12 +291,9 @@ class SensorReader
                         sleep(1);
                 }
                 
-                echo $output;
-
                 $newReading = new Picture();
                 $newReading->type=5;
                 $newReading->filename=$filename;
-                //                $newReading->name=$sensor->name;
                 $newReading->sensor_id=$sensor->id;
                 
                 array_push($readings, $newReading);

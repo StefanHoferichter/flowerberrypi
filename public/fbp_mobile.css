@@ -178,7 +178,18 @@
 			margin-top:0px;
 			margin-left:5px; margin-right:5px;
 		}
-	
+		.nav_reboot {
+			margin-top:0px;
+			margin-left:5px; margin-right:5px;
+		}
+		.nav_shutdown {
+			margin-top:0px;
+			margin-left:5px; margin-right:5px;
+		}
+		.nav_logout {
+			margin-top:0px;
+			margin-left:5px; margin-right:5px;
+		}	
 		footer {
 		  grid-column: 1 / 4;
 		  grid-row:    3 / 4;		

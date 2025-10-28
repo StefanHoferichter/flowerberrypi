@@ -14,9 +14,6 @@ class WateringController
     {
         Log::info('start controlling remote socket ' . $code . ' ' . $gpio_out );
         $output = shell_exec('sudo /var/www/html/flowerberrypi/app/python/codesend ' . $code . ' 2>&1');
-//        sleep(1);
-//        $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_send_433mhz.py ' . $code . ' ' . $gpio_out);
-        echo $output;
         Log::info('finished controlling remote socket ' . $code . ' ' . $gpio_out . ' ' . $output );
     }
 
@@ -26,7 +23,6 @@ class WateringController
         $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_send_433mhz.py ' . $code . ' ' . $gpio_out);
         sleep(1);
         $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_send_433mhz.py ' . $code . ' ' . $gpio_out);
-        echo $output;
         Log::info('finished controlling remote socket ' . $code . ' ' . $gpio_out . ' ' . $output );
     }
     
@@ -34,7 +30,6 @@ class WateringController
     {
         Log::info('start controlling relay ' . $code . ' ' . $gpio_out );
         $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_set_relay.py '. $gpio_out. ' ' . $code  );
-        echo $output;
         Log::info('finished controlling relay ' . $code . ' ' . $gpio_out . ' ' . $output );
     }
     
@@ -56,19 +51,16 @@ class WateringController
             
             if (!$process->isSuccessful()) 
             {
-                // Beispiel: Device busy oder andere Fehler
                 Log::error("RFSniffer failed: $errorOutput");
                 return $errorOutput;
             }
             
-            // Gib hier den Output zurück, je nachdem wie RFSniffer ihn liefert
             return $output;
             
         }
         catch (ProcessTimedOutException $e)
         {
             $output = trim($process->getOutput());
-//            echo $output;
             Log::error('RFSniffer timeout exception: ' . $output);
             return $output;
         }

@@ -23,10 +23,15 @@ if not pi.connected:
 # Sensor initialisieren
 sensor = DHT11(gpio_pin, pi=pi)
 
-result = sensor.read()
-if result['valid']:
-    print(f"{result['temp_c']},{result['humidity']}")
-else:
-    print("ERROR: during reading of sensor.")
+MAX_ATTEMPTS = 5
+for attempt in range(MAX_ATTEMPTS):
+    result = sensor.read()
+    if result['valid']:
+        print(f"{result['temp_c']},{result['humidity']}")
+        pi.stop()
+        sys.exit(0)
+    time.sleep(2)  # kurz warten vor erneutem Versuch
 
+print("ERROR: during reading of sensor (all attempts failed).")
 pi.stop()
+

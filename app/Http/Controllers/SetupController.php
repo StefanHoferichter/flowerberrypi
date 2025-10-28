@@ -83,8 +83,6 @@ class SetupController extends Controller
         else
             $sensor->enabled = 0;
                 
-        echo $id . "-" . $request->name;
-        
         $sensor->save();
         
         $sensors = Sensor::all();

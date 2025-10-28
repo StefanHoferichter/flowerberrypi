@@ -29,7 +29,8 @@
       <li>3: strong watering</li>
     </ul>
     
-    The thresholds for temperature, water level, and soil moisture are configurable. An optional camera can take pictures of your plants three times a day.
+	Additional waterings can be triggered from the UI, and manual waterings outside of FlowerBerryPi can also be tracked.<br>
+    The thresholds for temperature, water level, and soil moisture are configurable. An optional camera can take pictures of your plants three times a day.<br>
 		
 </div>
 @endsection

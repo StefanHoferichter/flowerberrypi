@@ -111,12 +111,10 @@ class SensorController extends Controller
         
         $outdoor = $zone->outdoor;
         $rain_sensitive = $zone->rain_sensitive;
-        //        echo $outdoor;
         
         $sensors = Sensor::where('zone_id', $id)->get();
                 
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
-//        echo ($horizon);
 
         $timeSeries = [];
         
@@ -171,7 +169,6 @@ class SensorController extends Controller
                         $mois_day = $mois->day;
                         if ($temp_day == $mois_day and $temp_hour == $mois_hour)
                         {
-                            //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
                             $found = true;
                             $data[] = $mois->value;
                             break;
@@ -210,7 +207,6 @@ class SensorController extends Controller
                         $dist_day = $dist->day;
                         if ($temp_day == $dist_day and $temp_hour == $dist_hour)
                         {
-                            //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
                             $found = true;
                             $data[] = $dist->value;
                             break;
@@ -240,15 +236,12 @@ class SensorController extends Controller
             {
                 $forecast_day=$forecast->day;
                 $forecast_hour=$forecast->hour;
-                //                echo $temp_day . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
                 if ($temp_day == $forecast_day and $forecast_hour==$temp_hour)
                 {
-                    //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
                     $found = true;
                     $hourly_forecast_temperature[] = $forecast->temperature;
                     $hourly_forecast_precipitation[] = $forecast->precipitation;
                     $hourly_forecast_cloud_cover[] = $forecast->cloud_cover;
-                    //                    $rain_sum[] = $forecast->rain_sum;
                     break;
                 }
             }
@@ -256,8 +249,6 @@ class SensorController extends Controller
             {
                 $hourly_forecast_temperature[] = 20.0;
                 $hourly_forecast_precipitation[] = 0.0;
-                //                $forecast_min[] = 10.0;
-//                $rain_sum[] = 0.0;
             }
         }
         if ($outdoor)
@@ -276,13 +267,7 @@ class SensorController extends Controller
                     'unit' => 'mm',
                     'values' => $hourly_forecast_precipitation,
                 ];
-/*                $timeSeries[] = ['name' => 'Cloud Cover',
-                    'color' => GlobalStuff::get_cloud_cover_color(),
-                    'type' => 'line',
-                    'unit' => '%',
-                    'values' => $hourly_forecast_cloud_cover,
-                ];
-*/            }
+            }
         }
         $decisions = WateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
         $manual_decisions = ManualWateringDecision::where('zone_id', $id)->where('day', '>=', $horizon)->get();
@@ -295,7 +280,6 @@ class SensorController extends Controller
             $hour=$temp->created_at->format('H');
             $tod=GlobalStuff::get_tod_from_hour($hour);
             $ifh=GlobalStuff::is_first_hour_of_tod($hour);
-//            echo $day . " " . $temp->created_at->format('H') . " " . $tod . " " . $ifh . " ";
             $found = false;
             foreach ($decisions as $dec)
             {
@@ -405,9 +389,6 @@ class SensorController extends Controller
     
     public function control_remote_socket(Request $request)
     {
-        echo $request->action;
-        echo $request->id;
-
         $sensor = Sensor::where('sensor_type', '1')->first();
         
         $remoteSocket = RemoteSocket::find($request->id);
@@ -433,9 +414,6 @@ class SensorController extends Controller
 
     public function control_relays(Request $request)
     {
-        echo $request->action;
-        echo $request->id;
-        
         $sensor = Sensor::find($request->id);
         
         
@@ -456,7 +434,6 @@ class SensorController extends Controller
     public function show_temperatures(Request $request)
     {
         $time_horizon_days = $request->query('time_horizon_days', 3);
-//        echo $time_horizon_days;
         $sensors = Sensor::where('sensor_type', '4')->get();
         $reader = new SensorReader();        
         $readings = $reader->read_temperatures($sensors);
@@ -465,7 +442,6 @@ class SensorController extends Controller
         $temp_history = SensorValue::where('type', '1')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         $hum_history = SensorValue::where('type', '2')->where('day', '>=', $horizon)->orderBy('created_at')->get();
         
-        // Extrahiere Zeit (X-Achse) und Temperaturwerte (Y-Achse)
         $labels = [];
         $temperatures = [];
         $humidities = [];
@@ -646,7 +622,6 @@ class SensorController extends Controller
                         $mois_day = $mois->day;
                         if ($temp_day == $mois_day and $temp_hour == $mois_hour)
                         {
-                            //                    echo $temp_day . " " . $temp_hour . " " . $forecast_day . " " . $forecast->max_temp . " <br>";
                             $found = true;
                             $data[] = $mois->value;
                             break;
