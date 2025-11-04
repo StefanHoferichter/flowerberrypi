@@ -62,6 +62,8 @@ class ProcessData implements ShouldQueue
         $this->make_watering_decisions($job, $tod, $day, $hour);
         
         $this->execute_watering_decisions($job, $tod, $day);
+
+        self::clear_flagfile();
         
         $job->status = "E";
         $job->save();
@@ -382,5 +384,11 @@ class ProcessData implements ShouldQueue
         }
 
         Log::info('finished watering with relay ' . $relay->name . ' classification ' . $classification);
+    }
+    
+    public static function clear_flagfile()
+    {
+        @unlink(storage_path('app/startup_job_ran'));
+        Log::info('flagfile deleted');
     }
 }
