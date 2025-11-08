@@ -21,56 +21,56 @@ class ZoneSeeder extends Seeder
             'outdoor' => '0',
         ]);
         DB::table('zones')->insert([
-            'name' => 'Balkony Rechte Seite',
+            'name' => 'Zone A',
             'enabled' => '1',
             'has_watering' => '1',
             'rain_sensitive' => '1',
             'outdoor' => '1',
         ]);
         DB::table('zones')->insert([
-            'name' => 'not in use',
+            'name' => 'Zone B',
             'enabled' => '0',
             'has_watering' => '1',
             'rain_sensitive' => '1',
             'outdoor' => '1',
         ]);
         DB::table('zones')->insert([
-            'name' => 'SZ innen, no pump',
-            'enabled' => '1',
+            'name' => 'Zone C',
+            'enabled' => '0',
             'has_watering' => '0',
             'rain_sensitive' => '0',
             'outdoor' => '0',
         ]);
         DB::table('zones')->insert([
-            'name' => 'Balkon Tisch',
-            'enabled' => '1',
+            'name' => 'Zone D',
+            'enabled' => '0',
             'has_watering' => '1',
             'rain_sensitive' => '0',
             'outdoor' => '1',
         ]);
         DB::table('zones')->insert([
-            'name' => 'Bathroom A',
+            'name' => 'Zone E',
             'enabled' => '0',
             'has_watering' => '1',
             'rain_sensitive' => '1',
             'outdoor' => '0',
         ]);
         DB::table('zones')->insert([
-            'name' => 'SZ innen Palme',
-            'enabled' => '1',
-            'has_watering' => '1',
-            'rain_sensitive' => '0',
-            'outdoor' => '0',
-        ]);
-        DB::table('zones')->insert([
-            'name' => 'Bathroom C',
+            'name' => 'Zone F',
             'enabled' => '0',
             'has_watering' => '1',
             'rain_sensitive' => '0',
             'outdoor' => '0',
         ]);
         DB::table('zones')->insert([
-            'name' => 'Bathroom D',
+            'name' => 'Zone G',
+            'enabled' => '0',
+            'has_watering' => '1',
+            'rain_sensitive' => '0',
+            'outdoor' => '0',
+        ]);
+        DB::table('zones')->insert([
+            'name' => 'Zone H',
             'enabled' => '0',
             'has_watering' => '1',
             'rain_sensitive' => '0',
