@@ -63,7 +63,7 @@ class ProcessData implements ShouldQueue
         
         $this->execute_watering_decisions($job, $tod, $day);
 
-        self::clear_flagfile();
+//        self::clear_flagfile();
         
         $job->status = "E";
         $job->save();

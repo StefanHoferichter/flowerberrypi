@@ -13,6 +13,8 @@ class StartupJob implements ShouldQueue
 {
     use Queueable;
 
+    protected static $alreadyRun = false;
+    
     /**
      * Create a new job instance.
      */
@@ -28,10 +30,16 @@ class StartupJob implements ShouldQueue
     {
         Log::info('!!!!!!!!!!! start handling startup job');
         
+        if (self::$alreadyRun) 
+        {
+            Log::info('StartupJob skipped (already run)');
+            return;
+        }
+        
+        self::$alreadyRun = true;
+        
         $this->switch_off_relays();
         $this->switch_off_remote_sockets();
-        
-        ProcessData::clear_flagfile();
         
         Log::info('!!!!!!!!!!! end handling startup job');
     }
