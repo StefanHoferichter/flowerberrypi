@@ -7,7 +7,7 @@
     <meta name="referrer" content=“no-referrer-when-downgrade“>
     <META NAME="ROBOTS" CONTENT="index, follow">
     <meta name="Description" content="@yield('description')">
-    <meta name="KeyWords" content="RezeptExperte, Triglyzerid, Hypertriglyceridämie, Cholesterin, Hypercholesterinämie, Diät, gesunde Ernährung, Rezepte">
+    <meta name="KeyWords" content="Watering, Flowers, Plants, Vacation, Balcony, Home, Garden">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">	
 	<meta property="og:title" content="@yield('title')">
     <meta property="og:description" content="@yield('description')">
