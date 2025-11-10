@@ -6,7 +6,7 @@
 @endsection
 
 @section('content')
-@include('time_horizon_menu')
+@include('include_time_horizon_menu')
         <h1>Sensor Jobs</h1>
 
 	<form action="/trigger_job" target="_top" method="post">

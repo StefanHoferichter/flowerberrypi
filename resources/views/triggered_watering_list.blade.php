@@ -7,7 +7,7 @@
 
 @section('content')
 
-@include('time_horizon_menu')
+@include('include_time_horizon_menu')
 
         <h1>Triggered Waterings</h1>
         <h2>Trigger Watering</h2>

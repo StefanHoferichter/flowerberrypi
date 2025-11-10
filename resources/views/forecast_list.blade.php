@@ -7,7 +7,7 @@
 
 @section('content')
 
-@include('time_horizon_menu')
+@include('include_time_horizon_menu')
 
         <h1>Forecast</h1>
 
