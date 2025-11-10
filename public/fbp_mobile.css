@@ -31,17 +31,6 @@
 		  padding: 20px;
 		  row-gap: 20px;
 		}
-		.recipe-action-container 
-		{
-		  display: grid;
-		  grid-template-columns: 1fr;
-		  background-color: #FFFFFF;
-		  align-content: flex-start;
-		  padding: 20px;
-		  row-gap: 20px;
-		  border: 1px solid gray;
-		  border-radius: 10px;
-		}
 		
 	    .grid-item 
 		{
@@ -237,15 +226,6 @@
 		 {
 		   margin: 10px;
 			width: 90%;
-	  	}
-	     .recipe_video 
-		 {
-		   width: 60%;
-	  	}
-	  	
-		 .thumb_img 
-		 {
-		   width: 70px;
 	  	}
 	   
 	    ul {margin-inline-start: 0; 
