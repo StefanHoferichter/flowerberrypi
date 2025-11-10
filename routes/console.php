@@ -14,5 +14,5 @@ Artisan::command('inspire', function () {
 return function (Schedule $schedule) 
 {
     $schedule->job(new ProcessData())->hourly();
-    $schedule->job(new \App\Jobs\StartupJob())->everyFiveMinutes();
+    $schedule->job(new \App\Jobs\StartupJob())->everyMinute();
 };

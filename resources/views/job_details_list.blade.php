@@ -79,7 +79,7 @@
                         <tr>
               <td>{{ $dec->day }} </a></td>
 				 <td> {{ $dec->tod  }} </td>
-				 <td> {{ $dec->zone->name  }} </td>
+				 <td><a href="/zone_details/{{$dec->zone->id}}">{{ $dec->zone->name }} </a></td>
 				 <td> {{ $dec->forecast_classification }} </td>
 				 <td> {{ $dec->soil_moisture_classification }} </td>
 				 <td> {{ $dec->tank_classification }} </td>
