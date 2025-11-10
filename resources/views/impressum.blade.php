@@ -3,7 +3,6 @@
 @include ('include_dummy_menu')     
 @endsection
 @section('title', 'Impressum')
-@section('url', env('APP_URL').'/impressum')
 
 @section('content')
         <h1>Impressum</h1>

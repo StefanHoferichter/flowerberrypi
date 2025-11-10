@@ -2,7 +2,6 @@
 <html lang="de">
   <head>
     <title>FlowerBerryPi - @yield('title')</title>
-    <link rel="canonical" href="@yield('url')" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <META NAME="Content-Language" CONTENT="de">
     <meta name="referrer" content=“no-referrer-when-downgrade“>

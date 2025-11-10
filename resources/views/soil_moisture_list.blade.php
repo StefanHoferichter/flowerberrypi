@@ -1,7 +1,6 @@
 @extends('flowerberrypi')
  
 @section('title', 'Sensoren')
-@section('url', 'https://www.rezeptexperte.de/show_categories') 
 @section('submenu')
 @include ('include_sensor_menu')  
 @endsection
@@ -73,7 +72,7 @@
 
                     	<h2>Graph</h2>
       	
-@include('chart')
+@include('include_chart')
         	</div>
         	
 

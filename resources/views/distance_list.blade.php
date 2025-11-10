@@ -70,7 +70,7 @@
 		
         	<h2>Graph</h2>
 
-@include('chart')
+@include('include_chart')
         	</div>
 
 @endsection
