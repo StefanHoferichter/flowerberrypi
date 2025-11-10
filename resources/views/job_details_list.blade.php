@@ -30,11 +30,14 @@
                 </thead>
                 <tbody>
                     @foreach($sensor_values as $hist) 
+                      @php
+                        $action = \App\Helpers\GlobalStuff::get_url_from_sensor_type($hist->sensor->sensor_type);
+                      @endphp            
                         <tr>
                             <td>{{ $hist->day }}</td>
                             <td>{{ $hist->hour }}</td>
                             <td>{{ $hist->sensor_id }}</td>
-                            <td>{{ $hist->sensor->name }}</td>
+                            <td><a href="{{ $action }}">{{ $hist->sensor->name }}</a></td>
                             <td>{{ $hist->sensor_value_type->name }}</td>
                             <td>{{ $hist->value }}</td>
                             <td>{{ $hist->classification }}</td>
