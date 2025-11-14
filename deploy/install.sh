@@ -102,6 +102,6 @@ cd temp
 git clone https://github.com/StefanHoferichter/flowerberrypi.git .
 cd ..
 chown -R www-data:www-data temp
-
+cp -r /var/www/html/temp/app/* /var/www/html/flowerberrypi/app/
 
 echo "✅ Installation finalized!"
