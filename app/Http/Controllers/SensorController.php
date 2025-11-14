@@ -398,7 +398,7 @@ class SensorController extends Controller
             $code = $remoteSocket->code_off;
         
          $controller = new WateringController();
-         $controller->control_remote_socket($sensor->gpio_out, $code);
+         $controller->control_remote_socket_old($sensor->gpio_out, $code);
         
         $remoteSockets = RemoteSocket::all();
         

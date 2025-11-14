@@ -336,12 +336,12 @@ class ProcessData implements ShouldQueue
         for ($i = 0; $i < $loops; $i++)
         {
             Log::info('switching  off remote socket ' . $remoteSocket->name . ' as stability measure');
-            $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_off);
+            $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
             sleep(2);
             Log::info('switching  on remote socket ' . $remoteSocket->name);
-            $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_on);
+            $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_on);
             sleep($sleep);
-            $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_off);
+            $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
             Log::info('switching off remote socket ' . $remoteSocket->name);
             sleep(2);
         }
