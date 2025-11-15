@@ -102,6 +102,24 @@ cd temp
 git clone https://github.com/StefanHoferichter/flowerberrypi.git .
 cd ..
 chown -R www-data:www-data temp
-cp -r /var/www/html/temp/app/* /var/www/html/flowerberrypi/app/
+
+echo "deploying flowerberrypi sources"
+SOURCE_DIR="/var/www/html/temp"
+DEST_DIR="/var/www/html/flowerberrypi"
+cp -r "$SOURCE_DIR"/app/* "$DEST_DIR"/app/
+cp -r "$SOURCE_DIR"/bootstrap/* "$DEST_DIR"/bootstrap/
+cp -r "$SOURCE_DIR"/config/* "$DEST_DIR"/config/
+cp -r "$SOURCE_DIR"/database/* "$DEST_DIR"/database/
+cp -r "$SOURCE_DIR"/public/* "$DEST_DIR"/public/
+cp -r "$SOURCE_DIR"/resources/* "$DEST_DIR"/resources/
+cp -r "$SOURCE_DIR"/routes/* "$DEST_DIR"/routes/
+
+echo "configuring apache 2"
+a2enmod rewrite
+cp "$SOURCE_DIR"/env/flowerberrypi.conf /etc/apache2/sites-available/
+a2dissite 000-default.conf
+a2ensite flowerberrypi.conf
+systemctl reload apache2
+
 
 echo "✅ Installation finalized!"

@@ -65,7 +65,7 @@ class StartupJob implements ShouldQueue
         foreach ($remoteSockets as $remoteSocket)
         {
             Log::info('switching  off remote socket ' . $remoteSocket->name);
-            $controller->control_remote_socket($sensor->gpio_out, $remoteSocket->code_off);
+            $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
             sleep(1);
         }
     }
