@@ -19,40 +19,12 @@ apt-get update
 apt-get install -y git build-essential supervisor net-tools proftpd \
         php-common libapache2-mod-php php-cli mc openssl ssl-cert \
 		apache2 mariadb-server python3-pip python3-dev pigpio i2c-tools \
-		php8.2-xml php8.2-mbstring php8.2-curl php8.2-zip php8.2-gd
+		php-mysql php8.2-xml php8.2-mbstring php8.2-curl php8.2-zip php8.2-gd
 
-#echo "📁 Erstelle Ordner …"
-#mkdir -p $PYTHON_PATH/scripts
-#mkdir -p $PYTHON_PATH/service
-
-#echo "📄 Installiere Python-Skripte …"
-#cp -r python/* $PYTHON_PATH/
-#pip3 install -r $PYTHON_PATH/requirements.txt
 
 echo "⚙️  activating pigpiod …"
 systemctl enable pigpiod
 systemctl start pigpiod
-
-#echo "📦 Installiere Laravel Paket …"
-#cp -r laravel/package/* "$LARAVEL_PATH"/packages/
-#cd "$LARAVEL_PATH"
-#composer dump-autoload
-
-#echo "🛠 Setze ENV Variablen falls nötig …"
-#if [[ ! -f "$LARAVEL_PATH/.env" ]]; then
-#    cp config/env.template "$LARAVEL_PATH/.env"
-#fi
-
-#echo "📡 Registriere Systemd-Services …"
-#cp systemd/python_daemon.service /etc/systemd/system/
-#cp systemd/laravel_queue.service /etc/systemd/system/
-
-#systemctl daemon-reload
-#systemctl enable python_daemon
-#systemctl enable laravel_queue
-
-#systemctl start python_daemon
-#systemctl start laravel_queue
 
 echo "installing 433Utils"
 
@@ -114,12 +86,59 @@ cp -r "$SOURCE_DIR"/public/* "$DEST_DIR"/public/
 cp -r "$SOURCE_DIR"/resources/* "$DEST_DIR"/resources/
 cp -r "$SOURCE_DIR"/routes/* "$DEST_DIR"/routes/
 
+echo "configuring flowerberrypi project"
+cp "$SOURCE_DIR"/env/.env.sample "$DEST_DIR"/.env
+
 echo "configuring apache 2"
 a2enmod rewrite
 cp "$SOURCE_DIR"/env/flowerberrypi.conf /etc/apache2/sites-available/
 a2dissite 000-default.conf
 a2ensite flowerberrypi.conf
 systemctl reload apache2
+
+echo "configuring database"
+read -rsp "Please enter mysql root password: " DB_PASS
+update_env_var() {
+    local key="$1"
+    local value="$2"
+    local file="$3"
+
+    if grep -q "^${key}=" "$file"; then
+        sed -i "s|^${key}=.*|${key}=${value}|" "$file"
+    else
+        echo "${key}=${value}" >> "$file"
+    fi
+}
+echo "set root pw"
+mysql <<EOF
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASS';
+flush privileges;
+EOF
+echo "create flowerberrypi database"
+mysql -u root -p"$DB_PASS" <<EOF
+DROP DATABASE IF EXISTS flowerberrypi;
+CREATE DATABASE IF NOT EXISTS flowerberrypi;
+GRANT ALL PRIVILEGES ON flowerberrypi.* TO root@localhost;
+flush privileges;
+EOF
+update_env_var "DB_PASSWORD" "$DB_PASS" "$DEST_DIR"/.env
+
+echo "populate flowerberrypi database"
+cd "$DEST_DIR"
+chmod -R 777 /var/www/html/flowerberrypi/storage
+chmod -R 777 /var/www/html/flowerberrypi/bootstrap
+sudo -u "$REAL_USER" php artisan migrate:refresh --seed
+
+sudo -u www-data php /var/www/html/flowerberrypi/artisan tinker --execute="Log::info('Installation Log erstellt');"
+chmod -R 777 "$DEST_DIR"/storage/logs/laravel.log
+
+echo "deploy 433Utils"
+cp /home/"$REAL_USER"/433Utils/RPi_utils/codesend "$DEST_DIR"/app/python
+cp /home/"$REAL_USER"/433Utils/RPi_utils/RFSniffer "$DEST_DIR"/app/python
+
+echo "configure group memberships"
+usermod -aG i2c www-data
+usermod -aG video www-data
 
 
 echo "✅ Installation finalized!"
