@@ -19,7 +19,9 @@ apt-get update
 apt-get install -y git build-essential supervisor net-tools proftpd \
         php-common libapache2-mod-php php-cli mc openssl ssl-cert \
 		apache2 mariadb-server python3-pip python3-dev pigpio i2c-tools \
-		php-mysql php8.2-xml php8.2-mbstring php8.2-curl php8.2-zip php8.2-gd
+		php-mysql php8.2-xml php8.2-mbstring php8.2-curl php8.2-zip php8.2-gd \
+		python3-pip python3-dev
+		
 
 
 echo "⚙️  activating pigpiod …"
@@ -45,6 +47,9 @@ pip install pigpio-dht --break-system-packages
 
 echo "installing adafruit"
 pip install adafruit-blinka adafruit-circuitpython-ads1x15==2.4.4 --break-system-packages
+
+echo "rpi-rf"
+pip install rpi-rf --break-system-packages 
 
 echo "installing composer"
 sudo -u "$REAL_USER" wget -O composer-setup.php https://getcomposer.org/installer
@@ -149,5 +154,8 @@ echo "configure crontab"
 chmod 644 "$SOURCE_DIR"/env/crontab
 chown root:root "$SOURCE_DIR"/env/crontab
 cp "$SOURCE_DIR"/env/crontab /etc
+
+echo "configure laravel worker"
+cp "$SOURCE_DIR"/env/laravel-worker.conf /etc/supervisor/conf.d
 
 echo "✅ Installation finalized!"
