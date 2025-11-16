@@ -145,4 +145,9 @@ chmod 440 "$SOURCE_DIR"/env/sudoers
 chown root:root "$SOURCE_DIR"/env/sudoers
 cp "$SOURCE_DIR"/env/sudoers /etc
 
+echo "configure crontab"
+chmod 644 "$SOURCE_DIR"/env/crontab
+chown root:root "$SOURCE_DIR"/env/crontab
+cp "$SOURCE_DIR"/env/crontab /etc
+
 echo "✅ Installation finalized!"
