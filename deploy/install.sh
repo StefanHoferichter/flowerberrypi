@@ -140,5 +140,9 @@ echo "configure group memberships"
 usermod -aG i2c www-data
 usermod -aG video www-data
 
+echo "configure sudoers"
+chmod 440 "$SOURCE_DIR"/env/sudoers
+chown root:root "$SOURCE_DIR"/env/sudoers
+cp "$SOURCE_DIR"/env/sudoers /etc
 
 echo "✅ Installation finalized!"
