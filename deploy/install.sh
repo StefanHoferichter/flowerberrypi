@@ -8,6 +8,8 @@ echo "Starting installation of flowerberrypi"
 LARAVEL_PATH="/var/www/html/flowerberrypi"
 PYTHON_PATH="/opt/myapp/python"
 
+read -rsp "Please enter mysql root password: " DB_PASS
+
 # --- Root Check ---
 if [[ $EUID -ne 0 ]]; then
    echo "❌ please run as root: sudo install.sh"
@@ -22,7 +24,11 @@ apt-get install -y git build-essential supervisor net-tools proftpd \
 		php-mysql php8.2-xml php8.2-mbstring php8.2-curl php8.2-zip php8.2-gd \
 		python3-pip python3-dev
 		
-
+echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/dbconfig-install boolean true" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/mysql/app-pass password $DB_PASS" | debconf-set-selections
+echo "phpmyadmin phpmyadmin/app-password-confirm password $DB_PASS" | debconf-set-selections
+apt-get install -y phpmyadmin
 
 echo "⚙️  activating pigpiod …"
 systemctl enable pigpiod
@@ -102,7 +108,6 @@ a2ensite flowerberrypi.conf
 systemctl reload apache2
 
 echo "configuring database"
-read -rsp "Please enter mysql root password: " DB_PASS
 update_env_var() {
     local key="$1"
     local value="$2"
@@ -124,6 +129,7 @@ mysql -u root -p"$DB_PASS" <<EOF
 DROP DATABASE IF EXISTS flowerberrypi;
 CREATE DATABASE IF NOT EXISTS flowerberrypi;
 GRANT ALL PRIVILEGES ON flowerberrypi.* TO root@localhost;
+GRANT ALL PRIVILEGES ON flowerberrypi.* TO phpmyadmin@localhost;
 flush privileges;
 EOF
 update_env_var "DB_PASSWORD" "$DB_PASS" "$DEST_DIR"/.env

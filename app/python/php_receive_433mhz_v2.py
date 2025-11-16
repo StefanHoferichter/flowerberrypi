@@ -1,69 +1,71 @@
 #!/usr/bin/env python3
-import sys
-import time
 import pigpio
+import time
+import sys
 
-DEFAULT_GPIO = 27
-GPIO_PIN = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_GPIO
+GPIO = 27
 
-# --- Parameter ---
-MIN_PULSE = 200      # µs, alles darunter wird ignoriert
-MAX_PULSE = 3500     # µs, alles darüber wird ignoriert
-FRAME_GAP = 5000     # µs, Pause >5ms = Frame-Ende
-MIN_PULSES = 30      # Minimum Pulse pro Telegramm
+# Min. Anzahl Pulse, die ein echter Brennenstuhl-Code hat
+MIN_PULSES = 20
 
-print(f"📡 Starte MX-F04 Sniffer auf GPIO {GPIO_PIN}")
+# Max Zeit ohne Puls, dann gilt Paket als fertig
+PACKAGE_TIMEOUT = 0.025   # 25 ms
 
 pi = pigpio.pi()
 if not pi.connected:
-    print("❌ pigpiod nicht verbunden!")
+    print("pigpiod not running!")
     sys.exit(1)
 
-pi.set_mode(GPIO_PIN, pigpio.INPUT)
-pi.set_pull_up_down(GPIO_PIN, pigpio.PUD_DOWN)
+pi.set_mode(GPIO, pigpio.INPUT)
+pi.set_pull_up_down(GPIO, pigpio.PUD_DOWN)
 
 last_tick = None
 pulses = []
+collecting = False
+last_pulse_time = time.time()
 
-def decode_rpirf(pulses_raw):
-    pulses = [p for p in pulses_raw if MIN_PULSE <= p <= MAX_PULSE]
-    if len(pulses) < MIN_PULSES:
-        return None
-    shortest = min(pulses)
-    bits = ""
-    for p in pulses:
-        if abs(p - shortest) < shortest * 0.4:
-            bits += "0"
-        elif abs(p - shortest*3) < shortest:
-            bits += "1"
-        else:
-            return None
-    if len(bits) < 10:
-        return None
-    return int(bits, 2), shortest, 1
 
 def edge_callback(gpio, level, tick):
-    global last_tick, pulses
-    if last_tick is not None:
-        diff = pigpio.tickDiff(last_tick, tick)
-        if diff > FRAME_GAP:
-            result = decode_rpirf(pulses)
-            if result:
-                code, pulselen, proto = result
-                print(f"📥 Empfangen: Code={code}  Pulse={pulselen}  Proto={proto}")
-            pulses = []
-        else:
-            if MIN_PULSE <= diff <= MAX_PULSE:
-                pulses.append(diff)
+    global last_tick, pulses, collecting, last_pulse_time
+
+    now = time.time()
+    if last_tick is None:
+        last_tick = tick
+        return
+
+    dt = pigpio.tickDiff(last_tick, tick)  # µs
     last_tick = tick
 
-cb = pi.callback(GPIO_PIN, pigpio.EITHER_EDGE, edge_callback)
+    # Speichere nur Pulse zwischen 80 µs und 5000 µs (Noise-Filter wie RFSniffer)
+    if 80 < dt < 5000:
+        pulses.append(dt)
+        collecting = True
+        last_pulse_time = now
+
+
+cb = pi.callback(GPIO, pigpio.EITHER_EDGE, edge_callback)
+
+print("Python RFSniffer läuft… (Strg+C zum Beenden)")
 
 try:
     while True:
-        time.sleep(0.1)
+        time.sleep(0.005)
+
+        # Wenn wir gerade ein Paket sammeln und eine Pause kommt:
+        if collecting and (time.time() - last_pulse_time) > PACKAGE_TIMEOUT:
+
+            if len(pulses) >= MIN_PULSES:
+                # Das macht RFSniffer: Pulse normalisieren und drucken
+                print("Empfangen Paket ({} Pulse):".format(len(pulses)))
+                print(pulses)
+
+            # Reset
+            pulses = []
+            collecting = False
+
 except KeyboardInterrupt:
-    print("\n⏹ Beende Sniffer...")
+    print("Beende…")
+
 finally:
     cb.cancel()
     pi.stop()
