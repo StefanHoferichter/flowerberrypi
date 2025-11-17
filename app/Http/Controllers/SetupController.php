@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Location;
 use App\Models\PercentageConversion;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
@@ -149,24 +150,25 @@ class SetupController extends Controller
         return view('zones', ['zones' => $zones]);
     }
 
-    public function show_password()
+    public function show_misc()
     {
         $users = User::all();
-        return view('password', ['users' => $users]);
+        $locations = Location::all();
+        return view('setup_misc', ['locations' => $locations, 'users' => $users]);
     }
     
     public function save_password(Request $request)
     {
         
         $request->validate([
-        'new_password' => [
-            'required',
-            'confirmed',          
-            Password::min(8)
-            ->mixedCase()
-            ->numbers()
-            ->symbols()
-            ->uncompromised(),
+            'new_password' => [
+                'required',
+                'confirmed',
+                Password::min(8)
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+                ->uncompromised(),
             ],
         ]);
         
@@ -174,6 +176,23 @@ class SetupController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
         
-        return back()->with('status', 'Passwort erfolgreich geändert.');
+        return back()->with('status', 'Password successfully saved.');
+    }
+
+    public function save_location(Request $request)
+    {
+        $validated = $request->validate([
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
+            'timezone'  => ['required', 'string'],
+        ]);
+        
+        $location = Location::first();
+        $location->latitude  = $validated['latitude'];
+        $location->longitude = $validated['longitude'];
+        $location->timezone  = $validated['timezone'];
+        $location->save();
+        
+        return back()->with('status', 'Location successfully saved.');
     }
 }

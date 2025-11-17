@@ -4,5 +4,5 @@
           <div class="nav_setup_remote_sockets"><a class="nav_item"  href="/setup_remote_sockets">Sockets</a></div>
           <div class="nav_setup_percentage_conversion"><a class="nav_item" href="/setup_percentage_conversions">Percentages</a></div>
           <div class="nav_setup_thresholds"><a class="nav_item"  href="/setup_thresholds">Thresholds</a></div>
-          <div class="nav_setup_password"><a class="nav_item"  href="/setup_password">Password</a></div>
+          <div class="nav_setup_misc"><a class="nav_item"  href="/setup_misc">Misc</a></div>
 </div>  

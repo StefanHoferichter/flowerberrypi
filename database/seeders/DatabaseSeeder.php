@@ -39,5 +39,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ThresholdSeeder::class,
         ]);
+        $this->call([
+            LocationSeeder::class,
+        ]);
     }
 }

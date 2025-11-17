@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\HourlyWeatherForecast;
+use App\Models\Location;
 use App\Models\WeatherForecast;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
@@ -14,8 +15,10 @@ class ForecastReader
 {
     public function read_hourly_api()
     {
-        $url = "https://api.open-meteo.com/v1/forecast?latitude=52.5244&longitude=13.4105&hourly=temperature_2m,precipitation,cloud_cover&forecast_days=1";
-        
+        $location = Location::first();
+        $url = "https://api.open-meteo.com/v1/forecast?latitude=" . $location->latitude . "&longitude=" . $location->longitude . "&timezone=" . urlencode($location->timezone) . "&hourly=temperature_2m,precipitation,cloud_cover&forecast_days=1";
+        Log::info("open meteo url " . $url);
+
         $hwf = [];
         $response = $this->callApi($url);
 
@@ -59,7 +62,10 @@ class ForecastReader
     
     public function read_daily_api()
     {
-        $url = "https://api.open-meteo.com/v1/forecast?latitude=52.5244&longitude=13.4105&daily=temperature_2m_max,temperature_2m_min,sunshine_duration,rain_sum&timezone=Europe%2FBerlin&forecast_days=1";
+        $location = Location::first();
+        $url = "https://api.open-meteo.com/v1/forecast?latitude=" . $location->latitude . "&longitude=" . $location->longitude . "&timezone=" . urlencode($location->timezone) . "&daily=temperature_2m_max,temperature_2m_min,sunshine_duration,rain_sum&forecast_days=1";
+        Log::info("open meteo url " . $url);
+        
         $wf = new WeatherForecast();
         
         $response = $this->callApi($url);
