@@ -44,6 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/setup_thresholds', 'App\Http\Controllers\SetupController@save_thresholds');
     Route::get('/setup_zones', 'App\Http\Controllers\SetupController@show_zones');
     Route::post('/setup_zones', 'App\Http\Controllers\SetupController@save_zones');
+    Route::get('/setup_password', 'App\Http\Controllers\SetupController@show_password');
+    Route::post('/setup_password', 'App\Http\Controllers\SetupController@save_password');
     
     Route::get('/diagnosis', 'App\Http\Controllers\DiagnosisController@show_diagnosis');
     Route::get('/i2c_bus', 'App\Http\Controllers\DiagnosisController@show_i2c_bus');

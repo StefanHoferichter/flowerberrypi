@@ -8,8 +8,11 @@ use App\Models\Sensor;
 use App\Models\SensorType;
 use App\Models\SensorValueType;
 use App\Models\Threshold;
+use App\Models\User;
 use App\Models\Zone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class SetupController extends Controller
 {
@@ -145,5 +148,32 @@ class SetupController extends Controller
         $zones = Zone::all();
         return view('zones', ['zones' => $zones]);
     }
+
+    public function show_password()
+    {
+        $users = User::all();
+        return view('password', ['users' => $users]);
+    }
     
+    public function save_password(Request $request)
+    {
+        
+        $request->validate([
+        'new_password' => [
+            'required',
+            'confirmed',          
+            Password::min(8)
+            ->mixedCase()
+            ->numbers()
+            ->symbols()
+            ->uncompromised(),
+            ],
+        ]);
+        
+        $user = auth()->user();
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+        
+        return back()->with('status', 'Passwort erfolgreich geändert.');
+    }
 }

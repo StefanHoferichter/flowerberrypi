@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'admin',
             'email' => 'admin',
-            'password' => bcrypt('flowerberry#()PI'),
+            'password' => bcrypt('flowerberry5()PI'),
         ]);
         
         $this->call([

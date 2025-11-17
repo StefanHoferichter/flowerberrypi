@@ -3,69 +3,46 @@ import pigpio
 import time
 import sys
 
-GPIO = 27
-
-# Min. Anzahl Pulse, die ein echter Brennenstuhl-Code hat
-MIN_PULSES = 20
-
-# Max Zeit ohne Puls, dann gilt Paket als fertig
-PACKAGE_TIMEOUT = 0.025   # 25 ms
+GPIO_PIN = 27       # Pin für den 433 MHz Empfänger
+MIN_INTERFRAME = 200000  # µs Pause = Ende eines Frames
 
 pi = pigpio.pi()
 if not pi.connected:
-    print("pigpiod not running!")
-    sys.exit(1)
+    sys.exit("pigpiod läuft nicht! Starte: sudo systemctl start pigpiod")
 
-pi.set_mode(GPIO, pigpio.INPUT)
-pi.set_pull_up_down(GPIO, pigpio.PUD_DOWN)
-
-last_tick = None
 pulses = []
-collecting = False
-last_pulse_time = time.time()
+last_tick = 0
 
-
-def edge_callback(gpio, level, tick):
-    global last_tick, pulses, collecting, last_pulse_time
-
-    now = time.time()
-    if last_tick is None:
-        last_tick = tick
-        return
-
-    dt = pigpio.tickDiff(last_tick, tick)  # µs
+def cb(gpio, level, tick):
+    global pulses, last_tick
+    if last_tick != 0:
+        pulse_len = pigpio.tickDiff(last_tick, tick)
+        pulses.append(pulse_len)
     last_tick = tick
 
-    # Speichere nur Pulse zwischen 80 µs und 5000 µs (Noise-Filter wie RFSniffer)
-    if 80 < dt < 5000:
-        pulses.append(dt)
-        collecting = True
-        last_pulse_time = now
+pi.set_mode(GPIO_PIN, pigpio.INPUT)
+cb_handle = pi.callback(GPIO_PIN, pigpio.EITHER_EDGE, cb)
 
-
-cb = pi.callback(GPIO, pigpio.EITHER_EDGE, edge_callback)
-
-print("Python RFSniffer läuft… (Strg+C zum Beenden)")
+print("Sniffer läuft auf GPIO", GPIO_PIN)
+print("Drücke deine Fernbedienung...")
 
 try:
     while True:
-        time.sleep(0.005)
-
-        # Wenn wir gerade ein Paket sammeln und eine Pause kommt:
-        if collecting and (time.time() - last_pulse_time) > PACKAGE_TIMEOUT:
-
-            if len(pulses) >= MIN_PULSES:
-                # Das macht RFSniffer: Pulse normalisieren und drucken
-                print("Empfangen Paket ({} Pulse):".format(len(pulses)))
-                print(pulses)
-
-            # Reset
+        time.sleep(0.05)
+        if pulses and (pigpio.tickDiff(last_tick, pi.get_current_tick()) > MIN_INTERFRAME):
+            # Frame Ende erkannt → Code erzeugen
+            frame = pulses[:]
             pulses = []
-            collecting = False
+
+            # einfacher "Code" = Abfolge der Pulslängen
+            code_str = "-".join(str(p) for p in frame)
+            print("\n--- Signal empfangen ---")
+            print("Pulslängen:", frame)
+            print("Code:", code_str)
+            print("------------------------")
 
 except KeyboardInterrupt:
-    print("Beende…")
-
+    print("\nBeende Sniffer...")
 finally:
-    cb.cancel()
+    cb_handle.cancel()
     pi.stop()
