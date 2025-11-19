@@ -213,5 +213,19 @@ class GlobalStuff
         return $action;
     }
     
-                
+    
+    public static function isRaspberryPi5(): bool 
+    {
+        $modelFile = '/proc/device-tree/model';
+        
+        if (!file_exists($modelFile)) 
+        {
+            return false; // kein Raspberry Pi
+        }
+        
+        $model = trim(file_get_contents($modelFile));
+
+        return stripos($model, 'Raspberry Pi 5') !== false;
+    }
+    
 }

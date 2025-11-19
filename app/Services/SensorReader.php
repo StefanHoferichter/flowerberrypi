@@ -19,22 +19,31 @@ class SensorReader
     {
         $readings = [];
         
+        $isPi5 = GlobalStuff::isRaspberryPi5();
         foreach ($sensors as $sensor)
         {
             $succ = false;
             while (! $succ)
             {
+                Log::info('is Raspberry 5 ' . $isPi5);
                 Log::info('start reading temperatures ' . $sensor->gpio_in);
                 $output = null;
-                while ($output === null)
+                while (empty($output))
                 {
-                    $output = DBLock::run('sensor_'. $sensor->id, 10, function () use ($sensor)
+                    $output = DBLock::run('sensor_'. $sensor->id, 10, function () use ($sensor, $isPi5)
                     {
-                        $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in);
+                        if ($isPi5)
+                        {
+                            $output = shell_exec('python3 /var/www/html/flowerberrypi/app/python/php_read_temp_pi5.py '. $sensor->gpio_in. ' 2>&1');
+                        }
+                        else 
+                        {
+                            $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_temp.py '. $sensor->gpio_in. ' 2>&1');
+                        }
                         return $output;
                     });
                     
-                    if ($output === null)
+                    if (empty($output))
                         sleep(1);
                 }
                 Log::info('finished reading temperatures ' . $output);
