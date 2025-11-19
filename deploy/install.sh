@@ -153,7 +153,6 @@ cp /home/"$REAL_USER"/433Utils/RPi_utils/RFSniffer "$DEST_DIR"/app/python
 echo "compiling 433mhz sender for raspberry pi 5"
 cd /var/www/html/flowerberrypi/app/c
 gcc send_433mhz_pi5.c -o send433_pi5 -lgpiod
-sudo -u "$REAL_USER" cd ~
 
 echo "configure group memberships"
 usermod -aG i2c www-data
