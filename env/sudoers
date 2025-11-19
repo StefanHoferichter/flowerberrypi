@@ -55,6 +55,7 @@ root	ALL=(ALL:ALL) ALL
 
 www-data ALL=(ALL) NOPASSWD: /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py *
 www-data ALL=(ALL) NOPASSWD: /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_send_433mhz_v2.py *
+www-data ALL=(ALL) NOPASSWD: /var/www/html/flowerberrypi/app/c/send433_pi5
 www-data ALL=(ALL) NOPASSWD: /var/www/html/flowerberrypi/app/python/codesend
 www-data ALL=(ALL) NOPASSWD: /var/www/html/flowerberrypi/app/python/RFSniffer
 www-data ALL=(ALL) NOPASSWD: /usr/sbin/i2cdetect

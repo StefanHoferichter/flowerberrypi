@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Helpers\GlobalStuff;
+use App\Models\WateringDecision;
 use Carbon\Exceptions\Exception;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
-use App\Models\WateringDecision;
 
 class WateringController
 {
@@ -19,19 +20,33 @@ class WateringController
 
     public function control_remote_socket_old($gpio_out, $code)
     {
+        $isPi5 = GlobalStuff::isRaspberryPi5();
         Log::info('start controlling remote socket ' . $code . ' ' . $gpio_out );
-        $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_send_433mhz_v2.py ' . $gpio_out . ' ' .  $code .  ' 2>&1');
-        Log::info('finished controlling remote socket ' . $code . ' ' . $gpio_out . ' ' . $output );
-        sleep(1);
-        $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_send_433mhz_v2.py ' . $gpio_out . ' ' .  $code .  ' 2>&1');
+        
+        if ($isPi5)
+        {
+            $output = shell_exec('sudo /var/www/html/flowerberrypi/app/c/send433_pi5 ' . $gpio_out . ' ' .  $code .  ' 2>&1');
+            sleep(1);
+            $output = shell_exec('sudo /var/www/html/flowerberrypi/app/c/send433_pi5 ' . $gpio_out . ' ' .  $code .  ' 2>&1');
+        }
+        else
+        {
+            $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_send_433mhz_v2.py ' . $gpio_out . ' ' .  $code .  ' 2>&1');
+            sleep(1);
+            $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_send_433mhz_v2.py ' . $gpio_out . ' ' .  $code .  ' 2>&1');
+        }
         Log::info('finished controlling remote socket ' . $code . ' ' . $gpio_out . ' ' . $output );
     }
     
     public function control_relay($gpio_out, $code)
     {
-        Log::info('start controlling relay ' . $code . ' ' . $gpio_out );
-        $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_set_relay.py '. $gpio_out. ' ' . $code  );
-        Log::info('finished controlling relay ' . $code . ' ' . $gpio_out . ' ' . $output );
+        $isPi5 = GlobalStuff::isRaspberryPi5();
+        Log::info('start controlling relay ' . $code . ' ' . $gpio_out . ' ' . $isPi5);
+        if ($isPi5)
+            $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_set_relay_pi5.py '. $gpio_out. ' ' . $code  );
+        else
+            $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_set_relay.py '. $gpio_out. ' ' . $code  );
+            Log::info('finished controlling relay ' . $code . ' ' . $gpio_out . ' ' . $output );
     }
     
     public function sniff($timeout)

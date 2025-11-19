@@ -88,6 +88,7 @@ class SensorReader
     public function read_distances(Collection $sensors)
     {
         $readings = [];
+        $isPi5 = GlobalStuff::isRaspberryPi5();
         
         foreach ($sensors as $sensor)
         {
@@ -99,9 +100,18 @@ class SensorReader
                 $output = null;
                 while ($output === null)
                 {
-                    $output = DBLock::run('sensor_'. $sensor->id, 10, function () use ($sensor)
+                    $output = DBLock::run('sensor_'. $sensor->id, 10, function () use ($sensor, $isPi5)
                     {
-                        $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 20 2>&1');
+                        if ($isPi5)
+                        {
+                            $output = shell_exec('python /var/www/html/flowerberrypi/app/python/php_read_distance_pi5.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 20 2>&1');
+                        }
+                        else
+                        {
+                            $output = shell_exec('/usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_read_distance.py '. $sensor->gpio_out . ' ' . $sensor->gpio_in . ' 20 2>&1');
+                        }
+                        return $output;
+                        
                         return $output;
                     });
                     

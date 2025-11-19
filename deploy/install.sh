@@ -22,8 +22,8 @@ apt-get install -y git build-essential supervisor net-tools proftpd \
         php-common libapache2-mod-php php-cli mc openssl ssl-cert \
 		apache2 mariadb-server python3-pip python3-dev pigpio i2c-tools \
 		php-mysql php8.2-xml php8.2-mbstring php8.2-curl php8.2-zip php8.2-gd \
-		python3-pip python3-dev
-		
+		python3-pip python3-dev libgpiod-dev python3-lgpio
+
 echo "phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2" | debconf-set-selections
 echo "phpmyadmin phpmyadmin/dbconfig-install boolean true" | debconf-set-selections
 echo "phpmyadmin phpmyadmin/mysql/app-pass password $DB_PASS" | debconf-set-selections
@@ -47,6 +47,14 @@ cd WiringPi
 sudo -u "$REAL_USER" ./build
 cd ../433Utils/RPi_utils
 sudo -u "$REAL_USER" make
+
+echo "compiling 433mhz sender for raspberry pi 5"
+cd /var/www/html/flowerberrypi/app/c
+gcc send_433mhz_pi5.c -o send433_pi5 -lgpiod
+sudo -u "$REAL_USER" cd ~
+
+echo "installing adafruit-circuitpython-dht"
+pip install adafruit-circuitpython-dht --break-system-packages 
 
 echo "installing pigpio-dht"
 pip install pigpio-dht --break-system-packages
@@ -150,6 +158,7 @@ cp /home/"$REAL_USER"/433Utils/RPi_utils/RFSniffer "$DEST_DIR"/app/python
 echo "configure group memberships"
 usermod -aG i2c www-data
 usermod -aG video www-data
+usermod -aG gpio www-data
 
 echo "configure sudoers"
 chmod 440 "$SOURCE_DIR"/env/sudoers
