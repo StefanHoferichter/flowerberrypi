@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
+use App\Services\MQTTController;
 use App\Services\WateringController;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -40,6 +41,7 @@ class StartupJob implements ShouldQueue
         
         $this->switch_off_relays();
         $this->switch_off_remote_sockets();
+        $this->publish_mqtt_to_ha();
         
         Log::info('!!!!!!!!!!! end handling startup job');
     }
@@ -69,4 +71,11 @@ class StartupJob implements ShouldQueue
             sleep(1);
         }
     }
+    
+    private function publish_mqtt_to_ha()
+    {
+        $controller = new MQTTController();
+        $controller->send_discovery_messages();
+    }
+    
 }

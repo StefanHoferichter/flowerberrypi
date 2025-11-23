@@ -13,6 +13,7 @@ use App\Models\WateringDecision;
 use App\Models\WeatherForecast;
 use App\Models\Zone;
 use App\Services\ForecastReader;
+use App\Services\MQTTController;
 use App\Services\SensorReader;
 use App\Services\WateringController;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -62,6 +63,8 @@ class ProcessData implements ShouldQueue
         $this->make_watering_decisions($job, $tod, $day, $hour);
         
         $this->execute_watering_decisions($job, $tod, $day);
+        
+        $this->publish_mqtt_to_ha();
 
 //        self::clear_flagfile();
         
@@ -306,6 +309,13 @@ class ProcessData implements ShouldQueue
         Log::info('finished executing watering decisions');
         
     }
+    
+    private function publish_mqtt_to_ha()
+    {
+        $controller = new MQTTController();
+        $controller->send_discovery_messages();
+    }
+    
     
     public static function water_via_remote_socket($classification, $sensor, $remoteSocket)
     {

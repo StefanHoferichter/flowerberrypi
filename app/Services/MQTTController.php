@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
@@ -8,7 +8,7 @@ use App\Models\SensorValue;
 use PhpMqtt\Client\ConnectionSettings;
 use PhpMqtt\Client\MqttClient;
 
-class MQTTController extends Controller
+class MQTTController
 {
     protected array $sensorTypeMap = [
         1 => ['device_class' => 'temperature', 'unit' => '°C'],
@@ -17,7 +17,7 @@ class MQTTController extends Controller
         4 => ['device_class' => 'moisture', 'unit' => '%'],        
     ];
     
-    public function send_discovery_message()
+    public function send_discovery_messages()
     {
         $host = config('mqtt.host');
         $port = config('mqtt.port');
@@ -25,7 +25,6 @@ class MQTTController extends Controller
         $password = config('mqtt.password');
         $clientId=gethostname();
         
-        // Verbindungseinstellungen
         $connectionSettings = (new ConnectionSettings)
             ->setUsername($username)
             ->setPassword($password)
@@ -42,12 +41,7 @@ class MQTTController extends Controller
             $this->publish_actuators($clientId, $mqtt);
             
             
-/*            // --- Initialwert senden ---
-            $stateTopic = "homeassistant/device/{$clientId}/temperature";
-            $statePayload = "22.0";
-            $mqtt->publish($stateTopic, $statePayload, 0, true);
-  */          
-            echo "Discovery + initialer Wert erfolgreich gesendet!\n";
+            Log:info("discovery message sent");
             
             $mqtt->disconnect();
         } 
@@ -69,7 +63,6 @@ class MQTTController extends Controller
         
         foreach ($latestValues as $value)
         {
-//            echo "Sensor: {$value->sensor->name}, {$value->type}\n";
             $sensorNameOrig=$value->sensor->name . " " . $value->sensor_value_type->name;
             $sensorName = $this->sanitizeSensorName($sensorNameOrig);
             
@@ -98,11 +91,9 @@ class MQTTController extends Controller
                 $payload['device_class'] = $typeConfig['device_class'];
             }
             
-//            echo json_encode($payload);
-            echo "-------<br>\n";
-            
-            // Discovery-Nachricht senden
             $mqtt->publish($discoveryTopic, json_encode($payload), 0, true);
+            
+            Log:info("sensor {$sensorName} message sent");
         }
     }
 
@@ -124,7 +115,7 @@ class MQTTController extends Controller
             
             $mqtt->publish($stateTopic, $payload, 0, true); 
             
-            echo "Published value {$payload} for sensor {$value->sensor->name} on topic {$stateTopic}\n";
+            Log:info("sensor value {$sensorName} message sent");
         }
     }
     private function publish_actuators($clientId, $mqtt)
@@ -165,10 +156,12 @@ class MQTTController extends Controller
                         ]
                         ];
             //            echo json_encode($payload);
-            echo "-------<br>\n";
             
             // Discovery-Nachricht senden
             $mqtt->publish($discoveryTopic, json_encode($payload), 0, true);
+            
+            Log:info("actuator {$actuatorName} message sent");
+            
         }
     }
     
