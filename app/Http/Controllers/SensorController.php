@@ -17,6 +17,7 @@ use App\Models\Zone;
 use App\Services\ForecastReader;
 use App\Services\SensorReader;
 use App\Services\WateringController;
+use App\Services\MQTTController;
 use App\Jobs\TriggeredWatering;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -399,6 +400,9 @@ class SensorController extends Controller
         
          $controller = new WateringController();
          $controller->control_remote_socket_old($sensor->gpio_out, $code);
+         
+         $mqttcontroller = new MQTTController();
+         $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, strtoupper($request->action));
         
         $remoteSockets = RemoteSocket::all();
         
@@ -422,9 +426,10 @@ class SensorController extends Controller
         else
            $code = 1;
                 
-           $controller = new WateringController();
-           $controller->control_relay($sensor->gpio_out, $code);
-            
+        $controller = new WateringController();
+        $controller->control_relay($sensor->gpio_out, $code);
+        $mqttcontroller = new MQTTController();
+        $mqttcontroller->send_status_message("relay", $sensor->id, strtoupper($request->action));
             
         $relays = Sensor::where('sensor_type', '3')->get();
         return view('relay_list', ['relays' => $relays]);

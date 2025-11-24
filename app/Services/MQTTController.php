@@ -48,7 +48,7 @@ class MQTTController
         } 
         catch (\PhpMqtt\Client\Exceptions\MqttClientException $e) 
         {
-            echo "Fehler beim Verbinden oder Senden: " . $e->getMessage() . "\n";
+            Log::info("MQTT error: " . $e->getMessage());
         }
     }
 
@@ -174,5 +174,39 @@ class MQTTController
         
         return $name;
     }
+    
+    
+    public function send_status_message($actuatorType, $actuatorId, $state)
+    {
+        $host = config('mqtt.host');
+        $port = config('mqtt.port');
+        $username = config('mqtt.username');
+        $password = config('mqtt.password');
+        $clientId=gethostname();
+        
+        $connectionSettings = (new ConnectionSettings)
+        ->setUsername($username)
+        ->setPassword($password)
+        ->setKeepAliveInterval(60);
+        
+        $mqtt = new MqttClient($host, $port, $clientId . "-state");
+        
+        try {
+            $mqtt->connect($connectionSettings, true);
+            
+            
+            $stateTopic = "plant/watering/actuator/{$clientId}/{$actuatorType}/{$actuatorId}/state";
+            $mqtt->publish($stateTopic, $state, 0);
+            
+            Log::info("state message sent to topic " . $stateTopic . " with state " . $state);
+            
+            $mqtt->disconnect();
+        }
+        catch (\PhpMqtt\Client\Exceptions\MqttClientException $e)
+        {
+            Log::info("MQTT error: " . $e->getMessage());
+        }
+    }
+    
 }
 

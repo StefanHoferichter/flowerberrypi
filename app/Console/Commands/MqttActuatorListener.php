@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
+use App\Services\MQTTController;
 use App\Services\WateringController;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -46,9 +47,9 @@ class MqttActuatorListener extends Command
             
             $this->executeActuator($actuatorType, $actuatorId, $message);
 
-            $clientId=gethostname();
-            $stateTopic = "plant/watering/actuator/{$clientId}/{$actuatorType}/{$actuatorId}/state";
-            $mqtt->publish($stateTopic, $message, 0); 
+            $controller = new MQTTController();
+            $controller->send_status_message($actuatorType, $actuatorId, $message);
+                  
             
             Log::info( "[§§§§§§§§§§§§§§§§§§§§§] finished");
         }, 0);

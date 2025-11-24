@@ -322,6 +322,7 @@ class ProcessData implements ShouldQueue
         Log::info('start watering with remote socket ' . $remoteSocket->name . ' classification ' . $classification);
         
         $controller = new WateringController();
+        $mqttcontroller = new MQTTController();
         
         $loops=0;
         if ($classification==1)
@@ -347,11 +348,15 @@ class ProcessData implements ShouldQueue
         {
             Log::info('switching  off remote socket ' . $remoteSocket->name . ' as stability measure');
             $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
+            $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, "OFF");
             sleep(2);
             Log::info('switching  on remote socket ' . $remoteSocket->name);
             $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_on);
+            $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, "ON");
+            
             sleep($sleep);
             $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
+            $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, "OFF");
             Log::info('switching off remote socket ' . $remoteSocket->name);
             sleep(2);
         }
@@ -384,12 +389,15 @@ class ProcessData implements ShouldQueue
         Log::info('watering time ' . $sleep);
         
         $controller = new WateringController();
+        $mqttcontroller = new MQTTController();
         if ($sleep > 0)
         {
             Log::info('switching on relay ' . $relay->name);
             $controller->control_relay($relay->gpio_out, 0);
+            $mqttcontroller->send_status_message("relay", $relay->id, "ON");
             sleep($sleep);
             $controller->control_relay($relay->gpio_out, 1);
+            $mqttcontroller->send_status_message("relay", $relay->id, "OFF");
             Log::info('switching off relay ' . $relay->name);
         }
 

@@ -55,6 +55,9 @@ class StartupJob implements ShouldQueue
             Log::info('switching off relay ' . $relay->name);
             $controller->control_relay($relay->gpio_out, 1);
             sleep(1);
+            $mqttcontroller = new MQTTController();
+            $mqttcontroller->send_status_message("relay", $relay->id, "OFF");
+            
         }
     }
 
@@ -69,6 +72,9 @@ class StartupJob implements ShouldQueue
             Log::info('switching  off remote socket ' . $remoteSocket->name);
             $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
             sleep(1);
+            $mqttcontroller = new MQTTController();
+            $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, "OFF");
+            
         }
     }
     
