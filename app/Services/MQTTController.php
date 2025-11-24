@@ -85,13 +85,18 @@ class MQTTController
                     "model" => "FlowerBerryPi V1.0"
                         ]
                         ];
-            if (!empty($typeConfig['unit'])) {
+            if (!empty($typeConfig['unit'])) 
+            {
                 $payload['unit_of_measurement'] = $typeConfig['unit'];
             }
-            if (!empty($typeConfig['device_class'])) {
+            if (!empty($typeConfig['device_class']))
+            {
                 $payload['device_class'] = $typeConfig['device_class'];
             }
-            
+            if ($value->type == 3)
+            {
+                $payload['icon'] = 'mdi:cup-water' ;
+            }
             $mqtt->publish($discoveryTopic, json_encode($payload), 0, true);
             
             Log::info("sensor {$sensorName} message sent");
@@ -149,11 +154,12 @@ class MQTTController
                 'payload_on' => "ON",
                 'payload_off' => "OFF",
                 'unique_id' => "{$clientId}_{$actuatorName}",
+                'icon' => "mdi:water",
                 "device" => [
                     "identifiers" => [$clientId],
                     "name" => "{$clientId}",
                     "manufacturer" => "SHSS",
-                    "model" => "FlowerBerryPi V1.0"
+                    "model" => "FlowerBerryPi V1.0",
                         ]
                         ];
 
