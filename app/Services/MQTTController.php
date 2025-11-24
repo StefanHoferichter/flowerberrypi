@@ -124,13 +124,13 @@ class MQTTController
         $relays = Sensor::where('sensor_type', "3" )->get()->map(fn($r) => [
             'id' => $r->id,
             'name' => $r->name,
-            'type' => 'Relay'
+            'type' => 'relay'
         ]);
         
         $sockets = RemoteSocket::all()->map(fn($s) => [
             'id' => $s->id,
             'name' => $s->name,
-            'type' => 'Remote Socket'
+            'type' => 'remote_socket'
         ]);
         
         $actuators = $relays->merge($sockets);
@@ -144,8 +144,8 @@ class MQTTController
                         
             $payload = [
                 'name' => $actuatorNameOrig,
-                'state_topic' => "plant/watering/actuator/{$clientId}/{$actuator['type']}/{$actuatorName}/state",
-                'command_topic' => "plant/watering/actuator/{$clientId}/{$actuator['type']}/{$actuatorName}/set",
+                'state_topic' => "plant/watering/actuator/{$clientId}/{$actuator['type']}/{$actuator['id']}/state",
+                'command_topic' => "plant/watering/actuator/{$clientId}/{$actuator['type']}/{$actuator['id']}/set",
                 'payload_on' => "ON",
                 'payload_off' => "OFF",
                 'unique_id' => "{$clientId}_{$actuatorName}",
@@ -156,9 +156,7 @@ class MQTTController
                     "model" => "FlowerBerryPi V1.0"
                         ]
                         ];
-            //            echo json_encode($payload);
-            
-            // Discovery-Nachricht senden
+
             $mqtt->publish($discoveryTopic, json_encode($payload), 0, true);
             
             Log::info("actuator {$actuatorName} message sent");

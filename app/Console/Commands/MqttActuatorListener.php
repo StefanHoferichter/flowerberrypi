@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Services\WateringController;
 use Illuminate\Console\Command;
@@ -24,19 +25,23 @@ class MqttActuatorListener extends Command
         
         $connectionSettings = (new ConnectionSettings)
         ->setUsername($username)
-        ->setPassword($password);
+        ->setPassword($password)
+        ->setKeepAliveInterval(30)   
+        ->setReconnectAutomatically(true);
         
         $mqtt = new MqttClient($host, $port, $clientId);
         
         Log::info("Connecting to MQTT broker {$host}:{$port} ...");
-        $mqtt->connect($connectionSettings, true);
-        
-        Log::info("Connected. Listening for actuator commands…  'plant/watering/{$clientId}/actuator/+/set'");
+        $mqtt->connect($connectionSettings, false);
+        $topic = "plant/watering/actuator/{$clientId}/+/+/set";
+        Log::info("Connected. Listening for actuator commands… " .  $topic);
                 
-        $mqtt->subscribe("plant/watering/actuator/{$clientId}/+/+/set", function (string $topic, string $message) {
-            Log::info( "[MQTT] {$topic} = {$message}");
+        $mqtt->subscribe($topic, function (string $topic, string $message) 
+        {
+            Log::info( "[§§§§§§§§§§§§§§§§§§§§§] {$topic} = {$message}");
             
             $this->executeActuator($topic, $message);
+            Log::info( "[§§§§§§§§§§§§§§§§§§§§§] finished");
         }, 0);
             
         $mqtt->loop(true);
@@ -46,13 +51,13 @@ class MqttActuatorListener extends Command
     {
         $parts = explode('/', $topic);
         $actuatorType = $parts[4];
-        $actuatorName = $parts[5];
+        $actuatorId = $parts[5];
         
-        Log::info("received set for " . $actuatorName . " type " . $actuatorType . " with message " . $message);
+        Log::info("received set for " . $actuatorId . " type " . $actuatorType . " with message " . $message);
         
-        if ($actuatorType == "Relay")
+        if ($actuatorType == "relay")
         {
-            $relay = Sensor::where('sensor_type', '3')->whereRaw('LOWER(name) = LOWER(?)', [$actuatorName])->first();
+            $relay = Sensor::where('sensor_type', '3')->where('id', $actuatorId)->first();
             $controller = new WateringController();
             if ($message == "ON")
             {
@@ -65,8 +70,28 @@ class MqttActuatorListener extends Command
                 $controller->control_relay($relay->gpio_out, 1);
             }
         }
+        if ($actuatorType == "remote_socket")
+        {
+            Log::info('switching remote_socket ');
+            $sensor = Sensor::where('sensor_type', '1')->first();
+            Log::info('switching remote_socket ' . $sensor->gpio_out);
+            $remoteSocket = RemoteSocket::where('id', $actuatorId)->first();
+            Log::info('switching remote_socket ' . $remoteSocket->name . " - " . $sensor->gpio_out);
+            $controller = new WateringController();
+            if ($message == "ON")
+            {
+                Log::info('switching on remote_socket ' . $remoteSocket->name);
+                $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_on);
+                sleep($sleep);
+            }
+            else
+            {
+                Log::info('switching off remote_socket ' . $remoteSocket->name);
+                $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
+            }
+            
+        }
     }
-    
 }
 
 
