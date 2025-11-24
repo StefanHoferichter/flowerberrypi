@@ -31,7 +31,7 @@ class MQTTController
             ->setPassword($password)
             ->setKeepAliveInterval(60);
         
-        $mqtt = new MqttClient($host, $port, $clientId);
+        $mqtt = new MqttClient($host, $port, $clientId . "-publisher");
         
         try {
             $mqtt->connect($connectionSettings, true);

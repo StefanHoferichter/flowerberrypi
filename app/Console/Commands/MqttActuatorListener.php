@@ -29,7 +29,7 @@ class MqttActuatorListener extends Command
         ->setKeepAliveInterval(30)   
         ->setReconnectAutomatically(true);
         
-        $mqtt = new MqttClient($host, $port, $clientId);
+        $mqtt = new MqttClient($host, $port, $clientId . "-listener");
         
         Log::info("Connecting to MQTT broker {$host}:{$port} ...");
         $mqtt->connect($connectionSettings, false);
@@ -45,6 +45,9 @@ class MqttActuatorListener extends Command
         }, 0);
             
         $mqtt->loop(true);
+
+        Log::info( "############### listener finished");
+        
     }
     
     private function executeActuator($topic, $message)
