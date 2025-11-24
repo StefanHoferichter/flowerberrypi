@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorValue;
+use Illuminate\Support\Facades\Log;
 use PhpMqtt\Client\ConnectionSettings;
 use PhpMqtt\Client\MqttClient;
 
@@ -41,7 +42,7 @@ class MQTTController
             $this->publish_actuators($clientId, $mqtt);
             
             
-            Log:info("discovery message sent");
+            Log::info("discovery message sent");
             
             $mqtt->disconnect();
         } 
@@ -93,7 +94,7 @@ class MQTTController
             
             $mqtt->publish($discoveryTopic, json_encode($payload), 0, true);
             
-            Log:info("sensor {$sensorName} message sent");
+            Log::info("sensor {$sensorName} message sent");
         }
     }
 
@@ -115,12 +116,12 @@ class MQTTController
             
             $mqtt->publish($stateTopic, $payload, 0, true); 
             
-            Log:info("sensor value {$sensorName} message sent");
+            Log::info("sensor value {$sensorName} message sent");
         }
     }
     private function publish_actuators($clientId, $mqtt)
     {
-        $relays = Sensor::where('sensor_type', "1" )->get()->map(fn($r) => [
+        $relays = Sensor::where('sensor_type', "3" )->get()->map(fn($r) => [
             'id' => $r->id,
             'name' => $r->name,
             'type' => 'Relay'
@@ -136,15 +137,15 @@ class MQTTController
         
         foreach ($actuators as $actuator)
         {
-            $actuatorNameOrig=$actuator['name'] . " " . $actuator['type'];
+            $actuatorNameOrig=$actuator['name'];
             $actuatorName = $this->sanitizeSensorName($actuatorNameOrig);
             
             $discoveryTopic = "homeassistant/switch/{$clientId}/{$actuatorName}/config";
-            
+                        
             $payload = [
                 'name' => $actuatorNameOrig,
-                'state_topic' => "plant/watering/actuator/{$actuatorName}/state",
-                'command_topic' => "plant/watering/actuator/{$actuatorName}/set",
+                'state_topic' => "plant/watering/actuator/{$clientId}/{$actuator['type']}/{$actuatorName}/state",
+                'command_topic' => "plant/watering/actuator/{$clientId}/{$actuator['type']}/{$actuatorName}/set",
                 'payload_on' => "ON",
                 'payload_off' => "OFF",
                 'unique_id' => "{$clientId}_{$actuatorName}",
@@ -160,7 +161,7 @@ class MQTTController
             // Discovery-Nachricht senden
             $mqtt->publish($discoveryTopic, json_encode($payload), 0, true);
             
-            Log:info("actuator {$actuatorName} message sent");
+            Log::info("actuator {$actuatorName} message sent");
             
         }
     }
