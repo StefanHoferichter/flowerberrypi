@@ -35,12 +35,21 @@ class MqttActuatorListener extends Command
         $mqtt->connect($connectionSettings, false);
         $topic = "plant/watering/actuator/{$clientId}/+/+/set";
         Log::info("Connected. Listening for actuator commands… " .  $topic);
-                
-        $mqtt->subscribe($topic, function (string $topic, string $message) 
+        
+        $mqtt->subscribe($topic, function (string $topic, string $message) use ($mqtt)
         {
             Log::info( "[§§§§§§§§§§§§§§§§§§§§§] {$topic} = {$message}");
+
+            $parts = explode('/', $topic);
+            $actuatorType = $parts[4];
+            $actuatorId = $parts[5];
             
-            $this->executeActuator($topic, $message);
+            $this->executeActuator($actuatorType, $actuatorId, $message);
+
+            $clientId=gethostname();
+            $stateTopic = "plant/watering/actuator/{$clientId}/{$actuatorType}/{$actuatorId}/state";
+            $mqtt->publish($stateTopic, $message, 0); 
+            
             Log::info( "[§§§§§§§§§§§§§§§§§§§§§] finished");
         }, 0);
             
@@ -50,11 +59,8 @@ class MqttActuatorListener extends Command
         
     }
     
-    private function executeActuator($topic, $message)
+    private function executeActuator($actuatorType, $actuatorId, $message)
     {
-        $parts = explode('/', $topic);
-        $actuatorType = $parts[4];
-        $actuatorId = $parts[5];
         
         Log::info("received set for " . $actuatorId . " type " . $actuatorType . " with message " . $message);
         
@@ -85,15 +91,14 @@ class MqttActuatorListener extends Command
             {
                 Log::info('switching on remote_socket ' . $remoteSocket->name);
                 $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_on);
-                sleep($sleep);
             }
             else
             {
                 Log::info('switching off remote_socket ' . $remoteSocket->name);
                 $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
             }
-            
         }
+
     }
 }
 
