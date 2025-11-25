@@ -79,6 +79,7 @@ sudo -u www-data composer create-project laravel/laravel .
 sudo -u www-data composer require Laravel/breeze
 chmod -R 777 storage
 sudo -u www-data php artisan breeze:install blade --no-interaction
+sudo -u www-data composer require php-mqtt/client
 
 echo "downloading flowerberrypi sources"
 cd /var/www/html/
@@ -171,5 +172,6 @@ cp "$SOURCE_DIR"/env/crontab /etc
 
 echo "configure laravel worker"
 cp "$SOURCE_DIR"/env/laravel-worker.conf /etc/supervisor/conf.d
+cp "$SOURCE_DIR"/env/mqtt-listener.conf /etc/supervisor/conf.d
 
 echo "✅ Installation finalized!"

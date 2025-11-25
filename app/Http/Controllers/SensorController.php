@@ -76,6 +76,7 @@ class SensorController extends Controller
     }
     public function trigger_watering(Request $request)
     {
+        Log::info("start triggered watering");
         $time_horizon_days = $request->query('time_horizon_days', 3);
         $horizon = Carbon::now()->subDays($time_horizon_days)->toDateString();
         
@@ -86,8 +87,10 @@ class SensorController extends Controller
         $wd->hour = date('G');
         $wd->save();
         
+        Log::info("start triggered watering start dispatch");
         TriggeredWatering::dispatch();
-
+        Log::info("start triggered watering finished dispatch");
+        
         $triggered_waterings = TriggeredWateringDecision::where('day', '>=', $horizon)->get();
         $zones = Zone::all();
         $form_url = "/triggered_watering";

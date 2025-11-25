@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
+use App\Models\WateringDecision;
+use App\Models\Zone;
 use App\Services\MQTTController;
 use App\Services\WateringController;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -41,6 +43,7 @@ class StartupJob implements ShouldQueue
         
         $this->switch_off_relays();
         $this->switch_off_remote_sockets();
+        $this->switch_off_ha_triggers();
         $this->publish_mqtt_to_ha();
         
         Log::info('!!!!!!!!!!! end handling startup job');
@@ -75,6 +78,20 @@ class StartupJob implements ShouldQueue
             $mqttcontroller = new MQTTController();
             $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, "OFF");
             
+        }
+    }
+    
+    private function switch_off_ha_triggers()
+    {
+        $zones = Zone::where('enabled', true)->where('id', '>', '1')->get();
+        $mqttcontroller = new MQTTController();
+        
+        foreach ($zones as $zone)
+        {
+            $wateringDecision = new WateringDecision();
+            $wateringDecision->zone_id=$zone->id;
+            $wateringDecision->watering_classification=1;
+            $mqttcontroller->send_ha_watering($wateringDecision);       
         }
     }
     

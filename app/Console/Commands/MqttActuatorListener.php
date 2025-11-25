@@ -18,6 +18,8 @@ class MqttActuatorListener extends Command
     
     public function handle()
     {
+        Log::info( "############### listener started");
+        
         $host = config('mqtt.host');
         $port = config('mqtt.port');
         $username = config('mqtt.username');
@@ -30,32 +32,44 @@ class MqttActuatorListener extends Command
         ->setKeepAliveInterval(30)   
         ->setReconnectAutomatically(true);
         
-        $mqtt = new MqttClient($host, $port, $clientId . "-listener");
-        
-        Log::info("Connecting to MQTT broker {$host}:{$port} ...");
-        $mqtt->connect($connectionSettings, false);
-        $topic = "plant/watering/actuator/{$clientId}/+/+/set";
-        Log::info("Connected. Listening for actuator commands… " .  $topic);
-        
-        $mqtt->subscribe($topic, function (string $topic, string $message) use ($mqtt)
+        if (empty($host))
         {
-            Log::info( "[§§§§§§§§§§§§§§§§§§§§§] {$topic} = {$message}");
-
-            $parts = explode('/', $topic);
-            $actuatorType = $parts[4];
-            $actuatorId = $parts[5];
+            Log::info('MQTT disabled');
+            return;
+        }
             
-            $this->executeActuator($actuatorType, $actuatorId, $message);
-
-            $controller = new MQTTController();
-            $controller->send_status_message($actuatorType, $actuatorId, $message);
-                  
+        $mqtt = new MqttClient($host, $port, $clientId . "-listener");
+        try
+        {
+            Log::info("Connecting to MQTT broker {$host}:{$port} ...");
+            $mqtt->connect($connectionSettings, false);
+            $topic = "plant/watering/actuator/{$clientId}/+/+/set";
+            Log::info("Connected. Listening for actuator commands… " .  $topic);
             
-            Log::info( "[§§§§§§§§§§§§§§§§§§§§§] finished");
-        }, 0);
-            
-        $mqtt->loop(true);
-
+            $mqtt->subscribe($topic, function (string $topic, string $message) use ($mqtt)
+            {
+                Log::info( "[§§§§§§§§§§§§§§§§§§§§§] {$topic} = {$message}");
+    
+                $parts = explode('/', $topic);
+                $actuatorType = $parts[4];
+                $actuatorId = $parts[5];
+                
+                $this->executeActuator($actuatorType, $actuatorId, $message);
+    
+                $controller = new MQTTController();
+                $controller->send_status_message($actuatorType, $actuatorId, $message);
+                      
+                
+                Log::info( "[§§§§§§§§§§§§§§§§§§§§§] finished");
+            }, 0);
+                
+            $mqtt->loop(true);
+        }
+        catch (\PhpMqtt\Client\Exceptions\MqttClientException $e)
+        {
+            Log::error("MQTT error: " . $e->getMessage());
+        }
+        
         Log::info( "############### listener finished");
         
     }

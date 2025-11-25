@@ -279,6 +279,7 @@ class ProcessData implements ShouldQueue
     private function execute_watering_decisions($job, $tod, $day)
     {
         Log::info('start executing watering decisions');
+        $mqttcontroller = new MQTTController();
         
         if ($tod > 0)
         {
@@ -301,6 +302,9 @@ class ProcessData implements ShouldQueue
                 {
                     self::water_via_relay($decision->watering_classification, $relay);
                 }
+                
+                $mqttcontroller->send_ha_watering($decision);
+                
                 
                 $decision->executed=1;
                 $decision->save();

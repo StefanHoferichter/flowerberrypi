@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorValue;
+use App\Models\Zone;
 use Illuminate\Support\Facades\Log;
 use PhpMqtt\Client\ConnectionSettings;
 use PhpMqtt\Client\MqttClient;
@@ -30,7 +31,13 @@ class MQTTController
             ->setUsername($username)
             ->setPassword($password)
             ->setKeepAliveInterval(60);
-        
+
+        if (empty($host))
+        {
+            Log::info('MQTT disabled');
+            return;
+        }
+            
         $mqtt = new MqttClient($host, $port, $clientId . "-publisher");
         
         try {
@@ -40,7 +47,7 @@ class MQTTController
             $this->publish_sensors($clientId, $mqtt);
             $this->publish_sensor_values($clientId, $mqtt);
             $this->publish_actuators($clientId, $mqtt);
-            
+            $this->publish_ha_triggers($clientId, $mqtt);
             
             Log::info("discovery message sent");
             
@@ -48,7 +55,7 @@ class MQTTController
         } 
         catch (\PhpMqtt\Client\Exceptions\MqttClientException $e) 
         {
-            Log::info("MQTT error: " . $e->getMessage());
+            Log::error("MQTT error: " . $e->getMessage());
         }
     }
 
@@ -126,7 +133,7 @@ class MQTTController
     }
     private function publish_actuators($clientId, $mqtt)
     {
-        $relays = Sensor::where('sensor_type', "3" )->get()->map(fn($r) => [
+        $relays = Sensor::where('sensor_type', "3" )->where('enabled', '1')->get()->map(fn($r) => [
             'id' => $r->id,
             'name' => $r->name,
             'type' => 'relay'
@@ -170,6 +177,85 @@ class MQTTController
         }
     }
     
+    private function publish_ha_triggers($clientId, $mqtt)
+    {
+        $zones = Zone::where('enabled', true)->where('id', '>', '1')->get();
+        
+        foreach ($zones as $zone)
+        {
+            $zoneNameOrig=$zone->name;
+            $zoneName = $this->sanitizeSensorName($zoneNameOrig);
+            
+            $discoveryTopic = "homeassistant/select/{$clientId}/{$zoneName}/config";
+                        
+            $payload = [
+                'name' => $zoneNameOrig,
+                'unique_id' => "{$clientId}_{$zoneName}",
+                'command_topic' => "plant/watering/select/{$clientId}/{$zone->id}/set",
+                'state_topic' => "plant/watering/select/{$clientId}/{$zone->id}/state",
+                'options' => ['off', 'weak', 'strong'],
+                "device" => [
+                    "identifiers" => [$clientId],
+                    "name" => "{$clientId}",
+                    "manufacturer" => "SHSS",
+                    "model" => "FlowerBerryPi V1.0",
+                    ]
+            ];
+            $mqtt->publish($discoveryTopic, json_encode($payload), 0, true);
+            
+            Log::info("select {$zoneName} message sent");
+        }
+    }
+    
+    public function send_ha_watering($wateringDecision)
+    {
+        $host = config('mqtt.host');
+        $port = config('mqtt.port');
+        $username = config('mqtt.username');
+        $password = config('mqtt.password');
+        $clientId=gethostname();
+        
+        $connectionSettings = (new ConnectionSettings)
+        ->setUsername($username)
+        ->setPassword($password)
+        ->setKeepAliveInterval(60);
+        
+        if (empty($host))
+        {
+            Log::info('MQTT disabled');
+            return;
+        }
+        $mqtt = new MqttClient($host, $port, $clientId . "-select");
+        
+        try {
+            $mqtt->connect($connectionSettings, true);
+            $clientId=gethostname();
+            
+            $stateTopic = "plant/watering/select/{$clientId}/{$wateringDecision->zone_id}/state";
+
+            switch ($wateringDecision->watering_classification)
+            {
+                case 1: $value="off"; break;
+                case 2: $value="weak"; break;
+                case 3: $value="strong"; break;
+                default: $value="off"; break;
+                
+            }
+            $payload = $value;
+            
+            $mqtt->publish($stateTopic, $payload, 0, true);
+            sleep(10);
+            $mqtt->publish($stateTopic, "off", 0, true);
+            
+            
+            Log::info("select value {$wateringDecision->zone_id} message sent with value {$value}");
+            $mqtt->disconnect();
+        }
+        catch (\PhpMqtt\Client\Exceptions\MqttClientException $e)
+        {
+            Log::error("MQTT error: " . $e->getMessage());
+        }
+    }
     
     private function sanitizeSensorName(string $name): string
     {
@@ -195,9 +281,16 @@ class MQTTController
         ->setPassword($password)
         ->setKeepAliveInterval(60);
         
+        if (empty($host))
+        {
+            Log::info('MQTT disabled');
+            return;
+        }
+        
         $mqtt = new MqttClient($host, $port, $clientId . "-state");
         
-        try {
+        try 
+        {
             $mqtt->connect($connectionSettings, true);
             
             
@@ -210,7 +303,7 @@ class MQTTController
         }
         catch (\PhpMqtt\Client\Exceptions\MqttClientException $e)
         {
-            Log::info("MQTT error: " . $e->getMessage());
+            Log::error("MQTT error: " . $e->getMessage());
         }
     }
     
