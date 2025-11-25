@@ -83,7 +83,7 @@ class MQTTController
             // Payload für Home Assistant Discovery
             $payload = [
                 'name' => $sensorNameOrig,
-                'state_topic' => "plant/watering/sensor/{$sensorName}/state",
+                'state_topic' => "plant/watering/sensor/{$clientId}/{$sensorName}/state",
                 'unique_id' => "{$clientId}_{$sensorName}",
                 "device" => [
                     "identifiers" => [$clientId],
@@ -122,7 +122,7 @@ class MQTTController
         {
             $sensorNameOrig=$value->sensor->name . " " . $value->sensor_value_type->name;
             $sensorName = $this->sanitizeSensorName($sensorNameOrig);
-            $stateTopic = "plant/watering/sensor/{$sensorName}/state";
+            $stateTopic = "plant/watering/sensor/{$clientId}/{$sensorName}/state";
             
             $payload = $value->value; 
             
