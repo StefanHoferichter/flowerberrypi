@@ -10,6 +10,7 @@ use App\Models\SensorType;
 use App\Models\SensorValueType;
 use App\Models\Threshold;
 use App\Models\User;
+use App\Models\WiFiSocket;
 use App\Models\Zone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -45,11 +46,12 @@ class SetupController extends Controller
     
     public function show_remote_sockets()
     {
-        $rss = RemoteSocket::all();
+        $rs = RemoteSocket::all();
+        $ws = WiFiSocket::all();
         $zones = Zone::all();
-        return view('remote_sockets', ['remoteSockets' => $rss, 'zones' => $zones]);
+        return view('remote_sockets', ['remoteSockets' => $rs, 'wifiSockets' => $ws, 'zones' => $zones]);
     }
-    public function save_remote_sockets(Request $request)
+    public function save_433mhz_sockets(Request $request)
     {
         $id = $request->id;
         $rs = RemoteSocket::find($id);
@@ -60,11 +62,28 @@ class SetupController extends Controller
         
         $rs->save();
         
-        $rss = RemoteSocket::all();
+        $rs = RemoteSocket::all();
+        $ws = WiFiSocket::all();
         $zones = Zone::all();
-        return view('remote_sockets', ['remoteSockets' => $rss, 'zones' => $zones]);
+        return view('remote_sockets', ['remoteSockets' => $rs, 'wifiSockets' => $ws, 'zones' => $zones]);
     }
-
+    public function save_wifi_sockets(Request $request)
+    {
+        $id = $request->id;
+        $rs = WiFiSocket::find($id);
+        $rs->name= $request->name;
+        $rs->url_on= $request->url_on;
+        $rs->url_off = $request->url_off;
+        $rs->zone_id = $request->zone_id;
+        
+        $rs->save();
+        
+        $rs = RemoteSocket::all();
+        $ws = WiFiSocket::all();
+        $zones = Zone::all();
+        return view('remote_sockets', ['remoteSockets' => $rs, 'wifiSockets' => $ws, 'zones' => $zones]);
+    }
+    
     public function show_sensors()
     {
         $sensors = Sensor::all();

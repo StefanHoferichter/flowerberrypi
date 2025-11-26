@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\SensorValue;
+use App\Models\WiFiSocket;
 use App\Models\Zone;
 use Illuminate\Support\Facades\Log;
 use PhpMqtt\Client\ConnectionSettings;
@@ -139,13 +140,18 @@ class MQTTController
             'type' => 'relay'
         ]);
         
-        $sockets = RemoteSocket::all()->map(fn($s) => [
+        $rsockets = RemoteSocket::all()->map(fn($s) => [
             'id' => $s->id,
             'name' => $s->name,
-            'type' => 'remote_socket'
+            'type' => '433mhz_socket'
+        ]);
+        $wsockets = WiFiSocket::all()->map(fn($s) => [
+            'id' => $s->id,
+            'name' => $s->name,
+            'type' => 'wifi_socket'
         ]);
         
-        $actuators = $relays->merge($sockets);
+        $actuators = $relays->merge($rsockets)->merge($wsockets);
         
         foreach ($actuators as $actuator)
         {

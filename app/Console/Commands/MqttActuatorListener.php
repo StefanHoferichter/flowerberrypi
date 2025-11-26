@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
+use App\Models\WiFiSocket;
 use App\Services\MQTTController;
 use App\Services\WateringController;
 use Illuminate\Console\Command;
@@ -94,26 +95,43 @@ class MqttActuatorListener extends Command
                 $controller->control_relay($relay->gpio_out, 1);
             }
         }
-        if ($actuatorType == "remote_socket")
+        if ($actuatorType == "433mhz_socket")
         {
-            Log::info('switching remote_socket ');
+            Log::info('switching 433mhz_socket ');
             $sensor = Sensor::where('sensor_type', '1')->first();
-            Log::info('switching remote_socket ' . $sensor->gpio_out);
+            Log::info('switching 433mhz socket ' . $sensor->gpio_out);
             $remoteSocket = RemoteSocket::where('id', $actuatorId)->first();
-            Log::info('switching remote_socket ' . $remoteSocket->name . " - " . $sensor->gpio_out);
+            Log::info('switching 433mhz socket ' . $remoteSocket->name . " - " . $sensor->gpio_out);
             $controller = new WateringController();
             if ($message == "ON")
             {
-                Log::info('switching on remote_socket ' . $remoteSocket->name);
-                $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_on);
+                Log::info('switching on 433mhz socket ' . $remoteSocket->name);
+                $controller->control_433mhz_socket($sensor->gpio_out, $remoteSocket->code_on);
             }
             else
             {
-                Log::info('switching off remote_socket ' . $remoteSocket->name);
-                $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
+                Log::info('switching off 433mhz socket ' . $remoteSocket->name);
+                $controller->control_433mhz_socket($sensor->gpio_out, $remoteSocket->code_off);
             }
         }
-
+        if ($actuatorType == "wifi_socket")
+        {
+            Log::info('switching wifi socket ');
+            $wifiSocket = WiFiSocket::where('id', $actuatorId)->first();
+            Log::info('switching wifi socket ' . $wifiSocket->name . " - " . $wifiSocket->url);
+            $controller = new WateringController();
+            if ($message == "ON")
+            {
+                Log::info('switching on wifi socket ' . $wifiSocket->url_on);
+                $controller->control_wifi_socket($wifiSocket->url_on);
+            }
+            else
+            {
+                Log::info('switching off wifi socket ' . $wifiSocket->url_off);
+                $controller->control_wifi_socket($wifiSocket->url_off);
+            }
+        }
+        
     }
 }
 

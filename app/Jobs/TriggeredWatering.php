@@ -5,13 +5,14 @@ namespace App\Jobs;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\TriggeredWateringDecision;
+use App\Models\WiFiSocket;
 use App\Services\MQTTController;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Foundation\Bus\Dispatchable;     
-use Illuminate\Queue\InteractsWithQueue;        
-use Illuminate\Queue\SerializesModels;          
 
 class TriggeredWatering implements ShouldQueue
 {
@@ -51,8 +52,14 @@ class TriggeredWatering implements ShouldQueue
             $remoteSocket = RemoteSocket::where('zone_id', $decision->zone_id)->first();
             if ($remoteSocket != null)
             {
-                ProcessData::water_via_remote_socket($decision->watering_classification, $sensor, $remoteSocket);
+                ProcessData::water_via_433mhz_socket($decision->watering_classification, $sensor, $remoteSocket);
             }
+            $wifiSocket = WiFiSocket::where('zone_id', $decision->zone_id)->first();
+            if ($wifiSocket != null)
+            {
+                ProcessData::water_via_wifi_socket($decision->watering_classification, $wifiSocket);
+            }
+            
             $relay = Sensor::where('sensor_type', '3')->where('zone_id', $decision->zone_id)->first();
             if ($relay != null)
             {

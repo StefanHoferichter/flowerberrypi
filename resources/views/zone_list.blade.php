@@ -18,7 +18,8 @@
                         <th>Name</th>
                         <th>enabled</th>
                         <th>Sensors</th>
-                        <th>Remote Sockets</th>
+                        <th>433MHz Sockets</th>
+                        <th>WiFi Sockets</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,6 +50,13 @@
                 			$rs_list= $rs_list . $rs->name . ',';
                 		
                 	}   
+                	$ws_list="";
+                	foreach($wifiSockets as $ws) 
+                	{
+                		if ($ws->zone_id == $zone->id)
+                			$ws_list= $ws_list . $ws->name . ',';
+                		
+                	}   
                 @endphp
                   <tr>
                       <td class="{{$enabled}}">{{ $zone->id }}</td>
@@ -57,6 +65,7 @@
     				 <td class="{{$enabled}}"> {{ $enabled }} </td>
     				 <td class="{{$enabled}}"> {!! $sensor_list !!} </td>
     				 <td class="{{$enabled}}"> <a  class="{{$enabled}}" href="/remote_sockets">{{ $rs_list }} </a></td>
+    				 <td class="{{$enabled}}"> <a  class="{{$enabled}}" href="/remote_sockets">{{ $ws_list }} </a></td>
                     </tr>
              
             @endforeach

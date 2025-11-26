@@ -11,6 +11,7 @@ use App\Models\SensorJob;
 use App\Models\SensorValue;
 use App\Models\WateringDecision;
 use App\Models\WeatherForecast;
+use App\Models\WiFiSocket;
 use App\Models\Zone;
 use App\Services\ForecastReader;
 use App\Services\MQTTController;
@@ -295,7 +296,12 @@ class ProcessData implements ShouldQueue
                 $remoteSocket = RemoteSocket::where('zone_id', $decision->zone_id)->first();
                 if ($remoteSocket != null)
                 {
-                    self::water_via_remote_socket($decision->watering_classification, $sensor, $remoteSocket);
+                    self::water_via_433mhz_socket($decision->watering_classification, $sensor, $remoteSocket);
+                }
+                $wifiSocket = WiFiSocket::where('zone_id', $decision->zone_id)->first();
+                if ($wifiSocket != null)
+                {
+                    self::water_via_wifi_socket($decision->watering_classification, $wifiSocket);
                 }
                 $relay = Sensor::where('sensor_type', '3')->where('zone_id', $decision->zone_id)->first();
                 if ($relay != null)
@@ -321,9 +327,9 @@ class ProcessData implements ShouldQueue
     }
     
     
-    public static function water_via_remote_socket($classification, $sensor, $remoteSocket)
+    public static function water_via_433mhz_socket($classification, $sensor, $remoteSocket)
     {
-        Log::info('start watering with remote socket ' . $remoteSocket->name . ' classification ' . $classification);
+        Log::info('start watering with 433mhz socket ' . $remoteSocket->name . ' classification ' . $classification);
         
         $controller = new WateringController();
         $mqttcontroller = new MQTTController();
@@ -350,24 +356,69 @@ class ProcessData implements ShouldQueue
         
         for ($i = 0; $i < $loops; $i++)
         {
-            Log::info('switching  off remote socket ' . $remoteSocket->name . ' as stability measure');
-            $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
-            $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, "OFF");
+            Log::info('switching  off 433mhz socket ' . $remoteSocket->name . ' as stability measure');
+            $controller->control_433mhz_socket($sensor->gpio_out, $remoteSocket->code_off);
+            $mqttcontroller->send_status_message("433mhz_socket", $remoteSocket->id, "OFF");
             sleep(2);
-            Log::info('switching  on remote socket ' . $remoteSocket->name);
-            $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_on);
-            $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, "ON");
-            
+            Log::info('switching  on 433mhz socket ' . $remoteSocket->name);
+            $controller->control_433mhz_socket($sensor->gpio_out, $remoteSocket->code_on);
+            $mqttcontroller->send_status_message("433mhz_socket", $remoteSocket->id, "ON");
             sleep($sleep);
-            $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
-            $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, "OFF");
-            Log::info('switching off remote socket ' . $remoteSocket->name);
+            $controller->control_433mhz_socket($sensor->gpio_out, $remoteSocket->code_off);
+            $mqttcontroller->send_status_message("433mhz_socket", $remoteSocket->id, "OFF");
+            Log::info('switching off 433mhz socket ' . $remoteSocket->name);
             sleep(2);
         }
 
-        Log::info('finished watering with remote socket ' . $remoteSocket->name);
+        Log::info('finished watering with 433mhz socket ' . $remoteSocket->name);
     }
- 
+
+    public static function water_via_wifi_socket($classification, $wifiSocket)
+    {
+        Log::info('start watering with wifi socket ' . $wifiSocket->name . ' classification ' . $classification);
+        
+        $controller = new WateringController();
+        $mqttcontroller = new MQTTController();
+        
+        $loops=0;
+        if ($classification==1)
+        {
+            $loops=0;
+            $sleep=2;
+        }
+        if ($classification==2)
+        {
+            $loops=1;
+            $sleep=60;
+        }
+        if ($classification==3)
+        {
+            $loops=2;
+            $sleep=60;
+        }
+        
+        $wt = $loops*$sleep;
+        Log::info('watering time ' . $wt);
+        
+        for ($i = 0; $i < $loops; $i++)
+        {
+            Log::info('switching  off wifi socket ' . $wifiSocket->name . ' as stability measure');
+            $controller->control_wifi_socket($wifiSocket->url_off);
+            $mqttcontroller->send_status_message("wifi_socket", $wifiSocket->id, "OFF");
+            sleep(2);
+            Log::info('switching  on wifi socket ' . $wifiSocket->name);
+            $controller->control_wifi_socket($wifiSocket->url_on);
+            $mqttcontroller->send_status_message("wifi_socket", $wifiSocket->id, "ON");
+            sleep($sleep);
+            $controller->control_wifi_socket($wifiSocket->url_off);
+            $mqttcontroller->send_status_message("wifi_socket", $wifiSocket->id, "OFF");
+            Log::info('switching off wifi socket ' . $wifiSocket->name);
+            sleep(2);
+        }
+        
+        Log::info('finished watering with wifi socket ' . $wifiSocket->name);
+    }
+    
     public static function water_via_relay($classification, $relay)
     {
         Log::info('start watering with relay ' . $relay->name . ' factor ' . $relay->gpio_extra . ' classification ' . $classification);

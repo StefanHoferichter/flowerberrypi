@@ -8,6 +8,7 @@ use App\Models\HourlyWeatherForecast;
 use App\Models\ManualWateringDecision;
 use App\Models\Picture;
 use App\Models\RemoteSocket;
+use App\Models\WiFiSocket;
 use App\Models\Sensor;
 use App\Models\SensorJob;
 use App\Models\SensorValue;
@@ -104,8 +105,9 @@ class SensorController extends Controller
         $zones = Zone::all();
         $sensors = Sensor::all();
         $remoteSockets = RemoteSocket::all();
+        $wifiSockets = WiFiSocket::all();
         
-        return view('zone_list', ['zones' => $zones, 'sensors' => $sensors, 'remoteSockets' => $remoteSockets]);
+        return view('zone_list', ['zones' => $zones, 'sensors' => $sensors, 'remoteSockets' => $remoteSockets, 'wifiSockets' => $wifiSockets]);
     }
     
     public function show_zone_details($id, Request $request)
@@ -387,11 +389,12 @@ class SensorController extends Controller
     public function show_remote_sockets()
     {
         $remoteSockets = RemoteSocket::with('zone')->get();
+        $wifiSockets = WiFiSocket::with('zone')->get();
         
-        return view('remote_socket_list', ['remoteSockets' => $remoteSockets]);
+        return view('remote_socket_list', ['remoteSockets' => $remoteSockets, 'wifiSockets' => $wifiSockets]);
     }
     
-    public function control_remote_socket(Request $request)
+    public function control_433mhz_socket(Request $request)
     {
         $sensor = Sensor::where('sensor_type', '1')->first();
         
@@ -400,18 +403,38 @@ class SensorController extends Controller
         $code = $remoteSocket->code_on;
         if ($request->action == "off")
             $code = $remoteSocket->code_off;
+            
+        $controller = new WateringController();
+        $controller->control_433mhz_socket($sensor->gpio_out, $code);
         
-         $controller = new WateringController();
-         $controller->control_remote_socket_old($sensor->gpio_out, $code);
-         
-         $mqttcontroller = new MQTTController();
-         $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, strtoupper($request->action));
+        $mqttcontroller = new MQTTController();
+        $mqttcontroller->send_status_message("433mhz_socket", $remoteSocket->id, strtoupper($request->action));
         
-        $remoteSockets = RemoteSocket::all();
+        $remoteSockets = RemoteSocket::with('zone')->get();
+        $wifiSockets = WiFiSocket::with('zone')->get();
         
-        return view('remote_socket_list', ['remoteSockets' => $remoteSockets]);
+        return view('remote_socket_list', ['remoteSockets' => $remoteSockets, 'wifiSockets' => $wifiSockets]);
     }
-
+    public function control_wifi_socket(Request $request)
+    {
+        $wifiSocket = WiFiSocket::find($request->id);
+        
+        $url = $wifiSocket->url_on;
+        if ($request->action == "off")
+            $url = $wifiSocket->url_off;
+            
+        $controller = new WateringController();
+        $controller->control_wifi_socket($url);
+        
+        $mqttcontroller = new MQTTController();
+        $mqttcontroller->send_status_message("wifi_socket", $wifiSocket->id, strtoupper($request->action));
+        
+        $remoteSockets = RemoteSocket::with('zone')->get();
+        $wifiSockets = WiFiSocket::with('zone')->get();
+        
+        return view('remote_socket_list', ['remoteSockets' => $remoteSockets, 'wifiSockets' => $wifiSockets]);
+    }
+    
     public function show_relays()
     {
         $relays = Sensor::where('sensor_type', '3')->get();

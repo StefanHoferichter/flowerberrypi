@@ -13,7 +13,8 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/sensors', 'App\Http\Controllers\SensorController@show_sensors');
     Route::get('/remote_sockets', 'App\Http\Controllers\SensorController@show_remote_sockets');
-    Route::post('/remote_sockets', 'App\Http\Controllers\SensorController@control_remote_socket');
+    Route::post('/433mhz_sockets', 'App\Http\Controllers\SensorController@control_433mhz_socket');
+    Route::post('/wifi_sockets', 'App\Http\Controllers\SensorController@control_wifi_socket');
     Route::get('/relays', 'App\Http\Controllers\SensorController@show_relays');
     Route::post('/relays', 'App\Http\Controllers\SensorController@control_relays');
     Route::get('/temperatures', 'App\Http\Controllers\SensorController@show_temperatures');
@@ -37,7 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/setup_percentage_conversions', 'App\Http\Controllers\SetupController@show_percentage_conversions');
     Route::post('/setup_percentage_conversions', 'App\Http\Controllers\SetupController@save_percentage_conversions');
     Route::get('/setup_remote_sockets', 'App\Http\Controllers\SetupController@show_remote_sockets');
-    Route::post('/setup_remote_sockets', 'App\Http\Controllers\SetupController@save_remote_sockets');
+    Route::post('/setup_433mhz_sockets', 'App\Http\Controllers\SetupController@save_433mhz_sockets');
+    Route::post('/setup_wifi_sockets', 'App\Http\Controllers\SetupController@save_wifi_sockets');
     Route::get('/setup_sensors', 'App\Http\Controllers\SetupController@show_sensors');
     Route::post('/setup_sensors', 'App\Http\Controllers\SetupController@save_sensors');
     Route::get('/setup_thresholds', 'App\Http\Controllers\SetupController@show_thresholds');

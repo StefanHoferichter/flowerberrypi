@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\RemoteSocket;
 use App\Models\Sensor;
 use App\Models\WateringDecision;
+use App\Models\WiFiSocket;
 use App\Models\Zone;
 use App\Services\MQTTController;
 use App\Services\WateringController;
@@ -42,7 +43,8 @@ class StartupJob implements ShouldQueue
         self::$alreadyRun = true;
         
         $this->switch_off_relays();
-        $this->switch_off_remote_sockets();
+        $this->switch_off_433mhz_sockets();
+        $this->switch_off_wifi_sockets();
         $this->switch_off_ha_triggers();
         $this->publish_mqtt_to_ha();
         
@@ -64,7 +66,7 @@ class StartupJob implements ShouldQueue
         }
     }
 
-    private function switch_off_remote_sockets()
+    private function switch_off_433mhz_sockets()
     {
         $sensor = Sensor::where('sensor_type', '1')->where('enabled', '1')->first();
         $remoteSockets = RemoteSocket::with('zone')->get();
@@ -72,11 +74,27 @@ class StartupJob implements ShouldQueue
         $controller = new WateringController();
         foreach ($remoteSockets as $remoteSocket)
         {
-            Log::info('switching  off remote socket ' . $remoteSocket->name);
-            $controller->control_remote_socket_old($sensor->gpio_out, $remoteSocket->code_off);
+            Log::info('switching  off 433mhz socket ' . $remoteSocket->name);
+            $controller->control_433mhz_socket($sensor->gpio_out, $remoteSocket->code_off);
             sleep(1);
             $mqttcontroller = new MQTTController();
-            $mqttcontroller->send_status_message("remote_socket", $remoteSocket->id, "OFF");
+            $mqttcontroller->send_status_message("433mhz_socket", $remoteSocket->id, "OFF");
+            
+        }
+    }
+    
+    private function switch_off_wifi_sockets()
+    {
+        $wifiSockets = WiFiSocket::with('zone')->get();
+        
+        $controller = new WateringController();
+        foreach ($wifiSockets as $wifiSocket)
+        {
+            Log::info('switching  off wifi socket ' . $wifiSocket->name);
+            $controller->control_wifi_socket($wifiSocket->url_off);
+            sleep(1);
+            $mqttcontroller = new MQTTController();
+            $mqttcontroller->send_status_message("wifi_socket", $wifiSocket->id, "OFF");
             
         }
     }

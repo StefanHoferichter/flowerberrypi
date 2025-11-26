@@ -34,6 +34,9 @@ class DatabaseSeeder extends Seeder
             RemoteSocketSeeder::class,
         ]);
         $this->call([
+            WiFiSocketSeeder::class,
+        ]);
+        $this->call([
             PercentageConversionSeeder::class,
         ]);
         $this->call([

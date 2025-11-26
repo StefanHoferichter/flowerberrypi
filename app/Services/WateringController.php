@@ -5,23 +5,25 @@ namespace App\Services;
 use App\Helpers\GlobalStuff;
 use App\Models\WateringDecision;
 use Carbon\Exceptions\Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
 class WateringController
 {
+    /*
     public function control_remote_socket($gpio_out, $code)
     {
         Log::info('start controlling remote socket ' . $code . ' ' . $gpio_out );
         $output = shell_exec('sudo /var/www/html/flowerberrypi/app/python/codesend ' . $code . ' 2>&1');
         Log::info('finished controlling remote socket ' . $code . ' ' . $gpio_out . ' ' . $output );
     }
-
-    public function control_remote_socket_old($gpio_out, $code)
+    */
+    public function control_433mhz_socket($gpio_out, $code)
     {
         $isPi5 = GlobalStuff::isRaspberryPi5();
-        Log::info('start controlling remote socket ' . $code . ' ' . $gpio_out );
+        Log::info('start controlling 433mhz socket ' . $code . ' ' . $gpio_out );
         
         if ($isPi5)
         {
@@ -35,7 +37,35 @@ class WateringController
             sleep(1);
             $output = shell_exec('sudo /usr/bin/python3 /var/www/html/flowerberrypi/app/python/php_send_433mhz_v2.py ' . $gpio_out . ' ' .  $code .  ' 2>&1');
         }
-        Log::info('finished controlling remote socket ' . $code . ' ' . $gpio_out . ' ' . $output );
+        Log::info('finished controlling 433mhz socket ' . $code . ' ' . $gpio_out . ' ' . $output );
+    }
+
+    public function control_wifi_socket($url)
+    {
+        Log::info('start controlling wifi socket ' . $url );
+        
+        try 
+        {
+            $response = Http::timeout(3)->throw()->get($url);
+            Log::info('Response received', [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ]);
+        } 
+        catch (\Illuminate\Http\Client\ConnectionException $e) 
+        {
+            Log::error("Connection error: " . $e->getMessage());
+        } 
+        catch (\Illuminate\Http\Client\RequestException $e) 
+        {
+            Log::error("HTTP request failed: " . $e->getMessage(), ['status' => optional($e->response)->status()]);
+        } 
+        catch (\Exception $e) 
+        {
+            Log::error("General error controlling WiFi socket: " . $e->getMessage());
+        }
+        
+        Log::info('finished controlling wifi socket ' . $url );
     }
     
     public function control_relay($gpio_out, $code)
