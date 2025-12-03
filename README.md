@@ -1,61 +1,42 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FlowerBerryPi
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+    <img src="https://www.hoferichter.net/logo/flowerberrypi_logo_homepage.png" alt="FlowerBerryPi">
 </p>
 
-## About Laravel
+Welcome to FlowerBerryPi, your smart personal watering solution for flowers and plants.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+FlowerBerryPi uses soil moisture sensors to monitor the soil’s moisture level. Indoor temperature is measured with a sensor, while outdoor temperature is obtained from an online weather service. The water level in the tanks is monitored using ultrasonic distance sensors.
+Plants are watered either via a Gardena Vacation Watering Set controlled by Brennenstuhl remote sockets or Shelly WiFi Sockets, or via 5V water pumps operated through a relay.
+FlowerBerryPi combines hardware (Raspberry Pi, sensors, PCBs, cables) with software (a web UI built on Laravel).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+FlowerBerryPi can be integrated with HomeAsssistant. (https://www.home-assistant.io)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+FlowerBerryPi requires an initial configuration. First, zones need to be defined. A zone consists of a water tank with an ultrasonic level sensor and a pump. Optionally, soil moisture sensors can be added.
+The GPIO pins can be configured for each sensor. By default, the configuration matches the PCBs that can be ordered.
 
-## Learning Laravel
+FlowerBerryPi runs a background job every hour to track sensor values in the database. Three times a day (9 a.m., 1 p.m., and 5 p.m.), FlowerBerryPi makes watering decisions based on soil moisture, temperature, and remaining water levels.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Currently, three watering levels exist:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+    1: no watering
+    2: medium watering
+    3: strong watering
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Additional waterings can be triggered from the UI, and manual waterings outside of FlowerBerryPi can also be tracked.
+The thresholds for temperature, water level, and soil moisture are configurable. An optional camera can take pictures of your plants three times a day.
 
-## Laravel Sponsors
+# Prerequisites
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+FlowerBerryPi requires hardware and software:
+*	1 Raspberry Pi Model 2, 3, 4 oder 5 with Raspberry Pi OS Bookworm (Trixie currently not supported)
+*	FlowerberryPi Software (This repo, PHP-Laravel-App with MariaDB)
+*	FlowerBerryPi HAT PCB for Raspberry Pi
+*	FlowerberryPi Soil Moisture PCB for reading 8 moisture sensors via ADC ADS 1115
+*	Sensors like DHT11, HC-SR04, moisture sensor V2.0, Raspberry Pi camera 1.3
+*	additional elements
+ 
 
-### Premium Partners
+# Installation
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The installation guide can be found at: https://www.hoferichter.net/en/fbp/installation_guide.php.
