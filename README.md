@@ -10,7 +10,7 @@ FlowerBerryPi uses soil moisture sensors to monitor the soil’s moisture level.
 Plants are watered either via a Gardena Vacation Watering Set controlled by Brennenstuhl remote sockets or Shelly WiFi Sockets, or via 5V water pumps operated through a relay.
 FlowerBerryPi combines hardware (Raspberry Pi, sensors, PCBs, cables) with software (a web UI built on Laravel).
 
-FlowerBerryPi can be integrated with HomeAsssistant. (https://www.home-assistant.io)
+FlowerBerryPi can be integrated with Home Assistant. (https://www.home-assistant.io)
 
 FlowerBerryPi requires an initial configuration. First, zones need to be defined. A zone consists of a water tank with an ultrasonic level sensor and a pump. Optionally, soil moisture sensors can be added.
 The GPIO pins can be configured for each sensor. By default, the configuration matches the PCBs that can be ordered.
