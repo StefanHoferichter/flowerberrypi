@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/i2c_bus', 'App\Http\Controllers\DiagnosisController@show_i2c_bus');
     Route::get('/sniff', 'App\Http\Controllers\DiagnosisController@show_433mhz_start');
     Route::post('/sniff', 'App\Http\Controllers\DiagnosisController@show_433mhz');
+    Route::get('/pcb_version', 'App\Http\Controllers\DiagnosisController@show_pcb_version');
 });
 
 

@@ -46,5 +46,13 @@ class DiagnosisController extends Controller
         
         return view('433mhz_list', ['output' => $lines, 'timeout' => $timeout]);
     }
+
+    public function show_pcb_version()
+    {
+        $reader = new SensorReader();
+        $output = $reader->read_pcb_version();
+        
+        return view('pcb_version', ['output' => $output]);
+    }
     
 }

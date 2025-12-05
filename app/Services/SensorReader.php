@@ -15,6 +15,24 @@ use Illuminate\Support\Facades\Log;
 
 class SensorReader
 {
+    public function read_pcb_version()
+    {
+        $cmd = " python /var/www/html/flowerberrypi/app/python/php_test_open_pin.py 6";
+        
+        $output = trim(shell_exec($cmd));
+        echo $output;
+        
+        $version = "ERROR";
+        if ($output == "2") {
+            $version = "1.0";
+        } else if ($output == "0") {
+            $version = "1.1";
+        } else if ($output == "1") {
+            $version = "1.2";
+        }
+                    
+        return $version;
+    }
     public function read_temperatures(Collection $sensors)
     {
         $readings = [];
