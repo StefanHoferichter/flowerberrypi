@@ -1,6 +1,6 @@
 @extends('flowerberrypi')
  
-@section('title', 'Sensoren')
+@section('title', 'Manual Waterings')
 @section('submenu')
 @include ('include_watering_menu')  
 @endsection

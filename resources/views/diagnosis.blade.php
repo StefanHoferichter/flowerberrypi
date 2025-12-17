@@ -1,6 +1,6 @@
 @extends('flowerberrypi')
  
-@section('title', 'Sensoren')
+@section('title', 'Diagnosis')
 @section('url', 'https://www.rezeptexperte.de/show_categories') 
 @section('submenu')
 @include ('include_diagnosis_menu')  
@@ -8,7 +8,7 @@
 
 @section('content')
 
-        <h1>Home</h1>
+        <h1>Diagnosis</h1>
 
 
 		<div class="grid-container">

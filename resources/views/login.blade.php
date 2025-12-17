@@ -1,6 +1,6 @@
 @extends('flowerberrypi')
  
-@section('title', 'Home')
+@section('title', 'Login')
 @section('submenu')
 @include ('include_system_menu')  
 @endsection

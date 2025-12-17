@@ -1,6 +1,6 @@
 @extends('flowerberrypi')
  
-@section('title', 'Sensoren')
+@section('title', 'Soil Moistures')
 @section('submenu')
 @include ('include_sensor_menu')  
 @endsection

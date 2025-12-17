@@ -1,6 +1,6 @@
 @extends('flowerberrypi')
  
-@section('title', 'Sensoren')
+@section('title', '433 MHz Reader')
 @section('submenu')
 @include ('include_diagnosis_menu')  
 @endsection

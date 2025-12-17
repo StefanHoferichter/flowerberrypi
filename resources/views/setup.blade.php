@@ -1,13 +1,13 @@
 @extends('flowerberrypi')
  
-@section('title', 'Sensoren')
+@section('title', 'Setup')
 @section('submenu')
 @include ('include_setup_menu')  
 @endsection
 
 @section('content')
 
-        <h1>Home</h1>
+        <h1>Setup</h1>
 
 
 		<div class="grid-container">

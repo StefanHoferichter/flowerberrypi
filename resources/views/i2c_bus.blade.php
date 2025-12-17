@@ -1,6 +1,6 @@
 @extends('flowerberrypi')
  
-@section('title', 'Sensoren')
+@section('title', 'I2C Bus')
 @section('submenu')
 @include ('include_diagnosis_menu')  
 @endsection

@@ -1,13 +1,13 @@
 @extends('flowerberrypi')
  
-@section('title', 'Sensoren')
+@section('title', 'Hourly Jobs')
 @section('submenu')
 @include ('include_dummy_menu')  
 @endsection
 
 @section('content')
 @include('include_time_horizon_menu')
-        <h1>Sensor Jobs</h1>
+        <h1>Hourly Jobs</h1>
 
 	<form action="/trigger_job" target="_top" method="post">
 	        @csrf
