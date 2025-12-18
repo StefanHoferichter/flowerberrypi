@@ -39,4 +39,4 @@ FlowerBerryPi requires hardware and software:
 
 # Installation
 
-The installation guide can be found at: https://www.hoferichter.net/fbp/installation_guide.php.
+The installation guide can be found at: https://www.hoferichter.net/en/fbp/installation_guide.php.
